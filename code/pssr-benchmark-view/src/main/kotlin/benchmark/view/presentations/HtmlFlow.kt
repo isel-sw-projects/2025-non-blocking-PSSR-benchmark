@@ -127,9 +127,7 @@ val htmlFlowTemplateIter: HtmlView<Iterable<Presentation>> =
                             h1 { text("JFall 2013 Presentations - HtmlFlow") }
                         }
                         dyn { model: Iterable<Presentation> ->
-                            model.forEach {
-                                presentationFragment.renderAsync(it).thenApply { frag -> raw(frag) }
-                            }
+                            model.forEach { raw(presentationFragmentSync.render(it)) }
                         }
                     }
                 }

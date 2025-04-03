@@ -21,8 +21,21 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-jersey")
+
+    implementation("org.openjdk.jmh:jmh-core:1.35")
+    implementation("org.openjdk.jmh:jmh-core-benchmarks:1.35")
+    implementation("org.openjdk.jmh:jmh-generator-annprocess:1.35")
+    implementation("org.springframework.boot:spring-boot-starter-test")
+
     testImplementation(kotlin("test"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.openjdk.jmh:jmh-core:1.35")
+    testImplementation("org.openjdk.jmh:jmh-core-benchmarks:1.35")
+    testImplementation("org.openjdk.jmh:jmh-generator-annprocess:1.35")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    testImplementation(project(":pssr-benchmark-repository-mem"))
 }
 
 configurations.all {

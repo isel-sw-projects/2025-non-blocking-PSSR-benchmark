@@ -37,6 +37,8 @@ import reactor.core.publisher.Mono
 
 /**
  * Since JAX-RS does not support Project Reactor, we use this class to implement NIO routes using Spring WebFlux.
+ *
+ * Taken from: https://github.com/xmlet/spring-webflux-comparing-template-engines
  */
 @Component
 class PresentationsRoutes(
@@ -67,7 +69,7 @@ class PresentationsRoutes(
      */
     private val pebbleView = pebbleEngine.getTemplate("presentations")
     private val freemarkerView = freemarkerConfig.getTemplate("templates/freemarker/index-freemarker.ftl")
-    private val trimouView = mustacheEngine.getMustache("templates/trimou/presentations.trimou")
+    private val trimouView = mustacheEngine.getMustache("presentations")
     private val viewVelocity = velocityEngine.getTemplate("templates/velocity/presentations-velocity.vm", "UTF-8")
 
     /**

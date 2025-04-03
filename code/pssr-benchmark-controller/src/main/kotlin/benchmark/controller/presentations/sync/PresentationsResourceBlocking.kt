@@ -100,7 +100,7 @@ class PresentationsResourceBlocking
         fun handleTemplateTrimouSync(): Response {
             val output =
                 StreamingOutput { out ->
-                    trimouView.render(out.writer(), presentationsModelMap)
+                    trimouView.render(out.appendableOutputStream(), presentationsModelMap)
                 }
             return Response.ok(output).build()
         }
@@ -111,7 +111,7 @@ class PresentationsResourceBlocking
         fun handleTemplateVelocitySync(): Response {
             val output =
                 StreamingOutput { out ->
-                    viewVelocity.merge(presentationsModelVelocity, out.writer())
+                    viewVelocity.merge(presentationsModelVelocity, out.appendableOutputStream())
                 }
             return Response.ok(output).build()
         }
@@ -128,13 +128,13 @@ class PresentationsResourceBlocking
         }
 
         @GET
-        @Path("/htmlflow")
+        @Path("/htmlFlow")
         @Produces(MediaType.TEXT_HTML)
         fun handleTemplateHtmlFlowSync(): Response {
             val output =
                 StreamingOutput { out ->
                     htmlFlowTemplateIter
-                        .setOut(out.writer())
+                        .setOut(out.appendableOutputStream())
                         .write(presentationsIter)
                 }
             return Response.ok(output).build()
@@ -146,7 +146,7 @@ class PresentationsResourceBlocking
         fun handleTemplateKotlinXSync(): Response {
             val output =
                 StreamingOutput { out ->
-                    kotlinXIter(out.writer(), presentationsIter)
+                    kotlinXIter(out.appendableOutputStream(), presentationsIter)
                 }
             return Response.ok(output).build()
         }

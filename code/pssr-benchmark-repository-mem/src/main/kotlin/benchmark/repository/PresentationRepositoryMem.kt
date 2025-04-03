@@ -13,7 +13,7 @@ fun <T : Any> Observable<T>.interleaved(
 ) = concatMap { Observable.just(it).delay(timeout, timeUnit, scheduler) }
 
 class PresentationRepositoryMem(
-    private val timeout: Long,
+    private val timeout: Long = 0L,
 ) : PresentationRepository {
     private val presentationsList = mutableListOf<Presentation>()
     private val presentationsReactive = Observable.fromIterable(presentationsList)
