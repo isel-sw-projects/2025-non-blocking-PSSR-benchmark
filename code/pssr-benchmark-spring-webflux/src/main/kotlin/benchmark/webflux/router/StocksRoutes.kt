@@ -1,13 +1,13 @@
 package benchmark.webflux.router
 
-import benchmark.repository.PresentationRepository
+import benchmark.repository.StockRepository
 import benchmark.view.appendable.AppendableSink
 import benchmark.view.appendable.OutputStreamSink
 import benchmark.view.appendable.WriterSink
-import benchmark.view.presentations.JStachioView
-import benchmark.view.presentations.JStachioView.PresentationsModel
-import benchmark.view.presentations.PresentationsHtmlFlow
-import benchmark.view.presentations.PresentationsKotlinX
+import benchmark.view.stocks.JStachioView
+import benchmark.view.stocks.JStachioView.StocksModel
+import benchmark.view.stocks.StocksHtmlFlow
+import benchmark.view.stocks.StocksKotlinX
 import com.fizzed.rocker.runtime.OutputStreamOutput
 import freemarker.template.Configuration
 import io.pebbletemplates.pebble.PebbleEngine
@@ -36,13 +36,13 @@ import reactor.core.publisher.Mono
  * Taken from: https://github.com/xmlet/spring-webflux-comparing-template-engines
  */
 @Component
-class PresentationsRoutes(
-    private val freemarkerConfig: Configuration,
-    private val pebbleEngine: PebbleEngine,
+class StocksRoutes(
+    freemarkerConfig: Configuration,
+    pebbleEngine: PebbleEngine,
     private val thymeleafEngine: TemplateEngine,
-    private val mustacheEngine: MustacheEngine,
-    private val velocityEngine: VelocityEngine,
-    private val presentations: PresentationRepository,
+    mustacheEngine: MustacheEngine,
+    velocityEngine: VelocityEngine,
+    stocks: StockRepository,
 ) {
     /**
      * We are using next one for synchronous blocking render.
@@ -62,66 +62,66 @@ class PresentationsRoutes(
     /**
      * Views
      */
-    private val pebbleView = pebbleEngine.getTemplate("presentations")
-    private val freemarkerView = freemarkerConfig.getTemplate("templates/freemarker/index-freemarker.ftl")
-    private val trimouView = mustacheEngine.getMustache("presentations")
-    private val viewVelocity = velocityEngine.getTemplate("templates/velocity/presentations-velocity.vm", "UTF-8")
+    private val pebbleView = pebbleEngine.getTemplate("stocks")
+    private val freemarkerView = freemarkerConfig.getTemplate("templates/freemarker/stocks-freemarker.ftl")
+    private val trimouView = mustacheEngine.getMustache("stocks")
+    private val viewVelocity = velocityEngine.getTemplate("templates/velocity/stocks-velocity.vm", "UTF-8")
 
     /**
      * Data models
      */
-    private val presentationsFlux = presentations.findAllReactive()
-    private val presentationsIter = presentations.findAllIterable()
-    private val presentationsModelJStachio = PresentationsModel(presentationsIter)
-    private val presentationsModelMap: Map<String, Any> = mutableMapOf("presentations" to presentationsIter)
-    private val presentationsModelVelocity = VelocityContext(presentationsModelMap)
-    private val presentationsModelThymeleaf = Context().apply { setVariable("presentations", presentationsIter) }
-    private val presentationsFlow = presentations.findAllReactive().toFlowable(DROP).asFlow()
-    private val presentationModelThymeleafRx = mapOf<String, Any>("presentations" to ReactiveDataDriverContextVariable(presentationsFlux, 1))
+    private val stocksFlux = stocks.findAllReactive()
+    private val stocksIter = stocks.findAllIterable()
+    private val stocksModelJStachio = StocksModel(stocksIter)
+    private val stocksModelMap: Map<String, Any> = mutableMapOf("stocks" to stocksIter)
+    private val stocksModelVelocity = VelocityContext(stocksModelMap)
+    private val stocksModelThymeleaf = Context().apply { setVariable("stocks", stocksIter) }
+    private val presentationsFlow = stocksFlux.toFlowable(DROP).asFlow()
+    private val presentationModelThymeleafRx = mapOf<String, Any>("stocks" to ReactiveDataDriverContextVariable(stocksFlux, 1))
 
     @Bean
-    fun presentationsRouter() =
+    fun stocksRouter() =
         router {
-        /*
-         * Thymeleaf
-         */
-            GET("/presentations/thymeleaf") { handleTemplateThymeleaf() }
-            GET("/presentations/thymeleaf/sync") { handleTemplateThymeleafSync() }
-            GET("/presentations/thymeleaf/virtualSync") { handleTemplateThymeleafVirtualSync() }
-        /*
-         * HtmlFlow
-         */
-            GET("/presentations/htmlFlow") { handleTemplateHtmlFlowFromFlux() }
-            GET("/presentations/htmlFlow/suspending") { handleTemplateHtmlFlowSuspending() }
-            GET("/presentations/htmlFlow/sync") { handleTemplateHtmlFlowSync() }
-            GET("/presentations/htmlFlow/virtualSync") { handleTemplateHtmlFlowVirtual() }
-        /*
-         * KotlinX
-         */
-            GET("/presentations/kotlinx") { handleTemplateKotlinX() } // Async non-blocking BUT returns MALL FORMED HTML
-            GET("/presentations/kotlinx/sync") { handleTemplateKotlinXSync() }
-            GET("/presentations/kotlinx/virtualSync") { handleTemplateKotlinXVirtualSync() }
-        /*
-         * Others that do NOT support data models with Asynchronous APIs.
-         * Those use sync blocking approaches running on different Dispatcher and other thread pool,
-         */
-            GET("/presentations/rocker/sync") { handleTemplateRockerSync() }
-            GET("/presentations/rocker/virtualSync") { handleTemplateRockerVirtualSync() }
+            /*
+             * Thymeleaf
+             */
+            GET("/stocks/thymeleaf") { handleTemplateThymeleaf() }
+            GET("/stocks/thymeleaf/sync") { handleTemplateThymeleafSync() }
+            GET("/stocks/thymeleaf/virtualSync") { handleTemplateThymeleafVirtualSync() }
+            /*
+             * HtmlFlow
+             */
+            GET("/stocks/htmlFlow") { handleTemplateHtmlFlowFromFlux() }
+            GET("/stocks/htmlFlow/suspending") { handleTemplateHtmlFlowSuspending() }
+            GET("/stocks/htmlFlow/sync") { handleTemplateHtmlFlowSync() }
+            GET("/stocks/htmlFlow/virtualSync") { handleTemplateHtmlFlowVirtual() }
+            /*
+             * KotlinX
+             */
+            GET("/stocks/kotlinx") { handleTemplateKotlinX() } // Async non-blocking BUT returns MALL FORMED HTML
+            GET("/stocks/kotlinx/sync") { handleTemplateKotlinXSync() }
+            GET("/stocks/kotlinx/virtualSync") { handleTemplateKotlinXVirtualSync() }
+            /*
+             * Others that do NOT support data models with Asynchronous APIs.
+             * Those use sync blocking approaches running on different Dispatcher and other thread pool,
+             */
+            GET("/stocks/rocker/sync") { handleTemplateRockerSync() }
+            GET("/stocks/rocker/virtualSync") { handleTemplateRockerVirtualSync() }
 
-            GET("/presentations/jstachio/sync") { handleTemplateJStachioSync() }
-            GET("/presentations/jstachio/virtualSync") { handleTemplateJStachioVirtualSync() }
+            GET("/stocks/jstachio/sync") { handleTemplateJStachioSync() }
+            GET("/stocks/jstachio/virtualSync") { handleTemplateJStachioVirtualSync() }
 
-            GET("/presentations/pebble/sync") { handleTemplatePebbleSync() }
-            GET("/presentations/pebble/virtualSync") { handleTemplatePebbleVirtualSync() }
+            GET("/stocks/pebble/sync") { handleTemplatePebbleSync() }
+            GET("/stocks/pebble/virtualSync") { handleTemplatePebbleVirtualSync() }
 
-            GET("/presentations/freemarker/sync") { handleTemplateFreemarkerSync() }
-            GET("/presentations/freemarker/virtualSync") { handleTemplateFreemarkerVirtualSync() }
+            GET("/stocks/freemarker/sync") { handleTemplateFreemarkerSync() }
+            GET("/stocks/freemarker/virtualSync") { handleTemplateFreemarkerVirtualSync() }
 
-            GET("/presentations/trimou/sync") { handleTemplateTrimouSync() }
-            GET("/presentations/trimou/virtualSync") { handleTemplateTrimouVirtualSync() }
+            GET("/stocks/trimou/sync") { handleTemplateTrimouSync() }
+            GET("/stocks/trimou/virtualSync") { handleTemplateTrimouVirtualSync() }
 
-            GET("/presentations/velocity/sync") { handleTemplateVelocitySync() }
-            GET("/presentations/velocity/virtualSync") { handleTemplateVelocityVirtualSync() }
+            GET("/stocks/velocity/sync") { handleTemplateVelocitySync() }
+            GET("/stocks/velocity/virtualSync") { handleTemplateVelocityVirtualSync() }
         }
 
     private fun handleTemplateRockerSync(): Mono<ServerResponse> {
@@ -129,8 +129,8 @@ class PresentationsRoutes(
             OutputStreamSink().also {
                 scope.launch {
                     rocker
-                        .presentations
-                        .template(presentationsIter)
+                        .stocks
+                        .template(stocksIter)
                         .render { contentType, charset -> OutputStreamOutput(contentType, it, charset) }
                     it.close()
                 }
@@ -146,8 +146,8 @@ class PresentationsRoutes(
             OutputStreamSink().also {
                 Thread.startVirtualThread {
                     rocker
-                        .presentations
-                        .template(presentationsIter)
+                        .stocks
+                        .template(stocksIter)
                         .render { contentType, charset -> OutputStreamOutput(contentType, it, charset) }
                     it.close()
                 }
@@ -162,7 +162,7 @@ class PresentationsRoutes(
         val out =
             OutputStreamSink().also {
                 scope.launch {
-                    JStachioView.presentationsWrite(presentationsModelJStachio, it)
+                    JStachioView.stocksWrite(stocksModelJStachio, it)
                     it.close()
                 }
             }
@@ -176,7 +176,7 @@ class PresentationsRoutes(
         val out =
             OutputStreamSink().also {
                 Thread.startVirtualThread {
-                    JStachioView.presentationsWrite(presentationsModelJStachio, it)
+                    JStachioView.stocksWrite(stocksModelJStachio, it)
                     it.close()
                 }
             }
@@ -190,7 +190,7 @@ class PresentationsRoutes(
         val out =
             WriterSink().also {
                 scope.launch {
-                    pebbleView.evaluate(it, presentationsModelMap)
+                    pebbleView.evaluate(it, stocksModelMap)
                     it.close()
                 }
             }
@@ -204,7 +204,7 @@ class PresentationsRoutes(
         val out =
             WriterSink().also {
                 Thread.startVirtualThread {
-                    pebbleView.evaluate(it, presentationsModelMap)
+                    pebbleView.evaluate(it, stocksModelMap)
                     it.close()
                 }
             }
@@ -218,7 +218,7 @@ class PresentationsRoutes(
         val out =
             WriterSink().also {
                 scope.launch {
-                    freemarkerView.process(presentationsModelMap, it)
+                    freemarkerView.process(stocksModelMap, it)
                     it.close()
                 }
             }
@@ -232,7 +232,7 @@ class PresentationsRoutes(
         val out =
             WriterSink().also {
                 Thread.startVirtualThread {
-                    freemarkerView.process(presentationsModelMap, it)
+                    freemarkerView.process(stocksModelMap, it)
                     it.close()
                 }
             }
@@ -246,7 +246,7 @@ class PresentationsRoutes(
         val out =
             AppendableSink().also {
                 scope.launch {
-                    trimouView.render(it, presentationsModelMap)
+                    trimouView.render(it, stocksModelMap)
                     it.close()
                 }
             }
@@ -260,7 +260,7 @@ class PresentationsRoutes(
         val out =
             AppendableSink().also {
                 Thread.startVirtualThread {
-                    trimouView.render(it, presentationsModelMap)
+                    trimouView.render(it, stocksModelMap)
                     it.close()
                 }
             }
@@ -274,7 +274,7 @@ class PresentationsRoutes(
         val out =
             WriterSink().also {
                 scope.launch {
-                    viewVelocity.merge(presentationsModelVelocity, it)
+                    viewVelocity.merge(stocksModelVelocity, it)
                     it.close()
                 }
             }
@@ -288,7 +288,7 @@ class PresentationsRoutes(
         val out =
             WriterSink().also {
                 Thread.startVirtualThread {
-                    viewVelocity.merge(presentationsModelVelocity, it)
+                    viewVelocity.merge(stocksModelVelocity, it)
                     it.close()
                 }
             }
@@ -302,7 +302,7 @@ class PresentationsRoutes(
         val out =
             WriterSink().also {
                 scope.launch {
-                    thymeleafEngine.process("index-thymeleaf", presentationsModelThymeleaf, it)
+                    thymeleafEngine.process("stocks-thymeleaf", stocksModelThymeleaf, it)
                     it.close()
                 }
             }
@@ -317,7 +317,7 @@ class PresentationsRoutes(
         val out =
             WriterSink().also {
                 Thread.startVirtualThread {
-                    thymeleafEngine.process("index-thymeleaf", presentationsModelThymeleaf, it)
+                    thymeleafEngine.process("stocks-thymeleaf", stocksModelThymeleaf, it)
                     it.close()
                 }
             }
@@ -332,7 +332,7 @@ class PresentationsRoutes(
         return ServerResponse
             .ok()
             .contentType(MediaType.TEXT_HTML)
-            .render("index-thymeleaf", presentationModelThymeleafRx)
+            .render("stocks-thymeleaf", presentationModelThymeleafRx)
     }
 
     private fun handleTemplateHtmlFlowSync(): Mono<ServerResponse> {
@@ -343,9 +343,10 @@ class PresentationsRoutes(
         val view =
             AppendableSink().also {
                 scope.launch {
-                    PresentationsHtmlFlow.htmlFlowTemplateSync
+                    StocksHtmlFlow
+                        .htmlFlowTemplateSync
                         .setOut(it)
-                        .write(presentationsFlux)
+                        .write(stocksFlux)
                     it.close()
                 }
             }
@@ -359,9 +360,10 @@ class PresentationsRoutes(
         val view =
             AppendableSink().also {
                 Thread.startVirtualThread {
-                    PresentationsHtmlFlow.htmlFlowTemplateIter
+                    StocksHtmlFlow
+                        .htmlFlowTemplateIter
                         .setOut(it)
-                        .write(presentationsIter)
+                        .write(stocksIter)
                     it.close()
                 }
             }
@@ -374,8 +376,9 @@ class PresentationsRoutes(
     private fun handleTemplateHtmlFlowFromFlux(): Mono<ServerResponse> {
         val view =
             AppendableSink().also { sink ->
-                PresentationsHtmlFlow.htmlFlowTemplate
-                    .writeAsync(sink, presentationsFlux)
+                StocksHtmlFlow
+                    .htmlFlowTemplate
+                    .writeAsync(sink, stocksFlux)
                     .thenAccept { sink.close() }
             }
         return ServerResponse
@@ -394,7 +397,7 @@ class PresentationsRoutes(
         val view =
             AppendableSink().also {
                 unconf.launch {
-                    PresentationsHtmlFlow
+                    StocksHtmlFlow
                         .htmlFlowTemplateSuspending
                         .write(it, presentationsFlow)
                     it.close()
@@ -414,7 +417,7 @@ class PresentationsRoutes(
         val view =
             AppendableSink().also {
                 scope.launch {
-                    PresentationsKotlinX.kotlinXSync(it, presentationsFlux)
+                    StocksKotlinX.kotlinXSync(it, stocksFlux)
                     it.close()
                 }
             }
@@ -427,7 +430,7 @@ class PresentationsRoutes(
     private fun handleTemplateKotlinX(): Mono<ServerResponse> {
         val view =
             AppendableSink().also {
-                PresentationsKotlinX.kotlinXReactive(it, presentationsFlux)
+                StocksKotlinX.kotlinXReactive(it, stocksFlux)
             }
         return ServerResponse
             .ok()
@@ -439,7 +442,7 @@ class PresentationsRoutes(
         val view =
             AppendableSink().also {
                 Thread.startVirtualThread {
-                    PresentationsKotlinX.kotlinXIter(it, presentationsIter)
+                    StocksKotlinX.kotlinXIterable(it, stocksIter)
                     it.close()
                 }
             }

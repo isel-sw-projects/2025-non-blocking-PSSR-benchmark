@@ -5,13 +5,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 
 @SpringBootApplication
-@ComponentScan(
-    basePackages =
-        ["benchmark.controller.presentations.sync", "benchmark.repository", "benchmark.webflux"],
-)
 open class Launch {
     companion object {
         private val logger = LoggerFactory.getLogger(Launch::class.java)

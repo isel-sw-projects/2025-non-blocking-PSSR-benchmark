@@ -3,12 +3,10 @@
 <head>
 	<title>Stock Prices</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta http-equiv="Content-Style-Type" content="text/css">
-	<meta http-equiv="Content-Script-Type" content="text/javascript">
 	<link rel="shortcut icon" href="/images/favicon.ico">
 	<link rel="stylesheet" type="text/css" href="/css/style.css" media="all">
 	<script type="text/javascript" src="/js/util.js"></script>
-	<style type="text/css">
+	<style>
 		/*<![CDATA[*/
 		body {
 			color: #333333;
@@ -39,7 +37,7 @@
 
 	<body>
 
-		<h1>Stock Prices</h1>
+		<h1>Stock Prices - Pebble</h1>
 
 		<table>
 	   		<thead>
@@ -53,7 +51,7 @@
 	    		</tr>
 			</thead>
 			<tbody>
-			{% for item in stockItems %}
+			{% for item in stocks %}
 				<tr class="{% if (loop.index + 1) is even %}even{% else %}odd{% endif %}">
 			    	<td>{{loop.index + 1}}</td>
 			    	<td>

@@ -7,6 +7,8 @@ import benchmark.controller.presentations.DEFAULT_THYMELEAF_ENGINE
 import benchmark.controller.presentations.DEFAULT_VELOCITY_ENGINE
 import benchmark.repository.PresentationRepository
 import benchmark.repository.PresentationRepositoryMem
+import benchmark.repository.StockRepository
+import benchmark.repository.StockRepositoryMem
 import freemarker.template.Configuration
 import io.pebbletemplates.pebble.PebbleEngine
 import jakarta.enterprise.context.ApplicationScoped
@@ -14,7 +16,6 @@ import jakarta.enterprise.inject.Produces
 import jakarta.ws.rs.ApplicationPath
 import jakarta.ws.rs.core.Application
 import org.apache.velocity.app.VelocityEngine
-import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.thymeleaf.TemplateEngine
 import org.trimou.engine.MustacheEngine
 
@@ -23,11 +24,16 @@ class JerseyConfig : Application()
 
 @ApplicationScoped
 class RepositoryConfig {
-    private val timeout = System.getProperty("benchTimeout")?.toLongOrNull() ?: 300L
+    private val timeout = System.getProperty("benchTimeout")?.toLongOrNull() ?: 100L
 
     @Produces
     fun presentationRepository(): PresentationRepository {
         return PresentationRepositoryMem(timeout)
+    }
+
+    @Produces
+    fun stocksRepository(): StockRepository {
+        return StockRepositoryMem(timeout)
     }
 }
 
@@ -56,16 +62,5 @@ class TemplateEngineConfig {
     @Produces
     fun velocityEngine(): VelocityEngine {
         return DEFAULT_VELOCITY_ENGINE
-    }
-}
-
-@ApplicationScoped
-class MessageSourceConfig {
-    @Produces
-    fun messageSource(): ReloadableResourceBundleMessageSource {
-        val messageSource = ReloadableResourceBundleMessageSource()
-        messageSource.setBasename("classpath:/messages")
-        messageSource.setDefaultEncoding("UTF-8")
-        return messageSource
     }
 }

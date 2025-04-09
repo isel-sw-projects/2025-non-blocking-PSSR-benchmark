@@ -2,8 +2,8 @@ package benchmark.controller.presentations.sync
 
 import benchmark.repository.PresentationRepository
 import benchmark.view.presentations.JStachioView
-import benchmark.view.presentations.htmlFlowTemplateIter
-import benchmark.view.presentations.kotlinXIter
+import benchmark.view.presentations.PresentationsHtmlFlow
+import benchmark.view.presentations.PresentationsKotlinX.kotlinXIter
 import com.fizzed.rocker.runtime.OutputStreamOutput
 import freemarker.template.Configuration
 import io.pebbletemplates.pebble.PebbleEngine
@@ -133,7 +133,8 @@ class PresentationsResourceBlocking
         fun handleTemplateHtmlFlowSync(): Response {
             val output =
                 StreamingOutput { out ->
-                    htmlFlowTemplateIter
+                    PresentationsHtmlFlow
+                        .htmlFlowTemplateIter
                         .setOut(out.appendableOutputStream())
                         .write(presentationsIter)
                 }

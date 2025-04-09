@@ -26,6 +26,10 @@ dependencies {
     implementation("io.quarkus:quarkus-kotlin")
 
     implementation(kotlin("stdlib-jdk8"))
+
+    testImplementation(kotlin("test"))
+    testImplementation("io.quarkus:quarkus-junit5")
+    testImplementation("io.rest-assured:rest-assured")
 }
 
 tasks.named("quarkusDependenciesBuild") {

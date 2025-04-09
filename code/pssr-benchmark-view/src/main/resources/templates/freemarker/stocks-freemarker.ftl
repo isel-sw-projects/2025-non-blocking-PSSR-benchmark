@@ -3,12 +3,10 @@
 <head>
 <title>Stock Prices</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta http-equiv="Content-Script-Type" content="text/javascript">
 <link rel="shortcut icon" href="/images/favicon.ico">
 <link rel="stylesheet" type="text/css" href="/css/style.css" media="all">
 <script type="text/javascript" src="/js/util.js"></script>
-<style type="text/css">
+<style>
 /*<![CDATA[*/
 body {
 	color: #333333;
@@ -39,7 +37,7 @@ thead {
 
 <body>
 
-	<h1>Stock Prices</h1>
+	<h1>Stock Prices - Freemarker</h1>
 
 	<table>
 		<thead>
@@ -53,16 +51,16 @@ thead {
 			</tr>
 		</thead>
 		<tbody>
-			<#list stockItems as item>
-			<tr class="${["even", "odd"][(item_index+1) %2]}">
-				<td>${item_index + 1}</td>
-				<td><a href="/stocks/${item.symbol}">${item.symbol}</a></td>
-				<td><a href="${item.url}">${item.name}</a></td>
-				<td><strong>${item.price}</strong></td><#if (item.change < 0.0)>
-				<td class="minus">${item.change}</td>
-				<td class="minus">${item.ratio}</td><#else>
-				<td>${item.change}</td>
-				<td>${item.ratio}</td></#if>
+			<#list stocks.iterator() as stock>
+			<tr class="${["even", "odd"][(stock_index+1) %2]}">
+				<td>${stock_index + 1}</td>
+				<td><a href="/stocks/${stock.getSymbol()}">${stock.getSymbol()}</a></td>
+				<td><a href="${stock.getUrl()}">${stock.getName()}</a></td>
+				<td><strong>${stock.getPrice()}</strong></td><#if (stock.getChange() < 0.0)>
+				<td class="minus">${stock.getChange()}</td>
+				<td class="minus">${stock.getRatio()}</td><#else>
+				<td>${stock.getChange()}</td>
+				<td>${stock.getRatio()}</td></#if>
 			</tr>
 			</#list>
 		</tbody>

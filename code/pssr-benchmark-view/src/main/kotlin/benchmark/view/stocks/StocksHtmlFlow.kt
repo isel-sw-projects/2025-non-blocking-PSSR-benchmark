@@ -1,0 +1,341 @@
+package benchmark.view.stocks
+
+import benchmark.model.Stock
+import htmlflow.HtmlFlow
+import htmlflow.HtmlPage
+import htmlflow.HtmlView
+import htmlflow.HtmlViewAsync
+import htmlflow.HtmlViewSuspend
+import htmlflow.dyn
+import htmlflow.html
+import htmlflow.suspending
+import htmlflow.viewSuspend
+import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.flow.Flow
+import org.xmlet.htmlapifaster.EnumHttpEquivType
+import org.xmlet.htmlapifaster.EnumMediaType
+import org.xmlet.htmlapifaster.EnumRelType
+import org.xmlet.htmlapifaster.EnumTypeContentType
+import org.xmlet.htmlapifaster.EnumTypeScriptType
+import org.xmlet.htmlapifaster.a
+import org.xmlet.htmlapifaster.body
+import org.xmlet.htmlapifaster.h1
+import org.xmlet.htmlapifaster.head
+import org.xmlet.htmlapifaster.link
+import org.xmlet.htmlapifaster.meta
+import org.xmlet.htmlapifaster.script
+import org.xmlet.htmlapifaster.style
+import org.xmlet.htmlapifaster.table
+import org.xmlet.htmlapifaster.tbody
+import org.xmlet.htmlapifaster.td
+import org.xmlet.htmlapifaster.th
+import org.xmlet.htmlapifaster.thead
+import org.xmlet.htmlapifaster.tr
+
+object StocksHtmlFlow {
+    private val STOCKS_CSS =
+        "/*<![CDATA[*/\n" +
+            "body {\n" +
+            "\tcolor: #333333;\n" +
+            "\tline-height: 150%;\n" +
+            "}\n" +
+            "\n" +
+            "thead {\n" +
+            "\tfont-weight: bold;\n" +
+            "\tbackground-color: #CCCCCC;\n" +
+            "}\n" +
+            "\n" +
+            ".odd {\n" +
+            "\tbackground-color: #FFCCCC;\n" +
+            "}\n" +
+            "\n" +
+            ".even {\n" +
+            "\tbackground-color: #CCCCFF;\n" +
+            "}\n" +
+            "\n" +
+            ".minus {\n" +
+            "\tcolor: #FF0000;\n" +
+            "}\n" +
+            "\n" +
+            "/*]]>*/"
+
+    val htmlFlowTemplate: HtmlViewAsync<Observable<Stock>> =
+        HtmlFlow.viewAsync<Observable<Stock>> { page ->
+            page.html {
+                head {
+                    attrTitle("Stock Prices")
+                    meta {
+                        attrHttpEquiv(EnumHttpEquivType.CONTENT_TYPE)
+                        attrContent("text/html; charset=UTF-8")
+                    }
+                    link {
+                        addAttr("rel", "shortcut icon")
+                        attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css")
+                    }
+                    link {
+                        attrRel(EnumRelType.STYLESHEET)
+                        attrType(EnumTypeContentType.TEXT_CSS)
+                        attrHref("/CSS/style.css")
+                        attrMedia(EnumMediaType.ALL)
+                    }
+                    script {
+                        attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
+                        attrSrc("/js/util.js")
+                    }
+                    style {
+                        attrType(EnumTypeContentType.TEXT_CSS)
+                        raw(STOCKS_CSS)
+                    }
+                }
+                body {
+                    h1 { text("Stock Prices - HtmlFlow") }
+                    table {
+                        thead {
+                            tr {
+                                th { text("#") }
+                                th { text("Symbol") }
+                                th { text("Name") }
+                                th { text("Price") }
+                                th { text("Change") }
+                                th { text("Ratio") }
+                            }
+                        }
+                        tbody {
+                            await { tbody, model: Observable<Stock>, onCompletion ->
+                                Observable
+                                    .zip(model, Observable.range(0, Int.MAX_VALUE)) { stock, idx -> StockDto(stock, idx + 1) }
+                                    .doOnNext { dto ->
+                                        stockPartialAsync.renderAsync(dto).thenApply { frag -> tbody.raw(frag) }
+                                    }
+                                    .doOnComplete { onCompletion.finish() }
+                                    .subscribe()
+                            }
+                        }
+                    }
+                }
+            }
+        }.threadSafe()
+
+    val htmlFlowTemplateSuspending: HtmlViewSuspend<Flow<Stock>> =
+        viewSuspend<Flow<Stock>> {
+            html {
+                head {
+                    attrTitle("Stock Prices")
+                    meta {
+                        attrHttpEquiv(EnumHttpEquivType.CONTENT_TYPE)
+                        attrContent("text/html; charset=UTF-8")
+                    }
+                    link {
+                        addAttr("rel", "shortcut icon")
+                        attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css")
+                    }
+                    link {
+                        attrRel(EnumRelType.STYLESHEET)
+                        attrType(EnumTypeContentType.TEXT_CSS)
+                        attrHref("/CSS/style.css")
+                        attrMedia(EnumMediaType.ALL)
+                    }
+                    script {
+                        attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
+                        attrSrc("/js/util.js")
+                    }
+                    style {
+                        attrType(EnumTypeContentType.TEXT_CSS)
+                        raw(STOCKS_CSS)
+                    }
+                }
+                body {
+                    h1 { text("Stock Prices - HtmlFlow") }
+                    table {
+                        thead {
+                            tr {
+                                th { text("#") }
+                                th { text("Symbol") }
+                                th { text("Name") }
+                                th { text("Price") }
+                                th { text("Change") }
+                                th { text("Ratio") }
+                            }
+                        }
+                        tbody {
+                            suspending { model: Flow<Stock> ->
+                                var index = 0
+                                model.collect {
+                                    val dto = StockDto(it, ++index)
+                                    stockPartialAsync.renderAsync(dto).thenApply { frag -> raw(frag) }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }.threadSafe()
+
+    val htmlFlowTemplateSync: HtmlView<Observable<Stock>> =
+        HtmlFlow.view<Observable<Stock>> { page ->
+            page.html {
+                head {
+                    attrTitle("Stock Prices")
+                    meta {
+                        attrHttpEquiv(EnumHttpEquivType.CONTENT_TYPE)
+                        attrContent("text/html; charset=UTF-8")
+                    }
+                    link {
+                        addAttr("rel", "shortcut icon")
+                        attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css")
+                    }
+                    link {
+                        attrRel(EnumRelType.STYLESHEET)
+                        attrType(EnumTypeContentType.TEXT_CSS)
+                        attrHref("/CSS/style.css")
+                        attrMedia(EnumMediaType.ALL)
+                    }
+                    script {
+                        attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
+                        attrSrc("/js/util.js")
+                    }
+                    style {
+                        attrType(EnumTypeContentType.TEXT_CSS)
+                        raw(STOCKS_CSS)
+                    }
+                }
+                body {
+                    h1 { text("Stock Prices - HtmlFlow") }
+                    table {
+                        thead {
+                            tr {
+                                th { text("#") }
+                                th { text("Symbol") }
+                                th { text("Name") }
+                                th { text("Price") }
+                                th { text("Change") }
+                                th { text("Ratio") }
+                            }
+                        }
+                        tbody {
+                            dyn { model: Observable<Stock> ->
+                                Observable
+                                    .zip(model, Observable.range(0, Int.MAX_VALUE)) { stock, idx -> StockDto(stock, idx + 1) }
+                                    .doOnNext { dto ->
+                                        stockPartialAsync.renderAsync(dto).thenApply { frag -> tbody.raw(frag) }
+                                    }
+                                    .blockingLast()
+                            }
+                        }
+                    }
+                }
+            }
+        }.threadSafe()
+
+    val htmlFlowTemplateIter: HtmlView<Iterable<Stock>> =
+        HtmlFlow.view<Iterable<Stock>> { page ->
+            page.html {
+                head {
+                    attrTitle("Stock Prices")
+                    meta {
+                        attrHttpEquiv(EnumHttpEquivType.CONTENT_TYPE)
+                        attrContent("text/html; charset=UTF-8")
+                    }
+                    link {
+                        addAttr("rel", "shortcut icon")
+                        attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css")
+                    }
+                    link {
+                        attrRel(EnumRelType.STYLESHEET)
+                        attrType(EnumTypeContentType.TEXT_CSS)
+                        attrHref("/CSS/style.css")
+                        attrMedia(EnumMediaType.ALL)
+                    }
+                    script {
+                        attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
+                        attrSrc("/js/util.js")
+                    }
+                    style {
+                        attrType(EnumTypeContentType.TEXT_CSS)
+                        raw(STOCKS_CSS)
+                    }
+                }
+                body {
+                    h1 { text("Stock Prices - HtmlFlow") }
+                    table {
+                        thead {
+                            tr {
+                                th { text("#") }
+                                th { text("Symbol") }
+                                th { text("Name") }
+                                th { text("Price") }
+                                th { text("Change") }
+                                th { text("Ratio") }
+                            }
+                        }
+                        tbody {
+                            dyn { model: Iterable<Stock> ->
+                                for (stock in model.withIndex()) {
+                                    val dto = StockDto(stock.value, stock.index + 1)
+                                    raw(stockPartialSync.render(dto))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }.threadSafe()
+
+    private val stockPartialSync: HtmlView<StockDto?> =
+        HtmlFlow.view { view -> view.stockFragment() }
+
+    private val stockPartialAsync: HtmlViewAsync<StockDto?> =
+        HtmlFlow.viewAsync { view -> view.stockFragment() }
+
+    fun HtmlPage.stockFragment() {
+        tr()
+            .dyn { model: StockDto ->
+                if (model.index % 2 == 0) {
+                    attrClass("even")
+                } else {
+                    attrClass("odd")
+                }
+            }
+            .td { dyn { model: StockDto -> text(model.index.toString()) } }
+            .td {
+                a {
+                    dyn { model: StockDto ->
+                        attrHref("/stocks/${model.stock.symbol}")
+                        text(model.stock.symbol)
+                    }
+                }
+            }
+            .td {
+                a {
+                    dyn { model: StockDto ->
+                        attrHref(model.stock.url)
+                        text(model.stock.name)
+                    }
+                }
+            }
+            .td {
+                strong().dyn { model: StockDto ->
+                    text(model.stock.price.toString())
+                }.`__`()
+            }
+            .td {
+                dyn { model: StockDto ->
+                    val change = model.stock.change
+                    if (change < 0) {
+                        attrClass("minus")
+                    }
+                    text(change.toString())
+                }
+            }
+            .td {
+                dyn { model: StockDto ->
+                    val ratio = model.stock.ratio
+                    if (ratio < 0) {
+                        attrClass("minus")
+                    }
+                    text(ratio.toString())
+                }
+            }
+            .`__`() // tr
+    }
+}

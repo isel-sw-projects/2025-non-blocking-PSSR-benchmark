@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("org.springframework.boot") version "3.4.4"
     id("io.spring.dependency-management") version "1.1.7"
+    id("me.champeau.jmh") version "0.7.2"
 }
 
 group = "pt.isel.pfc"
@@ -29,9 +30,6 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.openjdk.jmh:jmh-core:1.35")
-    testImplementation("org.openjdk.jmh:jmh-core-benchmarks:1.35")
-    testImplementation("org.openjdk.jmh:jmh-generator-annprocess:1.35")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 

@@ -1,154 +1,103 @@
-import benchmark.controller.presentations.sync.PresentationsResourceBlocking
-import benchmark.mvc.Launch
-import jakarta.ws.rs.HttpMethod
-import jakarta.ws.rs.client.Client
-import jakarta.ws.rs.client.ClientBuilder
-import jakarta.ws.rs.core.MediaType
-import org.assertj.core.api.BDDAssertions
-import org.glassfish.jersey.client.ClientConfig
+import io.quarkus.test.junit.QuarkusTest
+import io.restassured.RestAssured
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.springframework.boot.SpringApplication
-import org.springframework.context.ConfigurableApplicationContext
 import java.net.URI
 import java.util.Arrays
 import java.util.Locale
 import java.util.stream.Collectors
 import java.util.stream.Stream
-import kotlin.jvm.java
+import kotlin.test.assertNotNull
 
+@QuarkusTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 open class PresentationIntegrationTest {
-    @DisplayName("Should generated html for each template")
+    init {
+        System.setProperty("benchTimeout", "10")
+    }
+
+    @DisplayName("Should generate html for each template")
     @ParameterizedTest
     @MethodSource("htmlTemplates")
     fun test_endpoint_for_template_for_response(r: RouteAndExpected) {
-        val response: String = getResponse(r.route.toString())
+        val response = getResponse(r.route.toString())
 
-        BDDAssertions.then(trimLines(response))
-            .isNotNull()
-            .isNotBlank()
-            .isEqualTo(trimLines(r.expected.toString()))
+        assertNotNull(response)
+
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(r.expected.toString())
+
+        assertNotNull(trimmedResponse)
+        assertNotNull(trimmedExpected)
+        assert(trimmedResponse == trimmedExpected) {
+            "Expected: $trimmedExpected, but got: $trimmedResponse"
+        }
     }
 
     @DisplayName("Should return 200 ok status code for all requests")
     @ParameterizedTest
     @MethodSource("htmlTemplates")
     fun test_endpoint_for_template_ok(r: RouteAndExpected) {
-        val res =
-            webTestClient!!.target("$baseUrl${r.route}")
-                .request()
-                .accept(MediaType.WILDCARD)
-                .method(HttpMethod.GET)
-                .status
-
-        BDDAssertions.then(res)
-            .isNotNull()
-            .isEqualTo(200)
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("${r.route}"))
+            .then()
+            .statusCode(200)
     }
 
     private fun htmlTemplates(): Stream<Arguments?> {
-        return Stream.of<Arguments?>(
+        return Stream.of(
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "Rocker Sync",
-                    RouteAndExpected("/presentations/rocker", wellFormedHtmlAssertion()),
-                ),
+                RouteAndExpected("/presentations/rocker", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "JStachio Sync",
-                    RouteAndExpected("/presentations/jstachio", wellFormedHtmlAssertion()),
-                ),
+                RouteAndExpected("/presentations/jstachio", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "Pebble Sync",
-                    RouteAndExpected("/presentations/pebble", wellFormedHtmlAssertion()),
-                ),
+                RouteAndExpected("/presentations/pebble", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "Freemarker Sync",
-                    RouteAndExpected("/presentations/freemarker", wellFormedHtmlAssertion()),
-                ),
+                RouteAndExpected("/presentations/freemarker", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "Trimou Sync",
-                    RouteAndExpected("/presentations/trimou", wellFormedHtmlAssertion()),
-                ),
+                RouteAndExpected("/presentations/trimou", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "Velocity Sync",
-                    RouteAndExpected("/presentations/velocity", wellFormedHtmlAssertion()),
-                ),
+                RouteAndExpected("/presentations/velocity", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "Thymeleaf Sync",
-                    RouteAndExpected("/presentations/thymeleaf", wellFormedHtmlAssertion()),
-                ),
+                RouteAndExpected("/presentations/thymeleaf", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "HtmlFlow Sync",
-                    RouteAndExpected("/presentations/htmlFlow", wellFormedHtmlAssertion()),
-                ),
+                RouteAndExpected("/presentations/htmlFlow", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
-                Named.of<RouteAndExpected?>(
-                    "KotlinX Sync",
-                    RouteAndExpected("/presentations/kotlinx", wellFormedHtmlAssertion().replace("<!DOCTYPE html>", "")),
-                ),
+                RouteAndExpected("/presentations/kotlinx", wellFormedHtmlAssertion().replace("<!DOCTYPE html>", "")),
             ),
         )
     }
 
     private fun getResponse(route: String): String {
-        return String(
-            webTestClient!!.target(URI.create("$baseUrl$route"))
-                .request()
-                .accept(MediaType.WILDCARD)
-                .method(jakarta.ws.rs.HttpMethod.GET)
-                .readEntity(String::class.java)
-                .toByteArray(),
-        )
-    }
-
-    @BeforeAll
-    fun startupSpring() {
-        System.setProperty("benchTimeout", "10")
-        context = SpringApplication.run(Launch::class.java)
-        webTestClient =
-            ClientBuilder.newClient(ClientConfig())
-                .register(PresentationsResourceBlocking::class.java)
+        return RestAssured.given()
+            .`when`()
+            .get(URI.create(route))
+            .then()
+            .extract()
+            .asString()
     }
 
     @AfterAll
-    fun shutdownSpring() {
-        if (context != null) {
-            SpringApplication.exit(context)
-            context = null
-            System.clearProperty("benchTimeout")
-        }
+    fun tearDown() {
+        System.clearProperty("benchTimeout")
     }
 
-    @JvmRecord
     data class RouteAndExpected(val route: String?, val expected: String?)
 
     companion object {
-        var context: ConfigurableApplicationContext? = null
-        var webTestClient: Client? = null
-        val baseUrl = "http://localhost:8080"
-
         private fun trimLines(lines: String): String {
             val nl = System.lineSeparator()
             return Arrays.stream<String>(

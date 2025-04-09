@@ -11,7 +11,9 @@ import org.trimou.engine.MustacheEngineBuilder
 import org.trimou.engine.config.EngineConfigurationKey.SKIP_VALUE_ESCAPING
 import org.trimou.engine.locator.ClassPathTemplateLocator.builder
 import org.trimou.engine.resolver.CombinedIndexResolver.ENABLED_KEY
+import org.trimou.handlebars.BasicValueHelper
 import org.trimou.handlebars.HelpersBuilder.extra
+import org.trimou.handlebars.Options
 import java.util.Locale
 import java.util.Properties
 
@@ -60,7 +62,19 @@ val DEFAULT_MUSTACHE_ENGINE =
                 .setScanClasspath(false)
                 .setSuffix("trimou").build(),
         )
-        .registerHelpers(extra().build()).build()
+        .registerHelpers(extra().build())
+        .registerHelper(
+            "minusClass",
+            object : BasicValueHelper() {
+                override fun execute(options: Options) {
+                    val value = options.parameters[0]
+                    if (value is Double && value < 0) {
+                        options.append(" class=\"minus\"")
+                    }
+                }
+            },
+        )
+        .build()
 
 val DEFAULT_VELOCITY_ENGINE =
     Properties().apply {

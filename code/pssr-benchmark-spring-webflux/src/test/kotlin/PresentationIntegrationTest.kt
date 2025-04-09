@@ -1,5 +1,7 @@
-import benchmark.webflux.jmh.LaunchJMH
+import benchmark.webflux.Launch
 import org.assertj.core.api.BDDAssertions
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.DisplayNameGeneration
 import org.junit.jupiter.api.DisplayNameGenerator
@@ -8,10 +10,16 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.springframework.boot.SpringApplication
+import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.http.MediaType
+import org.springframework.test.web.reactive.server.WebTestClient
+import java.net.URI
 import java.util.Arrays
 import java.util.Locale
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import kotlin.jvm.java
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores::class)
@@ -20,21 +28,24 @@ internal class PresentationIntegrationTest {
     @ParameterizedTest
     @MethodSource("htmlTemplates")
     fun test_endpoint_for_template_for_response(r: RouteAndExpected) {
-        jmh.route = r.route
-        val response: String = jmh.benchmarkTemplate()
+        val response: String = getResponse(r.route.toString())
 
         BDDAssertions.then(trimLines(response))
             .isNotNull()
             .isNotBlank()
-            .isEqualTo(trimLines(r.expected))
+            .isEqualTo(trimLines(r.expected.toString()))
     }
 
     @DisplayName("Should return 200 ok status code for all requests")
     @ParameterizedTest
     @MethodSource("htmlTemplates")
     fun test_endpoint_for_template_ok(r: RouteAndExpected) {
-        jmh.route = r.route
-        jmh.benchmarkTemplate()
+        client!!.get()
+            .uri(URI.create("${r.route}"))
+            .accept(MediaType.ALL)
+            .exchange()
+            .expectStatus()
+            .isOk
     }
 
     fun htmlTemplates(): Stream<Arguments> {
@@ -43,129 +54,129 @@ internal class PresentationIntegrationTest {
             Arguments.of(
                 Named.of(
                     "Rocker Sync",
-                    RouteAndExpected("/presentations/rocker/sync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/rocker/sync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "JStachio Sync",
-                    RouteAndExpected("/presentations/jstachio/sync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/jstachio/sync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Pebble Sync",
-                    RouteAndExpected("/presentations/pebble/sync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/pebble/sync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Freemarker Sync",
-                    RouteAndExpected("/presentations/freemarker/sync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/freemarker/sync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Trimou Sync",
-                    RouteAndExpected("/presentations/trimou/sync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/trimou/sync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Velocity Sync",
-                    RouteAndExpected("/presentations/velocity/sync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/velocity/sync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Thymeleaf Sync",
-                    RouteAndExpected("/presentations/thymeleaf/sync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/thymeleaf/sync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "HtmlFlow Sync",
-                    RouteAndExpected("/presentations/htmlFlow/sync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/htmlFlow/sync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "KotlinX Sync",
-                    RouteAndExpected("/presentations/kotlinx/sync", wellFormedAssertion().replace("<!DOCTYPE html>", "")),
+                    RouteAndExpected("/presentations/kotlinx/sync", wellFormedHtmlAssertion().replace("<!DOCTYPE html>", "")),
                 ),
             ),
             // Virtual Thread synchronous blocking routes
             Arguments.of(
                 Named.of(
                     "Rocker Virtual Thread",
-                    RouteAndExpected("/presentations/rocker/virtualSync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/rocker/virtualSync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "JStachio Virtual Thread",
-                    RouteAndExpected("/presentations/jstachio/virtualSync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/jstachio/virtualSync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Pebble Virtual Thread",
-                    RouteAndExpected("/presentations/pebble/virtualSync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/pebble/virtualSync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Freemarker Virtual Thread",
-                    RouteAndExpected("/presentations/freemarker/virtualSync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/freemarker/virtualSync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Trimou Virtual Thread",
-                    RouteAndExpected("/presentations/trimou/virtualSync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/trimou/virtualSync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Velocity Virtual Thread",
-                    RouteAndExpected("/presentations/velocity/virtualSync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/velocity/virtualSync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "Thymeleaf Virtual Thread",
-                    RouteAndExpected("/presentations/thymeleaf/virtualSync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/thymeleaf/virtualSync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "HtmlFlow Virtual Thread",
-                    RouteAndExpected("/presentations/htmlFlow/virtualSync", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/htmlFlow/virtualSync", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "KotlinX Virtual Thread",
-                    RouteAndExpected("/presentations/kotlinx/virtualSync", wellFormedAssertion().replace("<!DOCTYPE html>", "")),
+                    RouteAndExpected("/presentations/kotlinx/virtualSync", wellFormedHtmlAssertion().replace("<!DOCTYPE html>", "")),
                 ),
             ),
             // Functional routes with coroutines
             Arguments.of(
                 Named.of(
                     "Thymeleaf from Flux",
-                    RouteAndExpected("/presentations/thymeleaf", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/thymeleaf", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "HtmlFlow from Flux",
-                    RouteAndExpected("/presentations/htmlFlow", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/htmlFlow", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
                 Named.of(
                     "HtmlFlow from Suspending",
-                    RouteAndExpected("/presentations/htmlFlow/suspending", wellFormedAssertion()),
+                    RouteAndExpected("/presentations/htmlFlow/suspending", wellFormedHtmlAssertion()),
                 ),
             ),
             Arguments.of(
@@ -177,30 +188,62 @@ internal class PresentationIntegrationTest {
         )
     }
 
+    private fun getResponse(route: String): String {
+        return String(
+            client!!.get()
+                .uri(URI.create("$route"))
+                .accept(MediaType.ALL)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody().returnResult().responseBody!!,
+        )
+    }
+
+    @BeforeAll
+    fun startupSpring() {
+        System.setProperty("benchTimeout", "10")
+        context = SpringApplication.run(Launch::class.java)
+        client =
+            WebTestClient
+                .bindToApplicationContext(context!!)
+                .configureClient()
+                .baseUrl(baseURL)
+                .defaultHeader("Accept", "*/*")
+                .build()
+    }
+
+    @AfterAll
+    fun shutdownSpring() {
+        if (context != null) {
+            SpringApplication.exit(context)
+            context = null
+            System.clearProperty("benchTimeout")
+        }
+    }
+
     @JvmRecord
-    internal data class RouteAndExpected(val route: String, val expected: String)
+    internal data class RouteAndExpected(val route: String?, val expected: String?)
 
     companion object {
-        private val jmh: LaunchJMH = LaunchJMH()
-
-        init {
-            jmh.startupSpring()
-        }
+        val baseURL = "http://localhost:8080"
+        var context: ConfigurableApplicationContext? = null
+        var client: WebTestClient? = null
 
         private fun trimLines(lines: String): String {
             val nl = System.lineSeparator()
-            return Arrays.stream(
+            return Arrays.stream<String>(
                 lines
                     .replace("<", System.lineSeparator() + "<")
                     .replace(">", ">" + System.lineSeparator())
                     .split(nl.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
             )
-                .map { line: String -> line.trim { it <= ' ' }.lowercase(Locale.getDefault()) } // Skip title that is different for each template
-                .filter { line: String -> !line.isEmpty() && !line.contains("jfall 2013 presentations") }
+                .map<String?> { line: String? -> line!!.trim { it <= ' ' }.lowercase(Locale.getDefault()) } // Skip title that is different for each template
+                .filter { line: String? -> !line!!.isEmpty() && !line.contains("jfall 2013 presentations") }
                 .collect(Collectors.joining(nl))
         }
 
-        private fun wellFormedAssertion(): String {
+        private fun wellFormedHtmlAssertion(): String {
             return """
                 <!DOCTYPE html>
                 <html lang="en-us">
@@ -270,7 +313,6 @@ internal class PresentationIntegrationTest {
                     </div>
                 </body>
                 </html>
-                
                 """.trimIndent()
         }
 

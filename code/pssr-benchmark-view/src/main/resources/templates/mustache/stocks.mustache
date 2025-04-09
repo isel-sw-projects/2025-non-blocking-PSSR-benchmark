@@ -3,12 +3,10 @@
 <head>
 	<title>Stock Prices</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta http-equiv="Content-Style-Type" content="text/css">
-	<meta http-equiv="Content-Script-Type" content="text/javascript">
 	<link rel="shortcut icon" href="/images/favicon.ico">
 	<link rel="stylesheet" type="text/css" href="/css/style.css" media="all">
 	<script type="text/javascript" src="/js/util.js"></script>
-	<style type="text/css">
+	<style>
 		/*<![CDATA[*/
 		body {
 			color: #333333;
@@ -43,7 +41,7 @@
 
 	<table>
 		<thead>
-	    	<tr>
+    		<tr>
      			<th>#</th>
      			<th>symbol</th>
      			<th>name</th>
@@ -51,31 +49,24 @@
      			<th>change</th>
      			<th>ratio</th>
     		</tr>
-		</thead>
-		<tbody>
-		#foreach($item in $stockItems)
-			#if($velocityCount % 2 == 0) #set($klass = "even") #else #set($klass = "odd") #end
-			<tr class="${klass}">
-				<td>${velocityCount}</td>
-			    <td>
-			    	<a href="/stocks/${item.symbol}">${item.symbol}</a>
-			    </td>
-			    <td>
-			    	<a href="${item.url}">${item.name}</a>
-			    </td>
-			    <td>
-			    	<strong>${item.price}</strong>
-			    </td>
-
-			    #if($item.change < 0.0)
-			    	<td class="minus">${item.change}</td>
-			    	<td class="minus">${item.ratio}</td>
-			    #else
-			    	<td>${item.change}</td>
-			    	<td>${item.ratio}</td>
-			    #end
-			</tr>
-		#end
+   		</thead>
+   		<tbody>
+			{{#stockItems}}
+    		<tr class="{{rowClass}}">
+     			<td>{{index}}</td>
+    			<td>
+      				<a href="/stocks/{{value.symbol}}">{{value.symbol}}</a>
+     			</td>
+     			<td>
+      				<a href="{{value.url}}">{{value.name}}</a>
+     			</td>
+     			<td>
+      				<strong>{{value.price}}</strong>
+     			</td>
+			     <td>{{negativeClass}}>{{value.change}}</td>
+			     <td>{{negativeClass}}>{{value.ratio}}</td>
+    		</tr>
+			{{/stockItems}}
    		</tbody>
 	</table>
 
