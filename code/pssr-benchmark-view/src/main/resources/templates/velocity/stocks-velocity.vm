@@ -65,7 +65,7 @@
 			    	<strong>${item.getPrice()}</strong>
 			    </td>
 
-			    #if($item.getChange() < 0.0)
+			    #if($item.getChange() && $item.getChange() < 0.0)
 			    	<td class="minus">${item.getChange()}</td>
 			    	<td class="minus">${item.getRatio()}</td>
 			    #else

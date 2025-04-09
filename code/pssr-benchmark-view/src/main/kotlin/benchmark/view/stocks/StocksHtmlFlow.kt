@@ -24,12 +24,14 @@ import org.xmlet.htmlapifaster.head
 import org.xmlet.htmlapifaster.link
 import org.xmlet.htmlapifaster.meta
 import org.xmlet.htmlapifaster.script
+import org.xmlet.htmlapifaster.strong
 import org.xmlet.htmlapifaster.style
 import org.xmlet.htmlapifaster.table
 import org.xmlet.htmlapifaster.tbody
 import org.xmlet.htmlapifaster.td
 import org.xmlet.htmlapifaster.th
 import org.xmlet.htmlapifaster.thead
+import org.xmlet.htmlapifaster.title
 import org.xmlet.htmlapifaster.tr
 
 object StocksHtmlFlow {
@@ -63,14 +65,14 @@ object StocksHtmlFlow {
         HtmlFlow.viewAsync<Observable<Stock>> { page ->
             page.html {
                 head {
-                    attrTitle("Stock Prices")
+                    title { text("Stock Prices") }
                     meta {
                         attrHttpEquiv(EnumHttpEquivType.CONTENT_TYPE)
                         attrContent("text/html; charset=UTF-8")
                     }
                     link {
                         addAttr("rel", "shortcut icon")
-                        attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css")
+                        attrHref("/images/favicon.ico")
                     }
                     link {
                         attrRel(EnumRelType.STYLESHEET)
@@ -83,7 +85,6 @@ object StocksHtmlFlow {
                         attrSrc("/js/util.js")
                     }
                     style {
-                        attrType(EnumTypeContentType.TEXT_CSS)
                         raw(STOCKS_CSS)
                     }
                 }
@@ -120,14 +121,14 @@ object StocksHtmlFlow {
         viewSuspend<Flow<Stock>> {
             html {
                 head {
-                    attrTitle("Stock Prices")
+                    title { text("Stock Prices") }
                     meta {
                         attrHttpEquiv(EnumHttpEquivType.CONTENT_TYPE)
                         attrContent("text/html; charset=UTF-8")
                     }
                     link {
                         addAttr("rel", "shortcut icon")
-                        attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css")
+                        attrHref("/images/favicon.ico")
                     }
                     link {
                         attrRel(EnumRelType.STYLESHEET)
@@ -139,10 +140,7 @@ object StocksHtmlFlow {
                         attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
                         attrSrc("/js/util.js")
                     }
-                    style {
-                        attrType(EnumTypeContentType.TEXT_CSS)
-                        raw(STOCKS_CSS)
-                    }
+                    style { raw(STOCKS_CSS) }
                 }
                 body {
                     h1 { text("Stock Prices - HtmlFlow") }
@@ -175,14 +173,14 @@ object StocksHtmlFlow {
         HtmlFlow.view<Observable<Stock>> { page ->
             page.html {
                 head {
-                    attrTitle("Stock Prices")
+                    title { text("Stock Prices") }
                     meta {
                         attrHttpEquiv(EnumHttpEquivType.CONTENT_TYPE)
                         attrContent("text/html; charset=UTF-8")
                     }
                     link {
                         addAttr("rel", "shortcut icon")
-                        attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css")
+                        attrHref("/images/favicon.ico")
                     }
                     link {
                         attrRel(EnumRelType.STYLESHEET)
@@ -194,10 +192,7 @@ object StocksHtmlFlow {
                         attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
                         attrSrc("/js/util.js")
                     }
-                    style {
-                        attrType(EnumTypeContentType.TEXT_CSS)
-                        raw(STOCKS_CSS)
-                    }
+                    style { raw(STOCKS_CSS) }
                 }
                 body {
                     h1 { text("Stock Prices - HtmlFlow") }
@@ -217,7 +212,7 @@ object StocksHtmlFlow {
                                 Observable
                                     .zip(model, Observable.range(0, Int.MAX_VALUE)) { stock, idx -> StockDto(stock, idx + 1) }
                                     .doOnNext { dto ->
-                                        stockPartialAsync.renderAsync(dto).thenApply { frag -> tbody.raw(frag) }
+                                        stockPartialAsync.renderAsync(dto).thenApply { frag -> raw(frag) }
                                     }
                                     .blockingLast()
                             }
@@ -231,14 +226,14 @@ object StocksHtmlFlow {
         HtmlFlow.view<Iterable<Stock>> { page ->
             page.html {
                 head {
-                    attrTitle("Stock Prices")
+                    title { text("Stock Prices") }
                     meta {
                         attrHttpEquiv(EnumHttpEquivType.CONTENT_TYPE)
                         attrContent("text/html; charset=UTF-8")
                     }
                     link {
                         addAttr("rel", "shortcut icon")
-                        attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css")
+                        attrHref("/images/favicon.ico")
                     }
                     link {
                         attrRel(EnumRelType.STYLESHEET)
@@ -250,10 +245,7 @@ object StocksHtmlFlow {
                         attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
                         attrSrc("/js/util.js")
                     }
-                    style {
-                        attrType(EnumTypeContentType.TEXT_CSS)
-                        raw(STOCKS_CSS)
-                    }
+                    style { raw(STOCKS_CSS) }
                 }
                 body {
                     h1 { text("Stock Prices - HtmlFlow") }
@@ -282,10 +274,10 @@ object StocksHtmlFlow {
         }.threadSafe()
 
     private val stockPartialSync: HtmlView<StockDto?> =
-        HtmlFlow.view { view -> view.stockFragment() }
+        HtmlFlow.view<StockDto> { view -> view.stockFragment() }
 
-    private val stockPartialAsync: HtmlViewAsync<StockDto?> =
-        HtmlFlow.viewAsync { view -> view.stockFragment() }
+    private val stockPartialAsync =
+        HtmlFlow.viewAsync<StockDto> { view -> view.stockFragment() }.threadSafe()
 
     fun HtmlPage.stockFragment() {
         tr()
@@ -314,9 +306,11 @@ object StocksHtmlFlow {
                 }
             }
             .td {
-                strong().dyn { model: StockDto ->
-                    text(model.stock.price.toString())
-                }.`__`()
+                strong {
+                    dyn { model: StockDto ->
+                        text(model.stock.price.toString())
+                    }
+                }
             }
             .td {
                 dyn { model: StockDto ->

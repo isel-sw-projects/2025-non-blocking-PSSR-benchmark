@@ -67,7 +67,7 @@ object StocksKotlinX {
                 }
                 link {
                     rel = "shortcut icon"
-                    href = "/webjars/bootstrap/5.3.0/css/bootstrap.min.css"
+                    href = "/images/favicon.ico"
                 }
                 link {
                     rel = LinkRel.stylesheet
@@ -122,13 +122,17 @@ object StocksKotlinX {
                 }
                 link {
                     rel = "shortcut icon"
-                    href = "/webjars/bootstrap/5.3.0/css/bootstrap.min.css"
+                    href = "/images/favicon.ico"
                 }
                 link {
                     rel = LinkRel.stylesheet
                     type = "text/css"
                     href = "/CSS/style.css"
                     media = LinkMedia.all
+                }
+                script {
+                    type = "text/javascript"
+                    src = "/js/util.js"
                 }
                 style {
                     unsafe {
@@ -172,13 +176,17 @@ object StocksKotlinX {
                 }
                 link {
                     rel = "shortcut icon"
-                    href = "/webjars/bootstrap/5.3.0/css/bootstrap.min.css"
+                    href = "/images/favicon.ico"
                 }
                 link {
                     rel = LinkRel.stylesheet
                     type = "text/css"
                     href = "/CSS/style.css"
                     media = LinkMedia.all
+                }
+                script {
+                    type = "text/javascript"
+                    src = "/js/util.js"
                 }
                 style {
                     unsafe {

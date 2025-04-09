@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
-// java -Dspring.virtual.threads.enabled=true -jar build/libs/pssr-benchmark-spring-mvc-1.0-SNAPSHOT-jmh.jar -i 4 -wi 4 -f 1 -r 2 -w 2 -t 8
+// java -jar build/libs/pssr-benchmark-spring-mvc-1.0-SNAPSHOT-jmh.jar -i 4 -wi 4 -f 1 -r 2 -w 2 -t 8
 // -i 4 iterations
 // -wi 4 warmup iterations
 // -f 1 fork
@@ -37,6 +37,15 @@ open class LaunchJMH {
         "/presentations/thymeleaf",
         "/presentations/htmlFlow",
         "/presentations/kotlinx",
+        "/stocks/rocker",
+        "/stocks/jstachio",
+        "/stocks/pebble",
+        "/stocks/freemarker",
+        "/stocks/trimou",
+        "/stocks/velocity",
+        "/stocks/thymeleaf",
+        "/stocks/htmlFlow",
+        "/stocks/kotlinx",
     )
     lateinit var route: String
 

@@ -40,8 +40,18 @@ open class LaunchJMH {
         "/presentations/htmlFlow/suspending",
         "/presentations/htmlFlow/virtualSync",
         "/presentations/kotlinx/virtualSync",
+        "/stocks/rocker/sync",
+        "/stocks/thymeleaf/sync",
+        "/stocks/htmlFlow/sync",
+        "/stocks/kotlinx/sync",
+        "/stocks/thymeleaf",
+        "/stocks/thymeleaf/virtualSync",
+        "/stocks/htmlFlow",
+        "/stocks/htmlFlow/suspending",
+        "/stocks/htmlFlow/virtualSync",
+        "/stocks/kotlinx/virtualSync",
     )
-    var route: String? = null
+    lateinit var route: String
 
     companion object {
         var context: ConfigurableApplicationContext? = null

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 
 @SpringBootApplication
 open class Launch {
