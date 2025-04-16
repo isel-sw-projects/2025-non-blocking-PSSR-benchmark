@@ -27,7 +27,7 @@ class PresentationRepositoryMem(
 
     override fun findAllIterable(): Iterable<Presentation> =
         if (timeout == 0L) {
-            presentationsList
+            presentationsList.toList()
         } else {
             presentationsReactive.interleaved(timeout).blockingIterable()
         }

@@ -1,0 +1,76 @@
+name: Apache Benchmark
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ab:
+    runs-on: ubuntu-latest
+    env:
+      GH: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: corretto
+
+      - name: Build artifacts
+        run: ./gradlew clean build
+
+      - name: Run Benchmarks
+        run: ./benches/ab/bench-mvc.sh && ./benches/ab/bench-webflux.sh && ./benches/ab/bench-quarkus.sh
+
+      - name: Upload result artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            quarkus-results.log
+            quarkus-virtual-results.log
+            spring-mvc-results.log
+            spring-mvc-virtual-results.log
+            webflux-results.log
+
+  jmeter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Setup-Jmeter
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements.txt -q
+          sudo apt-get update
+          sudo apt install curl -y
+          sudo apt install -y default-jdk
+          sudo curl -O https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
+          sudo tar -xvf apache-jmeter-5.6.3.tgz
+          cd $GITHUB_WORKSPACE/apache-jmeter-5.6.3/lib && sudo curl -O https://repo1.maven.org/maven2/kg/apc/cmdrunner/2.2.1/cmdrunner-2.2.1.jar
+          cd $GITHUB_WORKSPACE/apache-jmeter-5.6.3/lib/ext && sudo curl -O https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.6/jmeter-plugins-manager-1.6.jar
+          cd $GITHUB_WORKSPACE/apache-jmeter-5.6.3/lib && sudo java -jar cmdrunner-2.2.1.jar --tool org.jmeterplugins.repository.PluginManagerCMD install jpgc-synthesis,jpgc-graphs-basic,jpgc-graphs-additional,jpgc-cmd,jpgc-graphs-dist,jpgc-standard,jpgc-casutg
+
+      - name: Run Benchmarks
+        run: ./benches/jmeter/bench-mvc.sh && ./benches/jmeter/bench-webflux.sh && ./benches/jmeter/bench-quarkus.sh
+
+      - name: Upload result artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            quarkus-results.log
+            quarkus-virtual-results.log
+            spring-mvc-results.log
+            spring-mvc-virtual-results.log
+            webflux-results.log

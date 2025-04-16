@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Configuration
 open class RepositoryConfig {
     @Bean
     open fun presentationRepository(): PresentationRepository {
-        val timeout = System.getProperty("benchTimeout")?.toLongOrNull() ?: 100L
+        val timeout = System.getProperty("benchTimeout")?.toLongOrNull() ?: 300L
         return PresentationRepositoryMem(timeout)
     }
 
     @Bean
     open fun stocksRepository(): StockRepository {
-        val timeout = System.getProperty("benchTimeout")?.toLongOrNull() ?: 100L
+        val timeout = System.getProperty("benchTimeout")?.toLongOrNull() ?: 300L
         return StockRepositoryMem(timeout)
     }
 }

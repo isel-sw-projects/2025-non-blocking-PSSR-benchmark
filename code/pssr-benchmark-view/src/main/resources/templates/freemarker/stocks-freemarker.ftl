@@ -51,7 +51,7 @@ thead {
 			</tr>
 		</thead>
 		<tbody>
-			<#list stocks.iterator() as stock>
+			<#list stocks as stock>
 			<tr class="${["even", "odd"][(stock_index+1) %2]}">
 				<td>${stock_index + 1}</td>
 				<td><a href="/stocks/${stock.getSymbol()}">${stock.getSymbol()}</a></td>

@@ -1,5 +1,16 @@
 package benchmark
 
+import benchmark.controller.presentations.DEFAULT_FREEMARKER_CONFIG
+import benchmark.controller.presentations.DEFAULT_MUSTACHE_ENGINE
+import benchmark.controller.presentations.DEFAULT_PEBBLE_ENGINE
+import benchmark.controller.presentations.DEFAULT_THYMELEAF_ENGINE
+import benchmark.controller.presentations.DEFAULT_VELOCITY_ENGINE
+import benchmark.controller.presentations.sync.PresentationsResourceBlocking
+import benchmark.controller.presentations.sync.StocksResourceBlocking
+import benchmark.repository.PresentationRepositoryMem
+import benchmark.repository.StockRepositoryMem
+import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.StreamingOutput
 import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.BenchmarkMode
 import org.openjdk.jmh.annotations.Fork
@@ -9,9 +20,11 @@ import org.openjdk.jmh.annotations.Param
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.web.client.RestTemplate
-import java.net.URI
+import org.springframework.http.codec.support.DefaultServerCodecConfigurer
+import org.springframework.mock.http.server.reactive.MockServerHttpRequest
+import org.springframework.mock.web.server.MockServerWebExchange
+import org.springframework.web.reactive.function.server.ServerRequest
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 
 // java -jar build/libs/pssr-benchmark-spring-mvc-1.0-SNAPSHOT-jmh.jar -i 4 -wi 4 -f 1 -r 2 -w 2 -t 8
@@ -48,44 +61,71 @@ open class LaunchJMH {
         "/stocks/kotlinx",
     )
     lateinit var route: String
+    private val timeout = 0L
+    private val presentationsRepositoryMem = PresentationRepositoryMem(timeout)
+    private val stocksRepositoryMem = StockRepositoryMem(timeout)
 
-    companion object {
-        var context: ConfigurableApplicationContext? = null
-        val restTemplate = RestTemplate()
-        val baseUrl = "http://localhost:8080"
-    }
+    private val presentationsRouter =
+        PresentationsResourceBlocking(
+            freemarkerConfig = DEFAULT_FREEMARKER_CONFIG,
+            pebbleEngine = DEFAULT_PEBBLE_ENGINE,
+            thymeleafEngine = DEFAULT_THYMELEAF_ENGINE,
+            mustacheEngine = DEFAULT_MUSTACHE_ENGINE,
+            velocityEngine = DEFAULT_VELOCITY_ENGINE,
+            presentations = presentationsRepositoryMem,
+        )
 
-//    @Setup(Level.Trial)
-//    @Synchronized
-//    fun startupSpring() {
-//        try {
-//            if (context == null) {
-//                System.setProperty("benchTimeout", "10")
-//                context = SpringApplication.run(Launch::class.java)
-//            }
-//        } catch (e: Exception) {
-//            // Force JMH crash
-//            throw RuntimeException(e)
-//        }
-//    }
-//
-//    @TearDown(Level.Trial)
-//    @Synchronized
-//    fun shutdownSpring() {
-//        try {
-//            if (context != null) {
-//                SpringApplication.exit(context)
-//                context = null
-//            }
-//        } catch (e: Exception) {
-//            // Force JMH crash
-//            throw RuntimeException(e)
-//        }
-//    }
+    private val stocksRouter =
+        StocksResourceBlocking(
+            freemarkerConfig = DEFAULT_FREEMARKER_CONFIG,
+            pebbleEngine = DEFAULT_PEBBLE_ENGINE,
+            thymeleafEngine = DEFAULT_THYMELEAF_ENGINE,
+            mustacheEngine = DEFAULT_MUSTACHE_ENGINE,
+            velocityEngine = DEFAULT_VELOCITY_ENGINE,
+            stocks = stocksRepositoryMem,
+        )
 
     @Benchmark
-    fun benchmarkTemplate(): String {
-        val uri = URI.create("$baseUrl$route")
-        return restTemplate.getForObject(uri, String::class.java) ?: ""
+    fun benchRoute(): String {
+        val request = MockServerHttpRequest.get(route).build()
+        val exchange = MockServerWebExchange.from(request)
+        val serverRequest = ServerRequest.create(exchange, DefaultServerCodecConfigurer().readers)
+
+        val response = routeRequest(serverRequest)
+        val entity = response.entity
+
+        if (entity is StreamingOutput) {
+            val outputStream = ByteArrayOutputStream()
+            entity.write(outputStream)
+            return outputStream.toString(Charsets.UTF_8.name())
+        } else {
+            throw IllegalStateException("Response entity is not a StreamingOutput")
+        }
+    }
+
+    private fun routeRequest(serverRequest: ServerRequest): Response {
+        val res =
+            when (serverRequest.requestPath().value()) {
+                "/presentations/rocker" -> presentationsRouter.handleTemplateRockerSync()
+                "/presentations/jstachio" -> presentationsRouter.handleTemplateJStachioSync()
+                "/presentations/pebble" -> presentationsRouter.handleTemplatePebbleSync()
+                "/presentations/freemarker" -> presentationsRouter.handleTemplateFreemarkerSync()
+                "/presentations/trimou" -> presentationsRouter.handleTemplateTrimouSync()
+                "/presentations/velocity" -> presentationsRouter.handleTemplateVelocitySync()
+                "/presentations/thymeleaf" -> presentationsRouter.handleTemplateThymeleafSync()
+                "/presentations/htmlFlow" -> presentationsRouter.handleTemplateHtmlFlowSync()
+                "/presentations/kotlinx" -> presentationsRouter.handleTemplateKotlinXSync()
+                "/stocks/rocker" -> stocksRouter.handleTemplateRockerSync()
+                "/stocks/jstachio" -> stocksRouter.handleTemplateJStachioSync()
+                "/stocks/pebble" -> stocksRouter.handleTemplatePebbleSync()
+                "/stocks/freemarker" -> stocksRouter.handleTemplateFreemarkerSync()
+                "/stocks/trimou" -> stocksRouter.handleTemplateTrimouSync()
+                "/stocks/velocity" -> stocksRouter.handleTemplateVelocitySync()
+                "/stocks/thymeleaf" -> stocksRouter.handleTemplateThymeleafSync()
+                "/stocks/htmlFlow" -> stocksRouter.handleTemplateHtmlFlowSync()
+                "/stocks/kotlinx" -> stocksRouter.handleTemplateKotlinXSync()
+                else -> throw IllegalArgumentException("Unknown route: $route")
+            }
+        return res
     }
 }

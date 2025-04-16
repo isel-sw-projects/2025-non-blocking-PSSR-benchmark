@@ -8,10 +8,10 @@ import java.nio.charset.Charset
 import java.nio.charset.CharsetEncoder
 
 fun OutputStream.appendableOutputStream(): OutputStreamWriter {
-    return AppendableOutputStream(this)
+    return OutputStreamWriter2(this)
 }
 
-class AppendableOutputStream(
+class OutputStreamWriter2(
     private val out: OutputStream,
 ) : OutputStreamWriter(out) {
     private val encoder: CharsetEncoder = Charset.defaultCharset().newEncoder()

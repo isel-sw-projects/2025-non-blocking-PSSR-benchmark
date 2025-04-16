@@ -3,6 +3,7 @@ plugins {
     id("org.springframework.boot") version "3.4.4"
     id("io.spring.dependency-management") version "1.1.7"
     id("me.champeau.jmh") version "0.7.3"
+//    id("com.gradleup.shadow") version "8.3.6"
 }
 
 group = "pt.isel.pfc"
@@ -30,14 +31,31 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 
     testImplementation(project(":pssr-benchmark-repository-mem"))
 }
 
+// tasks {
+//    shadowJar {
+//        jmhJar {
+//            append("META-INF/spring.handlers")
+//            append("META-INF/spring.schemas")
+//            append("META-INF/spring.factories")
+//        }
+//        exclude("META-INF/*.DSA", "META-INF/*.RSA", "META-INF/*.SF")
+//    }
+// }
+
+tasks.register<JavaExec>("runWebflux") {
+    mainClass.set("benchmark.webflux.LaunchKt")
+    classpath = sourceSets["main"].runtimeClasspath
+    systemProperties = System.getProperties().entries.associate { (k, v) -> k.toString() to v.toString() }
+}
+
 configurations.all {
     exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
+    exclude(group = "org.jboss.slf4j", module = "slf4j-jboss-logmanager")
 }
 
 tasks.test {

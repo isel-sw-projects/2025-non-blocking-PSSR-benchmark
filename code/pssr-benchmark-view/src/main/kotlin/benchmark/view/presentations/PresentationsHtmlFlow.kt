@@ -2,7 +2,6 @@ package benchmark.view.presentations
 
 import benchmark.model.Presentation
 import htmlflow.HtmlFlow
-import htmlflow.HtmlPage
 import htmlflow.HtmlView
 import htmlflow.HtmlViewAsync
 import htmlflow.HtmlViewSuspend
@@ -140,26 +139,33 @@ object PresentationsHtmlFlow {
      */
     private val presentationFragmentAsync: HtmlViewAsync<Presentation> =
         HtmlFlow.viewAsync<Presentation> { view ->
-            view.presentationFragment()
+            view.div().attrClass("card mb-3 shadow-sm rounded")
+                .div().attrClass("card-header")
+                .h5()
+                .attrClass("card-title")
+                .dyn { presentation: Presentation -> raw(presentation.title + " - " + presentation.speakerName) }
+                .`__`() // h5
+                .`__`() // div
+                .div()
+                .attrClass("card-body")
+                .dyn { presentation: Presentation -> raw(presentation.summary) }
+                .`__`() // div
+                .`__`() // div
         }.threadSafe()
 
     private val presentationFragmentSync =
         HtmlFlow.view<Presentation> { view ->
-            view.presentationFragment()
+            view.div().attrClass("card mb-3 shadow-sm rounded")
+                .div().attrClass("card-header")
+                .h5()
+                .attrClass("card-title")
+                .dyn { presentation: Presentation -> raw(presentation.title + " - " + presentation.speakerName) }
+                .`__`() // h5
+                .`__`() // div
+                .div()
+                .attrClass("card-body")
+                .dyn { presentation: Presentation -> raw(presentation.summary) }
+                .`__`() // div
+                .`__`() // div
         }.threadSafe()
-
-    fun HtmlPage.presentationFragment() {
-        div().attrClass("card mb-3 shadow-sm rounded")
-            .div().attrClass("card-header")
-            .h5()
-            .attrClass("card-title")
-            .dyn { presentation: Presentation -> raw(presentation.title + " - " + presentation.speakerName) }
-            .`__`() // h5
-            .`__`() // div
-            .div()
-            .attrClass("card-body")
-            .dyn { presentation: Presentation -> raw(presentation.summary) }
-            .`__`() // div
-            .`__`() // div
-    }
 }

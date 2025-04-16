@@ -274,7 +274,7 @@ object StocksHtmlFlow {
         }.threadSafe()
 
     private val stockPartialSync: HtmlView<StockDto?> =
-        HtmlFlow.view<StockDto> { view -> view.stockFragment() }
+        HtmlFlow.view<StockDto> { view -> view.stockFragment() }.threadSafe()
 
     private val stockPartialAsync =
         HtmlFlow.viewAsync<StockDto> { view -> view.stockFragment() }.threadSafe()
@@ -288,12 +288,12 @@ object StocksHtmlFlow {
                     attrClass("odd")
                 }
             }
-            .td { dyn { model: StockDto -> text(model.index.toString()) } }
+            .td { dyn { model: StockDto -> raw(model.index.toString()) } }
             .td {
                 a {
                     dyn { model: StockDto ->
                         attrHref("/stocks/${model.stock.symbol}")
-                        text(model.stock.symbol)
+                        raw(model.stock.symbol)
                     }
                 }
             }
@@ -301,14 +301,14 @@ object StocksHtmlFlow {
                 a {
                     dyn { model: StockDto ->
                         attrHref(model.stock.url)
-                        text(model.stock.name)
+                        raw(model.stock.name)
                     }
                 }
             }
             .td {
                 strong {
                     dyn { model: StockDto ->
-                        text(model.stock.price.toString())
+                        raw(model.stock.price.toString())
                     }
                 }
             }
@@ -318,7 +318,7 @@ object StocksHtmlFlow {
                     if (change < 0) {
                         attrClass("minus")
                     }
-                    text(change.toString())
+                    raw(change.toString())
                 }
             }
             .td {
@@ -327,7 +327,7 @@ object StocksHtmlFlow {
                     if (ratio < 0) {
                         attrClass("minus")
                     }
-                    text(ratio.toString())
+                    raw(ratio.toString())
                 }
             }
             .`__`() // tr

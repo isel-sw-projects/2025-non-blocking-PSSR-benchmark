@@ -2,6 +2,7 @@ package benchmark.controller.presentations
 
 import freemarker.cache.ClassTemplateLoader
 import freemarker.template.Configuration
+import freemarker.template.DefaultObjectWrapperBuilder
 import io.pebbletemplates.pebble.PebbleEngine
 import io.pebbletemplates.pebble.loader.ClasspathLoader
 import org.apache.velocity.app.VelocityEngine
@@ -25,6 +26,10 @@ val DEFAULT_FREEMARKER_CONFIG =
         setSetting("template_update_delay", "0")
         setSetting("locale", Locale.US.toString())
         setSetting("template_exception_handler", "rethrow")
+        objectWrapper =
+            DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_32)
+                .apply { iterableSupport = true }
+                .build()
     }
 
 val DEFAULT_PEBBLE_ENGINE =

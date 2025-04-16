@@ -36,6 +36,27 @@ dependencies {
     testRuntimeOnly("org.mockito:mockito-inline:5.2.0")
 }
 
+configurations.all {
+    exclude(group = "org.jboss.slf4j", module = "slf4j-jboss-logmanager")
+}
+
+tasks.register<JavaExec>("runMVC") {
+    mainClass.set("benchmark.mvc.LaunchKt")
+    classpath = sourceSets["main"].runtimeClasspath
+    systemProperties = System.getProperties().entries.associate { (k, v) -> k.toString() to v.toString() }
+}
+
+tasks.register<JavaExec>("runMVCVirtual") {
+    mainClass.set("benchmark.mvc.LaunchKt")
+    classpath = sourceSets["main"].runtimeClasspath
+    jvmArgs =
+        listOf(
+            "-Dspring.threads.virtual.enabled=true",
+            "-Djdk.tracePinnedThreads",
+        )
+    systemProperties = System.getProperties().entries.associate { (k, v) -> k.toString() to v.toString() }
+}
+
 tasks.test {
     useJUnitPlatform()
 }

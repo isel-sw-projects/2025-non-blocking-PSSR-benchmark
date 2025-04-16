@@ -6,7 +6,7 @@
 <body>
 <div class="container">
     [@example.pageTitle/]
-    [#list presentations.iterator() as presentation]
+    [#list presentations as presentation]
         <div class="card mb-3 shadow-sm rounded">
             <div class="card-header">
                 <h5 class="card-title">${presentation.getTitle()} - ${presentation.getSpeakerName()}</h5>

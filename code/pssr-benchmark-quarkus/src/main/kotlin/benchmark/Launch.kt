@@ -7,7 +7,7 @@ import io.quarkus.runtime.annotations.QuarkusMain
 @QuarkusMain
 class App : QuarkusApplication {
     override fun run(args: Array<String>): Int {
-        println("Starting Quarkus Application...")
+        println("Starting Quarkus Application on PID ${ProcessHandle.current().pid()}")
         Quarkus.waitForExit()
         return 0
     }

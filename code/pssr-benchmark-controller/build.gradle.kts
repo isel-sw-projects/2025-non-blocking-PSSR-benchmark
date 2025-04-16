@@ -17,6 +17,11 @@ dependencies {
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
     implementation("jakarta.enterprise:jakarta.enterprise.cdi-api:4.1.0")
 
+    implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:3.15.4"))
+    implementation("io.quarkus:quarkus-rest")
+    implementation("io.quarkus:quarkus-arc")
+    implementation("io.quarkus:quarkus-kotlin")
+
     implementation(project(":pssr-benchmark-repository"))
     implementation(project(":pssr-benchmark-repository-mem"))
     implementation(project(":pssr-benchmark-view"))

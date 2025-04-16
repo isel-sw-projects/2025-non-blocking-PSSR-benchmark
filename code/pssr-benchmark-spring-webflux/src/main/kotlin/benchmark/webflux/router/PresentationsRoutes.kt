@@ -37,12 +37,12 @@ import reactor.core.publisher.Mono
  */
 @Component
 class PresentationsRoutes(
-    private val freemarkerConfig: Configuration,
-    private val pebbleEngine: PebbleEngine,
+    freemarkerConfig: Configuration,
+    pebbleEngine: PebbleEngine,
     private val thymeleafEngine: TemplateEngine,
-    private val mustacheEngine: MustacheEngine,
-    private val velocityEngine: VelocityEngine,
-    private val presentations: PresentationRepository,
+    mustacheEngine: MustacheEngine,
+    velocityEngine: VelocityEngine,
+    presentations: PresentationRepository,
 ) {
     /**
      * We are using next one for synchronous blocking render.
@@ -124,7 +124,7 @@ class PresentationsRoutes(
             GET("/presentations/velocity/virtualSync") { handleTemplateVelocityVirtualSync() }
         }
 
-    private fun handleTemplateRockerSync(): Mono<ServerResponse> {
+    fun handleTemplateRockerSync(): Mono<ServerResponse> {
         val out =
             OutputStreamSink().also {
                 scope.launch {
@@ -141,7 +141,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateRockerVirtualSync(): Mono<ServerResponse> {
+    fun handleTemplateRockerVirtualSync(): Mono<ServerResponse> {
         val out =
             OutputStreamSink().also {
                 Thread.startVirtualThread {
@@ -158,7 +158,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateJStachioSync(): Mono<ServerResponse> {
+    fun handleTemplateJStachioSync(): Mono<ServerResponse> {
         val out =
             OutputStreamSink().also {
                 scope.launch {
@@ -172,7 +172,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateJStachioVirtualSync(): Mono<ServerResponse> {
+    fun handleTemplateJStachioVirtualSync(): Mono<ServerResponse> {
         val out =
             OutputStreamSink().also {
                 Thread.startVirtualThread {
@@ -186,7 +186,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplatePebbleSync(): Mono<ServerResponse> {
+    fun handleTemplatePebbleSync(): Mono<ServerResponse> {
         val out =
             WriterSink().also {
                 scope.launch {
@@ -200,7 +200,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplatePebbleVirtualSync(): Mono<ServerResponse> {
+    fun handleTemplatePebbleVirtualSync(): Mono<ServerResponse> {
         val out =
             WriterSink().also {
                 Thread.startVirtualThread {
@@ -214,7 +214,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateFreemarkerSync(): Mono<ServerResponse> {
+    fun handleTemplateFreemarkerSync(): Mono<ServerResponse> {
         val out =
             WriterSink().also {
                 scope.launch {
@@ -228,7 +228,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateFreemarkerVirtualSync(): Mono<ServerResponse> {
+    fun handleTemplateFreemarkerVirtualSync(): Mono<ServerResponse> {
         val out =
             WriterSink().also {
                 Thread.startVirtualThread {
@@ -242,7 +242,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateTrimouSync(): Mono<ServerResponse> {
+    fun handleTemplateTrimouSync(): Mono<ServerResponse> {
         val out =
             AppendableSink().also {
                 scope.launch {
@@ -256,7 +256,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateTrimouVirtualSync(): Mono<ServerResponse> {
+    fun handleTemplateTrimouVirtualSync(): Mono<ServerResponse> {
         val out =
             AppendableSink().also {
                 Thread.startVirtualThread {
@@ -270,7 +270,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateVelocitySync(): Mono<ServerResponse> {
+    fun handleTemplateVelocitySync(): Mono<ServerResponse> {
         val out =
             WriterSink().also {
                 scope.launch {
@@ -284,7 +284,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateVelocityVirtualSync(): Mono<ServerResponse> {
+    fun handleTemplateVelocityVirtualSync(): Mono<ServerResponse> {
         val out =
             WriterSink().also {
                 Thread.startVirtualThread {
@@ -298,7 +298,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateThymeleafSync(): Mono<ServerResponse> {
+    fun handleTemplateThymeleafSync(): Mono<ServerResponse> {
         val out =
             WriterSink().also {
                 scope.launch {
@@ -313,7 +313,7 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateThymeleafVirtualSync(): Mono<ServerResponse> {
+    fun handleTemplateThymeleafVirtualSync(): Mono<ServerResponse> {
         val out =
             WriterSink().also {
                 Thread.startVirtualThread {
@@ -328,14 +328,14 @@ class PresentationsRoutes(
             .body(out.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateThymeleaf(): Mono<ServerResponse> {
+    fun handleTemplateThymeleaf(): Mono<ServerResponse> {
         return ServerResponse
             .ok()
             .contentType(MediaType.TEXT_HTML)
             .render("index-thymeleaf", presentationModelThymeleafRx)
     }
 
-    private fun handleTemplateHtmlFlowSync(): Mono<ServerResponse> {
+    fun handleTemplateHtmlFlowSync(): Mono<ServerResponse> {
         /*
          * We need another co-routine in another thread (this one is blocking IO) to render concurrently and ensure
          * progressive server-side rendering (PSSR)
@@ -355,7 +355,7 @@ class PresentationsRoutes(
             .body(view.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateHtmlFlowVirtual(): Mono<ServerResponse> {
+    fun handleTemplateHtmlFlowVirtual(): Mono<ServerResponse> {
         val view =
             AppendableSink().also {
                 Thread.startVirtualThread {
@@ -371,7 +371,7 @@ class PresentationsRoutes(
             .body(view.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateHtmlFlowFromFlux(): Mono<ServerResponse> {
+    fun handleTemplateHtmlFlowFromFlux(): Mono<ServerResponse> {
         val view =
             AppendableSink().also { sink ->
                 PresentationsHtmlFlow.htmlFlowTemplate
@@ -384,7 +384,7 @@ class PresentationsRoutes(
             .body(view.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateHtmlFlowSuspending(): Mono<ServerResponse> {
+    fun handleTemplateHtmlFlowSuspending(): Mono<ServerResponse> {
         /*
          * We need another co-routine to render concurrently and ensure
          * progressive server-side rendering (PSSR)
@@ -406,7 +406,7 @@ class PresentationsRoutes(
             .body(view.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateKotlinXSync(): Mono<ServerResponse> {
+    fun handleTemplateKotlinXSync(): Mono<ServerResponse> {
         /*
          * We need another co-routine to render concurrently and ensure
          * progressive server-side rendering (PSSR)
@@ -435,7 +435,7 @@ class PresentationsRoutes(
             .body(view.asFlux(), object : ParameterizedTypeReference<String>() {})
     }
 
-    private fun handleTemplateKotlinXVirtualSync(): Mono<ServerResponse> {
+    fun handleTemplateKotlinXVirtualSync(): Mono<ServerResponse> {
         val view =
             AppendableSink().also {
                 Thread.startVirtualThread {

@@ -7,8 +7,8 @@ import benchmark.view.stocks.StocksKotlinX
 import com.fizzed.rocker.runtime.OutputStreamOutput
 import freemarker.template.Configuration
 import io.pebbletemplates.pebble.PebbleEngine
+import io.smallrye.common.annotation.RunOnVirtualThread
 import jakarta.inject.Inject
-import jakarta.inject.Named
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
@@ -21,8 +21,8 @@ import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import org.trimou.engine.MustacheEngine
 
-@Named
 @Path("/stocks")
+@RunOnVirtualThread
 class StocksResourceBlocking
     @Inject
     constructor(
