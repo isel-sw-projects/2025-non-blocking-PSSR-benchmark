@@ -1,6 +1,6 @@
 cd ../../code || exit
 
-./gradlew runQuarkus -DbenchTimeout=1 -Djdk.tracePinnedThreads > ../benches/jmeter/quarkus.log &
+./gradlew runQuarkus -DbenchTimeout=1 -DXms=1024m -DXmx=16G -Djdk.tracePinnedThreads > ../benches/jmeter/quarkus.log &
 PID_GRADLE=$!
 
 cd ../benches/jmeter || exit
@@ -16,23 +16,23 @@ echo ":::::::::::::::::::::::::::::::     Gradle running PID = $PID_GRADLE"
 echo ":::::::::::::::::::::::::::::::     Quarkus running PID = $PID_QUARKUS"
 
 ROUTES=(
-#  presentations/rocker
-#  presentations/jstachio
-#  presentations/pebble
-#  presentations/freemarker
-#  presentations/trimou
+  presentations/rocker
+  presentations/jstachio
+  presentations/pebble
+  presentations/freemarker
+  presentations/trimou
 #  presentations/velocity
-#  presentations/thymeleaf
-#  presentations/htmlFlow
-#  presentations/kotlinx
-#  stocks/rocker
-#  stocks/jstachio
-#  stocks/pebble
-#  stocks/freemarker
-#  stocks/trimou
+  presentations/thymeleaf
+  presentations/htmlFlow
+  presentations/kotlinx
+  stocks/rocker
+  stocks/jstachio
+  stocks/pebble
+  stocks/freemarker
+  stocks/trimou
 #  stocks/velocity
-#  stocks/thymeleaf
-#  stocks/htmlFlow
+  stocks/thymeleaf
+  stocks/htmlFlow
 )
 
 #
@@ -58,7 +58,7 @@ echo ":::::::::::::::::::::::::::::::     Sync Bench Done"
 
 cd ../../code || exit
 
-./gradlew runQuarkusVirtual -DbenchTimeout=1 > ../benches/jmeter/quarkus.log &
+./gradlew runQuarkusVirtual -DbenchTimeout=1 -DXms=1024m -DXmx=16G > ../benches/jmeter/quarkus.log &
 PID_GRADLE=$!
 
 cd ../benches/jmeter || exit

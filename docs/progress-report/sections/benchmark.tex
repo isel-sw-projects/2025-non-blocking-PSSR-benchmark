@@ -1,0 +1,42 @@
+\documentclass[../ppG48.tex]{subfiles}
+\begin{document}
+
+The benchmark is designed with a modular architecture, separating the view and model layers from the controller layer, which allows for easy extension and integration of new template engines and frameworks. It also includes a set of tests to ensure the correctness of implementations and to validate the HTML output.
+
+The benchmark includes two different data models, defined as follows: 
+\begin{lstlisting}
+data class Presentation(
+    val id: Long,
+    val title: String,
+    val speakerName: String,
+    val summary: String,
+)
+
+data class Stock(
+    val name: String,
+    val name2: String,
+    val url: String,
+    val symbol: String,
+    val price: Double,
+    val change: Double,
+    val ratio: Double,
+)
+\end{lstlisting}
+
+The application's repository contains a list of 10 instances of the `Presentation` class and 20 instances of the `Stock` class. Each list is used to generate a respective HTML view. Although the instances are kept in memory, the repository uses the `Observable` class from the RxJava library to interleave list items with a delay of 1 millisecond. This delay promotes context switching and frees up the calling thread to handle other requests in non-blocking scenarios, mimicking actual I/O operations.
+
+By using the \textbf{blockingIterable()} method of the `Observable` class, we provide a blocking interface for template engines that do not support asynchronous data models, while still simulating the asynchronous nature of the data source to enable PSSR. Template engines that do not support non-blocking I/O for PSSR include KotlinX, Rocker, JStachio, Pebble, Freemarker, Trimou, and Velocity. HtmlFlow supports non-blocking I/O through suspendable templates and asynchronous rendering, while Thymeleaf enables it using the \textbf{ReactiveDataDriverContextVariable} in conjunction with a non-blocking Spring `ViewResolver`.
+
+The Spring WebFlux implementation uses Project Reactor to support a reactive programming model: each method returns a `Flux<String>` as the response body, which acts as a publisher that progressively streams the HTML content to the client. It also includes methods using Kotlin coroutines and other asynchronous mechanisms supported by template engines, such as the \textbf{writeAsync()} method from HtmlFlow, which enables non-blocking I/O using continuations. The aforementioned blocking template engines are used in the context of Virtual Threads or alternative coroutine dispatchers, allowing the handler thread to be released and reused for other requests.
+
+The Spring MVC implementation uses handlers based solely on the blocking interface of the `Observable` class. To enable PSSR in this context, we utilize the \textbf{StreamingResponseBody} interface, which allows the application to write directly to the response `OutputStream` without blocking the servlet container thread. According to the Spring documentation, this class is "a controller method return value type for asynchronous request processing where the application can write directly to the response OutputStream without holding up the Servlet container thread". 
+
+In Spring MVC, `StreamingResponseBody` enables asynchronous writing relative to the request-handling thread, but the underlying I/O remains blocking—specifically the writes to the `OutputStream`. When using Virtual Threads, the I/O operations are more efficient, as they are executed in the context of a lightweight thread. Most of the computation is done in a separate thread from the one that receives each request; we use a thread pool `TaskExecutor` to process requests, allowing the application to scale and handle multiple clients more efficiently as opposed to the default 'TaskExecutor' implementation, which tries to create a thread for each request. 
+
+However, the Spring MVC implementation does not effectively support PSSR for these templates, as HTML content is not streamed progressively to the client. This is because the response is only sent once the content written to the `OutputStream` exceeds the output buffer size, which defaults to 8KB. As a result, the client receives the response only after the entire HTML content is rendered, defeating the purpose of PSSR in this context. We attempted to reduce the buffer size by configuring it via an `HttpFilter`, but this did not affect the observed behavior.
+
+The Quarkus implementation also uses handlers based on the blocking interface of the `Observable` class. It implements the \textbf{StreamingOutput} interface from the JAX-RS specification to enable PSSR, allowing HTML content to be streamed to the client. While `StreamingOutput` also uses blocking I/O, it operates on Vert.x worker threads, which prevents blocking of the event loop. When Virtual Threads are used, the I/O operations are handled efficiently, as they are executed in lightweight threads.
+
+The Quarkus implementation supports PSSR for these templates by configuring the response buffer size in the \textit{application.properties} file. The default buffer size is 8KB, but we reduced it to 512 bytes, which allows the response to be sent to the client progressively as the HTML content is rendered.
+
+\end{document}

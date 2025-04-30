@@ -1,6 +1,6 @@
 cd ../../code || exit
 
-./gradlew runWebflux -DbenchTimeout=1 > ../benches/jmeter/spring-webflux.log &
+./gradlew runWebflux -DbenchTimeout=1 -DXms=1024m -DXmx=16G > ../benches/jmeter/spring-webflux.log &
 
 PID_GRADLE=$!
 
@@ -32,16 +32,16 @@ ROUTES=(
   presentations/freemarker/virtualSync
   presentations/trimou/sync
   presentations/trimou/virtualSync
-  presentations/velocity/sync
-  presentations/velocity/virtualSync
-  presentations/thymeleaf
+#  presentations/velocity/sync
+#  presentations/velocity/virtualSync
+  stocks/thymeleaf
   stocks/thymeleaf/sync
   stocks/thymeleaf/virtualSync
-  stocks/htmlFlow
+#  stocks/htmlFlow
   stocks/htmlFlow/suspending
   stocks/htmlFlow/sync
   stocks/htmlFlow/virtualSync
-  stocks/kotlinx
+#  stocks/kotlinx
   stocks/kotlinx/sync
   stocks/kotlinx/virtualSync
   stocks/rocker/sync
@@ -54,8 +54,8 @@ ROUTES=(
   stocks/freemarker/virtualSync
   stocks/trimou/sync
   stocks/trimou/virtualSync
-  stocks/velocity/sync
-  stocks/velocity/virtualSync
+#  stocks/velocity/sync
+#  stocks/velocity/virtualSync
 )
 
 PID_WEBFLUX=$(grep -oP 'with PID \K[0-9]+' spring-webflux.log)

@@ -20,7 +20,8 @@ dependencies {
     api("io.pebbletemplates:pebble:3.2.4")
     api("org.freemarker:freemarker:2.3.34")
     api("org.trimou:trimou-core:2.5.1.Final")
-    api("org.apache.velocity:velocity-engine-core:2.4.1")
+    api("org.apache.velocity:velocity-engine-core:2.3")
+
     api("org.thymeleaf:thymeleaf:3.1.3.RELEASE")
     api("com.github.xmlet:htmlflow:4.7")
     api("org.jetbrains.kotlin:kotlin-stdlib:2.0.10")

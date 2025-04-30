@@ -1,0 +1,15 @@
+\documentclass[../ppG48.tex]{subfiles}
+
+\begin{document}
+
+Non-blocking Progressive Server-Side Rendering (PSSR) is a technique that combines some of the advantages of both server-side and client-side rendering to improve web application performance and user experience. By leveraging non-blocking I/O operations, PSSR allows for efficient handling of multiple concurrent requests while progressively streaming HTML content to the client.
+
+This project consists of a benchmark that evaluates the performance of different PSSR strategies on the Java Virtual Machine (JVM). The benchmark focuses on evaluating the performance of non-blocking PSSR implementations using approaches such as Kotlin coroutines, reactive-style programming, and Java virtual threads. Its main objective is to evaluate virtual threads as an alternative that ensures a non-blocking approach to PSSR while offering a more straightforward programming model than traditional asynchronous programming techniques.
+
+This project aims to extend the previous work done in \textit{spring-webflux-comparing-template-engines} \cite{spring-webflux-comparing-template-engines}, which compares the performance of various template engines in a Spring WebFlux application using different approaches to PSSR. It adds support for Java virtual threads and evaluates non-blocking PSSR implementations in other frameworks compared to Spring WebFlux.
+
+Currently, this project features a working benchmark in Spring WebFlux, Spring MVC, and Quarkus, comparing the performance of eight different template engines: Rocker, JStachio, Pebble, Freemarker, Trimou, Thymeleaf, HtmlFlow, and KotlinX. It includes Java Microbenchmark Harness (JMH) benchmarks for template engine performance testing, as well as Apache Bench and Apache JMeter scripts for evaluating throughput and scalability. In the future, the project could be extended to include other frameworks such as Vert.x, if time allows. However, the next objective is the completion of the written report and article submission. The written report will include a more detailed analysis of the benchmark results, along with a contextualization of the state of the art in non-blocking PSSR and asynchronous programming.
+
+This report will focus on detailing relevant aspects of the benchmark implementation and methodology, and will also provide a brief overview of the results obtained from the JMeter and Apache Bench tests, which evaluate the throughput and scalability of the different implementations.
+
+\end{document}

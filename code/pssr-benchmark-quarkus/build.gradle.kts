@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":pssr-benchmark-repository-mem"))
 
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:3.15.4"))
+
     implementation("io.quarkus:quarkus-rest")
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-kotlin")

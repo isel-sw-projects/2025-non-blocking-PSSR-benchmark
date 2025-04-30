@@ -7,7 +7,7 @@ import java.nio.CharBuffer
 import java.nio.charset.Charset
 import java.nio.charset.CharsetEncoder
 
-fun OutputStream.appendableOutputStream(): OutputStreamWriter {
+fun OutputStream.outputStreamWriter(): OutputStreamWriter {
     return OutputStreamWriter2(this)
 }
 

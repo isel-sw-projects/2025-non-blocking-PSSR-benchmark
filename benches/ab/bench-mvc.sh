@@ -1,6 +1,6 @@
 cd ../../code || exit
 
-./gradlew runMVC -DbenchTimeout=1 > ../benches/ab/spring-mvc.log &
+./gradlew runMVC -DbenchTimeout=1 -DXms=1024m -DXmx=16G > ../benches/ab/spring-mvc.log &
 PID_GRADLE=$!
 
 cd ../benches/ab || exit
@@ -22,7 +22,7 @@ ROUTES=(
    presentations/pebble
    presentations/freemarker
    presentations/trimou
-   presentations/velocity
+#   presentations/velocity
    presentations/thymeleaf
    presentations/htmlFlow
    presentations/kotlinx
@@ -31,7 +31,7 @@ ROUTES=(
    stocks/pebble
    stocks/freemarker
    stocks/trimou
-   stocks/velocity
+#   stocks/velocity
    stocks/thymeleaf
    stocks/htmlFlow
 )
@@ -68,7 +68,7 @@ echo ":::::::::::::::::::::::::::::::     Sync Bench Done"
 
 cd ../../code || exit
 
-./gradlew runMVCVirtual -DbenchTimeout=1 > ../benches/ab/spring-mvc.log &
+./gradlew runMVCVirtual -DbenchTimeout=1 -DXms=1024m -DXmx=16G > ../benches/ab/spring-mvc.log &
 PID_GRADLE=$!
 
 cd ../benches/ab || exit

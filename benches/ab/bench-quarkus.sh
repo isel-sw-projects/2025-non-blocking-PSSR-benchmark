@@ -1,6 +1,6 @@
 cd ../../code || exit
 
-./gradlew runQuarkus -DbenchTimeout=1 -Djdk.tracePinnedThreads > ../benches/ab/quarkus.log &
+./gradlew runQuarkus -DbenchTimeout=1 -DXms=1024m -DXmx=16G -Djdk.tracePinnedThreads > ../benches/ab/quarkus.log &
 PID_GRADLE=$!
 
 cd ../benches/ab || exit
@@ -24,7 +24,7 @@ ROUTES=(
   presentations/pebble
   presentations/freemarker
   presentations/trimou
-  presentations/velocity
+#  presentations/velocity
   presentations/thymeleaf
   presentations/htmlFlow
   presentations/kotlinx
@@ -33,7 +33,7 @@ ROUTES=(
   stocks/pebble
   stocks/freemarker
   stocks/trimou
-  stocks/velocity
+#  stocks/velocity
   stocks/thymeleaf
   stocks/htmlFlow
 )
@@ -71,7 +71,7 @@ echo ":::::::::::::::::::::::::::::::     Sync Bench Done"
 
 cd ../../code || exit
 
-./gradlew runQuarkusVirtual -DbenchTimeout=1 > ../benches/ab/quarkus.log &
+./gradlew runQuarkusVirtual -DbenchTimeout=1 -DXms=1024m -DXmx=16G > ../benches/ab/quarkus.log &
 PID_GRADLE=$!
 
 cd ../benches/ab || exit

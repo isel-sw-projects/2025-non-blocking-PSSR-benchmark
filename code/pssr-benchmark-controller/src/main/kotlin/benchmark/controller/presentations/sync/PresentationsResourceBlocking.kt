@@ -21,8 +21,8 @@ import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import org.trimou.engine.MustacheEngine
 
-@Path("/presentations")
 @RunOnVirtualThread
+@Path("/presentations")
 class PresentationsResourceBlocking
     @Inject
     constructor(
@@ -100,7 +100,7 @@ class PresentationsResourceBlocking
         fun handleTemplateTrimouSync(): Response {
             val output =
                 StreamingOutput { out ->
-                    trimouView.render(out.appendableOutputStream(), presentationsModelMap)
+                    trimouView.render(out.outputStreamWriter(), presentationsModelMap)
                 }
             return Response.ok(output).build()
         }
@@ -111,7 +111,7 @@ class PresentationsResourceBlocking
         fun handleTemplateVelocitySync(): Response {
             val output =
                 StreamingOutput { out ->
-                    viewVelocity.merge(presentationsModelVelocity, out.appendableOutputStream())
+                    viewVelocity.merge(presentationsModelVelocity, out.outputStreamWriter())
                 }
             return Response.ok(output).build()
         }
@@ -135,7 +135,7 @@ class PresentationsResourceBlocking
                 StreamingOutput { out ->
                     PresentationsHtmlFlow
                         .htmlFlowTemplateIter
-                        .setOut(out.appendableOutputStream())
+                        .setOut(out.outputStreamWriter())
                         .write(presentationsIter)
                 }
             return Response.ok(output).build()
@@ -147,7 +147,7 @@ class PresentationsResourceBlocking
         fun handleTemplateKotlinXSync(): Response {
             val output =
                 StreamingOutput { out ->
-                    kotlinXIter(out.appendableOutputStream(), presentationsIter)
+                    kotlinXIter(out.outputStreamWriter(), presentationsIter)
                 }
             return Response.ok(output).build()
         }

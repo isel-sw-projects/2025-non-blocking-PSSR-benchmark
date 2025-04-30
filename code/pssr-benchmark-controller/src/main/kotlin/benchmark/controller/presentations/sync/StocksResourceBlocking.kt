@@ -100,7 +100,7 @@ class StocksResourceBlocking
         fun handleTemplateTrimouSync(): Response {
             val output =
                 StreamingOutput { out ->
-                    trimouView.render(out.appendableOutputStream(), stocksModelMap)
+                    trimouView.render(out.outputStreamWriter(), stocksModelMap)
                 }
             return Response.ok(output).build()
         }
@@ -111,7 +111,7 @@ class StocksResourceBlocking
         fun handleTemplateVelocitySync(): Response {
             val output =
                 StreamingOutput { out ->
-                    viewVelocity.merge(stocksModelVelocity, out.appendableOutputStream())
+                    viewVelocity.merge(stocksModelVelocity, out.outputStreamWriter())
                 }
             return Response.ok(output).build()
         }
@@ -135,7 +135,7 @@ class StocksResourceBlocking
                 StreamingOutput { out ->
                     StocksHtmlFlow
                         .htmlFlowTemplateIter
-                        .setOut(out.appendableOutputStream())
+                        .setOut(out.outputStreamWriter())
                         .write(stocksIter)
                 }
             return Response.ok(output).build()
@@ -147,7 +147,7 @@ class StocksResourceBlocking
         fun handleTemplateKotlinXSync(): Response {
             val output =
                 StreamingOutput { out ->
-                    StocksKotlinX.kotlinXIterable(out.appendableOutputStream(), stocksIter)
+                    StocksKotlinX.kotlinXIterable(out.outputStreamWriter(), stocksIter)
                 }
             return Response.ok(output).build()
         }

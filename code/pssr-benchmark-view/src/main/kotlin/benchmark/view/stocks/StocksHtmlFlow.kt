@@ -262,8 +262,8 @@ object StocksHtmlFlow {
                         }
                         tbody {
                             dyn { model: Iterable<Stock> ->
-                                for (stock in model.withIndex()) {
-                                    val dto = StockDto(stock.value, stock.index + 1)
+                                model.forEachIndexed { index, stock ->
+                                    val dto = StockDto(stock, index + 1)
                                     raw(stockPartialSync.render(dto))
                                 }
                             }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Stock Prices</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -37,33 +37,33 @@
 
 <body>
 
-	<h1>Stock Prices - Thymeleaf</h1>
+<h1>Stock Prices - Thymeleaf</h1>
 
-	<table>
-		<thead>
-			<tr>
-				<th>#</th>
-				<th>symbol</th>
-				<th>name</th>
-				<th>price</th>
-				<th>change</th>
-				<th>ratio</th>
-			</tr>
-		</thead>
-		<tbody>
-		<!--/* Note that itemStat.odd works with index (starting with 0) whereas itemStat.count is starting with 1 */-->
-			<tr th:each="item: ${stocks}" th:class="${itemStat.odd}? 'odd' : 'even'">
-				<td th:utext="${itemStat.count}"></td>
-				<td><a th:href="${'/stocks/' + item.symbol}" th:utext="${item.symbol}"></a></td>
-				<td><a th:href="${item.url}" th:utext="${item.name}"></a></td>
-				<td><strong th:utext="${item.price}"></strong></td>
-				<td th:utext="${item.change}"
-					th:class="${item.change lt 0} ? 'minus'"></td>
-				<td th:utext="${item.ratio}"
-					th:class="${item.change lt 0} ? 'minus'"></td>
-			</tr>
-		</tbody>
-	</table>
+<table>
+	<thead>
+	<tr>
+		<th>#</th>
+		<th>symbol</th>
+		<th>name</th>
+		<th>price</th>
+		<th>change</th>
+		<th>ratio</th>
+	</tr>
+	</thead>
+	<tbody>
+	<!--/* Note that itemStat.odd works with index (starting with 0) whereas itemStat.count is starting with 1 */-->
+	<tr th:each="item: ${stocks}" th:class="${itemStat.odd}? 'odd' : 'even'">
+		<td th:utext="${itemStat.count}"></td>
+		<td><a th:href="${'/stocks/' + item.symbol}" th:utext="${item.symbol}"></a></td>
+		<td><a th:href="${item.url}" th:utext="${item.name}"></a></td>
+		<td><strong th:utext="${item.price}"></strong></td>
+		<td th:utext="${item.change}"
+			th:class="${item.change lt 0} ? 'minus'"></td>
+		<td th:utext="${item.ratio}"
+			th:class="${item.change lt 0} ? 'minus'"></td>
+	</tr>
+	</tbody>
+</table>
 
 </body>
 </html>

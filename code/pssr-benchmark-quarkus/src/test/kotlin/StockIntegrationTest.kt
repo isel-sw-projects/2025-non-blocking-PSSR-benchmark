@@ -1,16 +1,13 @@
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
 import java.net.URI
 import java.util.Arrays
 import java.util.Locale
 import java.util.stream.Collectors
-import java.util.stream.Stream
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @QuarkusTest
@@ -20,66 +17,226 @@ open class StockIntegrationTest {
         System.setProperty("benchTimeout", "10")
     }
 
-    @DisplayName("Should generate html for each template")
-    @ParameterizedTest
-    @MethodSource("htmlTemplates")
-    fun test_endpoint_for_template_for_response(r: RouteAndExpected) {
-        val response = getResponse(r.route.toString())
-
+    @Test
+    fun testRockerTemplate() {
+        val response = getResponse("/stocks/rocker")
         assertNotNull(response)
-
         val trimmedResponse = trimLines(response)
-        val trimmedExpected = trimLines(r.expected.toString())
-
-        assertNotNull(trimmedResponse)
-        assertNotNull(trimmedExpected)
-        assert(trimmedResponse == trimmedExpected) {
-            "Expected: $trimmedExpected, but got: $trimmedResponse"
-        }
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
     }
 
-    @DisplayName("Should return 200 ok status code for all requests")
-    @ParameterizedTest
-    @MethodSource("htmlTemplates")
-    fun test_endpoint_for_template_ok(r: RouteAndExpected) {
+    @Test
+    fun testRockerTemplateOk() {
         RestAssured.given()
             .`when`()
-            .get(URI.create("${r.route}"))
+            .get(URI.create("/stocks/rocker"))
             .then()
             .statusCode(200)
     }
 
-    private fun htmlTemplates(): Stream<Arguments?> {
-        return Stream.of(
-            Arguments.of(
-                RouteAndExpected("/stocks/rocker", wellFormedHtmlAssertion()),
-            ),
-            Arguments.of(
-                RouteAndExpected("/stocks/jstachio", wellFormedHtmlAssertion()),
-            ),
-            Arguments.of(
-                RouteAndExpected("/stocks/pebble", wellFormedHtmlAssertion()),
-            ),
-            Arguments.of(
-                RouteAndExpected("/stocks/freemarker", wellFormedHtmlAssertion()),
-            ),
-            Arguments.of(
-                RouteAndExpected("/stocks/trimou", wellFormedHtmlAssertion()),
-            ),
-            Arguments.of(
-                RouteAndExpected("/stocks/velocity", wellFormedHtmlAssertion()),
-            ),
-            Arguments.of(
-                RouteAndExpected("/stocks/thymeleaf", wellFormedHtmlAssertion()),
-            ),
-            Arguments.of(
-                RouteAndExpected("/stocks/htmlFlow", wellFormedHtmlAssertion()),
-            ),
-            Arguments.of(
-                RouteAndExpected("/stocks/kotlinx", wellFormedHtmlAssertion().replace("<!DOCTYPE html>", "")),
-            ),
-        )
+    @Test
+    fun testJstachioTemplate() {
+        val response = getResponse("/stocks/jstachio")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
     }
+
+    @Test
+    fun testJstachioTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/jstachio"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testPebbleTemplate() {
+        val response = getResponse("/stocks/pebble")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testPebbleTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/pebble"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testFreemarkerTemplate() {
+        val response = getResponse("/stocks/freemarker")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testFreemarkerTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/freemarker"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testTrimouTemplate() {
+        val response = getResponse("/stocks/trimou")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testTrimouTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/trimou"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testVelocityTemplate() {
+        val response = getResponse("/stocks/velocity")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testVelocityTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/velocity"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testThymeleafTemplate() {
+        val response = getResponse("/stocks/thymeleaf")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testThymeleafTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/thymeleaf"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testKotlinxTemplate() {
+        val response = getResponse("/stocks/kotlinx")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion().replace("<!DOCTYPE html>", ""))
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testKotlinxTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/kotlinx"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testHtmlFlowTemplate() {
+        val response = getResponse("/stocks/htmlFlow")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testHtmlFlowTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/htmlFlow"))
+            .then()
+            .statusCode(200)
+    }
+
+//    @DisplayName("Should generate html for each template")
+//    @ParameterizedTest
+//    @MethodSource("htmlTemplates")
+//    fun test_endpoint_for_template_for_response(r: RouteAndExpected) {
+//        val response = getResponse(r.route.toString())
+//
+//        assertNotNull(response)
+//
+//        val trimmedResponse = trimLines(response)
+//        val trimmedExpected = trimLines(r.expected.toString())
+//
+//        assertNotNull(trimmedResponse)
+//        assertNotNull(trimmedExpected)
+//        assertEquals(trimmedExpected, trimmedResponse)
+//    }
+
+//    @DisplayName("Should return 200 ok status code for all requests")
+//    @ParameterizedTest
+//    @MethodSource("htmlTemplates")
+//    fun test_endpoint_for_template_ok(r: RouteAndExpected) {
+//        RestAssured.given()
+//            .`when`()
+//            .get(URI.create("${r.route}"))
+//            .then()
+//            .statusCode(200)
+//    }
+
+//    private fun htmlTemplates(): Stream<Arguments?> {
+//        return Stream.of(
+//            Arguments.of(
+//                RouteAndExpected("/stocks/rocker", wellFormedHtmlAssertion()),
+//            ),
+//            Arguments.of(
+//                RouteAndExpected("/stocks/jstachio", wellFormedHtmlAssertion()),
+//            ),
+//            Arguments.of(
+//                RouteAndExpected("/stocks/pebble", wellFormedHtmlAssertion()),
+//            ),
+//            Arguments.of(
+//                RouteAndExpected("/stocks/freemarker", wellFormedHtmlAssertion()),
+//            ),
+//            Arguments.of(
+//                RouteAndExpected("/stocks/trimou", wellFormedHtmlAssertion()),
+//            ),
+//            Arguments.of(
+//                RouteAndExpected("/stocks/velocity", wellFormedHtmlAssertion()),
+//            ),
+//            Arguments.of(
+//                RouteAndExpected("/stocks/thymeleaf", wellFormedHtmlAssertion()),
+//            ),
+//            Arguments.of(
+//                RouteAndExpected("/stocks/kotlinx", wellFormedHtmlAssertion().replace("<!DOCTYPE html>", "")),
+//            ),
+//            Arguments.of(
+//                RouteAndExpected("/stocks/htmlFlow", wellFormedHtmlAssertion()),
+//            ),
+//        )
+//    }
 
     private fun getResponse(route: String): String {
         return RestAssured.given()
