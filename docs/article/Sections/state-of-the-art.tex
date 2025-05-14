@@ -1,6 +1,69 @@
 \section{State of the Art}
 
+In this section, we first present the main properties that characterize each web
+template technology approach, along with the advantages and drawbacks resulting
+from these characteristics.
+
+Next, we delve into the different design choices adopted by web servers in their
+internal architectures, and how these choices impact the behavior of the web
+template engines described in the previous subsection.
+
 \subsection{Related Work}
+
+\textit{Web templates} have been the most widely adopted approach for
+constructing dynamic HTML pages.
+Web templates (such as JSP, Handlebars, or Thymeleaf), also known as a
+\textit{web pages} or \textit{web views}~\cite{Fowler02,Alur01}, are based on
+HTML documents augmented with template-specific markers (e.g., \texttt{<\%>},
+\texttt{\{\{\}\}}, or \texttt{\$\{\}}), which represent \textit{dynamic}
+information to be replaced at runtime with the results of corresponding
+computations, producing the final HTML page.
+The process of parsing and replacing these markers---i.e.,
+\textit{resolution}---is the primary responsibility of the \textit{template
+engine}~\cite{Parr04}.
+
+One key characteristic of \textit{web templates} is their ability to receive a 
+\textit{context object}---equivalent to the \textit{model} in the model-view 
+design pattern~\cite{mvc88,Parr04}---which provides the data used to fill 
+template placeholders at runtime.
+
+Web templates can be distinguished by several properties, namely:
+\begin{enumerate}
+    \item Templating idiom
+    \item Supported data model APIs
+    \item Asynchronous support
+    \item Type safety and HTML safety
+    \item Progressive rendering
+\end{enumerate}
+
+Although some of the aforementioned characteristics apply to both server-side 
+and client-side approaches, we focus solely on web template technologies for 
+server-side rendering, as our work is centered on that approach.
+
+\subsubsection{Templating idiom}
+
+\subsubsection{Supported data model APIs}
+
+Restricted or unrestricted.
+
+\subsubsection{Asynchronous support}
+
+Explicar Observable e modelos reactivos
+
+Distinguish between template engines that support and do not support asynchronous data models.
+
+1. Nem se quer Existe API para iterar sobre um Async data model. 
+   E.g JStachio, .... apenas suportam interface Iterable. => Compilation Error.
+2. Consegue usar qq API e.g Kotlinx.Html and Groovy  => usa mal => produzir HTML out of order
+3. Sim suporta => well-formed HTML => Thymleaf e o HtmlFlow
+
+\subsubsection{Type safety and HTML safety}
+
+\subsubsection{Progressive rendering}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Web Framework Architectures and Approaches to PSSR}
 
