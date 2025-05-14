@@ -2,11 +2,12 @@
 
 The benchmark is designed with a modular architecture, separating the
 \textit{view} and \textit{model} layers from the \textit{controller} layer
-\citeauthor{Bucanek2009}, which allows for easy extension and integration of new
+\cite{Bucanek2009}, which allows for easy extension and integration of new
 template engines and frameworks. It also includes a set of tests to ensure the
 correctness of implementations and to validate the \textit{HTML} output.
 
-The benchmark includes two different data models, defined as follows:
+The benchmark includes two different data models, defined as \texttt{Presentation} and 
+\texttt{Stock} shown in \autoref{lst:data-models}. 
 
 \lstdefinestyle{listingstyle}{
   backgroundcolor=\color{lightgray!20},
@@ -60,16 +61,17 @@ asynchronous rendering, while Thymeleaf enables it using the
 \texttt{ReactiveDataDriverContextVariable} in conjunction with a non-blocking
 Spring \texttt{ViewResolver}.
 
-The Spring WebFlux implementation uses Project Reactor to support a reactive
+The aforementioned blocking template engines are used in
+the context of Virtual Threads or alternative coroutine dispatchers, allowing
+the handler thread to be released and reused for other requests.
+
+The Spring WebFlux core implementation uses Project Reactor to support a reactive
 programming model: each method returns a \texttt{Flux<String>} as the response
 body, which acts as a publisher that progressively streams the HTML content to
 the client. It also includes methods using Kotlin coroutines and other
 asynchronous mechanisms supported by template engines, such as the
 \texttt{writeAsync} method from HtmlFlow, which enables non-blocking I/O
-using \textit{continuations}. The aforementioned blocking template engines are used in
-the context of Virtual Threads or alternative coroutine dispatchers, allowing
-the handler thread to be released and reused for other requests.
-
+using \textit{continuations}. 
 The Spring MVC implementation uses handlers based solely on the blocking
 interface of the \texttt{Observable} class. To enable PSSR in this context, we utilize
 the \texttt{StreamingResponseBody} interface, which allows the application to
@@ -77,13 +79,13 @@ write directly to the response \texttt{OutputStream} without blocking the servle
 container thread. According to the Spring documentation, this class is \textit{a
 controller method return value type for asynchronous request processing where
 the application can write directly to the response OutputStream without holding
-up the Servlet container thread} \citeauthor{Spring-StreamingResponseBody}.
+up the Servlet container thread} \cite{Spring-StreamingResponseBody}.
 
 In Spring MVC, \texttt{StreamingResponseBody} enables asynchronous writing relative to
 the request-handling thread, but the underlying I/O remains
 blocking—specifically the writes to the \texttt{OutputStream}. When using Virtual
-Threads, the I/O operations are more efficient, as they are executed in the
-context of a lightweight thread. Most of the computation is done in a separate
+Threads, the I/O operations are more efficient when compared to platform threads,
+as they are executed in the context of a lightweight thread. Most of the computation is done in a separate
 thread from the one that receives each request; we use a thread pool
 \texttt{TaskExecutor} to process requests, allowing the application to scale and
 handle multiple clients more efficiently as opposed to the default
@@ -94,12 +96,10 @@ these templates, as HTML content is not streamed progressively to the client.
 This is because the response is only sent once the content written to the
 \texttt{OutputStream} exceeds the output buffer size, which defaults to 8KB\@. As a
 result, the client receives the response only after the entire HTML content is
-rendered, defeating the purpose of PSSR in this context. We attempted to reduce
-the buffer size by configuring it via an \texttt{HttpFilter}, but this did not affect
-the observed behavior.
+rendered, defeating the purpose of PSSR in this context.
 
 The Quarkus implementation also uses handlers based on the blocking interface
-of the \texttt{Observable} class. It implements the \textbf{StreamingOutput} interface
+of the \texttt{Observable} class. It implements the \texttt{StreamingOutput} interface
 from the JAX-RS specification to enable PSSR, allowing HTML content to be
 streamed to the client. While \texttt{StreamingOutput} also uses blocking I/O, it
 operates on Vert.x worker threads, which prevents blocking of the event loop.

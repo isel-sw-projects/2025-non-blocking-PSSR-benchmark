@@ -2,7 +2,7 @@
 %  For support, please attach all files needed for compiling as well as the log file, and specify your operating system, LaTeX version, and LaTeX editor.
 
 %=================================================================
-\documentclass[computers,article,submit,pdftex,moreauthors]{Definitions/mdpi}
+\documentclass[software,article,submit,pdftex,moreauthors]{Definitions/mdpi}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{listings}
 
@@ -376,102 +376,12 @@ $^{1}$ \quad Instituto Superior de Engenharia de Lisboa, Instituto Politécnico 
 	%=====================================
 	% References, variant A: external bibliography
 	%=====================================
-	% \bibliography{your_external_BibTeX_file}
+	\bibliography{referencias.bib}
 
 	%=====================================
 	% References, variant B: internal bibliography
 	%=====================================
 
-	% ACS format
-	\isAPAandChicago{}{%
-		\begin{thebibliography}{999}
-			\bibitem[Spring WebFlux Comparing Template Engines(2025)]{spring-webflux-comparing-template-engines}
-			Spring WebFlux Comparing Template Engines. 2025. \textit{GitHub}. Available online: \url{https://github.com/xmlet/spring-webflux-comparing-template-engines}.
-			\bibitem[Model-View-Controller Pattern(2009)]{Bucanek2009}
-			James Bucanek. 2009. Model-View-Controller Pattern. In \textit{Learn Objective-C for Java Developers}; Apress: Berkeley, CA, USA; pp. 353-402.
-			\bibitem[StreamingResponseBody - Spring Framework 6.2.6 API(2025)]{Spring-StreamingResponseBody}
-			Spring Framework. 2025. StreamingResponseBody - Spring Framework 6.2.6 API. Available online: \url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}.
-		\end{thebibliography}
-	}{}
-
-	% Chicago format (Used for journal: arts, genealogy, histories, humanities, jintelligence, laws, literature, religions, risks, socsci)
-	\isChicagoStyle{%
-		\begin{thebibliography}{999}
-			% Reference 1
-			\bibitem[Aranceta-Bartrina(1999a)]{ref-journal}
-			Aranceta-Bartrina, Javier. 1999a. Title of the cited article. \textit{Journal Title} 6: 100--10.
-			% Reference 2
-			\bibitem[Aranceta-Bartrina(1999b)]{ref-book1}
-			Aranceta-Bartrina, Javier. 1999b. Title of the chapter. In \textit{Book Title}, 2nd ed. Edited by Editor 1 and Editor 2. Publication place: Publisher, vol. 3, pp. 54–96.
-			% Reference 3
-			\bibitem[Baranwal and Munteanu {[1921]}(1955)]{ref-book2}
-			Baranwal, Ajay K., and Costea Munteanu. 1955. \textit{Book Title}. Publication place: Publisher, pp. 154--96. First published 1921 (op-tional).
-			% Reference 4
-			\bibitem[Berry and Smith(1999)]{ref-thesis}
-			Berry, Evan, and Amy M. Smith. 1999. Title of Thesis. Level of Thesis, Degree-Granting University, City, Country. Identifi-cation information (if available).
-			% Reference 5
-			\bibitem[Cojocaru et al.(1999)]{ref-unpublish}
-			Cojocaru, Ludmila, Dragos Constatin Sanda, and Eun Kyeong Yun. 1999. Title of Unpublished Work. \textit{Journal Title}, phrase indicating stage of publication.
-			% Reference 6
-			\bibitem[Driver et al.(2000)]{ref-proceeding}
-			Driver, John P., Steffen Rohrs, and Sean Meighoo. 2000. Title of Presentation. In \textit{Title of the Collected Work} (if available). Paper presented at Name of the Conference, Location of Conference, Date of Conference.
-			% Reference 7
-			\bibitem[Harwood(2008)]{ref-url}
-			Harwood, John. 2008. Title of the cited article. Available online: URL (accessed on Day Month Year).
-		\end{thebibliography}
-	}{}
-
-	% APA format (Used for journal: admsci, behavsci, businesses, econometrics, economies, education, ejihpe, games, humans, ijfs, journalmedia, jrfm, languages, psycholint, publications, tourismhosp, youth)
-	\isAPAStyle{%
-		\begin{thebibliography}{999}
-			% Reference 1
-			\bibitem[\protect\citeauthoryear{Azikiwe \BBA\ Bello}{{2020a}}]{ref-journal}
-			Azikiwe, H., \& Bello, A. (2020a). Title of the cited article. \textit{Journal Title}, \textit{Volume}(Issue),
-			Firstpage--Lastpage/Article Number.
-			% Reference 2
-			\bibitem[\protect\citeauthoryear{Azikiwe \BBA\ Bello}{{2020b}}]{ref-book1}
-			Azikiwe, H., \& Bello, A. (2020b). \textit{Book title}. Publisher Name.
-			% Reference 3
-			\bibitem[Davison(1623/2019)]{ref-book2}
-			Davison, T. E. (2019). Title of the book chapter. In A. A. Editor (Ed.), \textit{Title of the book: Subtitle}
-			(pp. Firstpage--Lastpage). Publisher Name. (Original work published 1623) (Optional).
-			% Reference 4
-			\bibitem[Fistek et al.(2017)]{ref-proceeding}
-			Fistek, A., Jester, E., \& Sonnenberg, K. (2017, Month Day). Title of contribution [Type of contribution]. Conference Name, Conference City, Conference Country.
-			% Reference 5
-			\bibitem[Hutcheson(2012)]{ref-thesis}
-			Hutcheson, V. H. (2012). \textit{Title of the thesis} [XX Thesis, Name of Institution Awarding the Degree].
-			% Reference 6
-			\bibitem[Lippincott \& Poindexter(2019)]{ref-unpublish}
-			Lippincott, T., \& Poindexter, E. K. (2019). \textit{Title of the unpublished manuscript} [Unpublished manuscript/Manuscript in prepara-tion/Manuscript submitted for publication]. Department Name, Institution Name.
-			% Reference 7
-			\bibitem[Harwood(2008)]{ref-url}
-			Harwood, J. (2008). \textit{Title of the cited article}. Available online: URL (accessed on Day Month Year).
-		\end{thebibliography}
-	}{}
-
-	% If authors have biography, please use the format below
-	%\section*{Short Biography of Authors}
-	%\bio
-	%{\raisebox{-0.35cm}{\includegraphics[width=3.5cm,height=5.3cm,clip,keepaspectratio]{Definitions/author1.pdf}}}
-	%{\textbf{Firstname Lastname} Biography of first author}
-	%
-	%\bio
-	%{\raisebox{-0.35cm}{\includegraphics[width=3.5cm,height=5.3cm,clip,keepaspectratio]{Definitions/author2.jpg}}}
-	%{\textbf{Firstname Lastname} Biography of second author}
-
-	% For the MDPI journals use author-date citation, please follow the formatting guidelines on http://www.mdpi.com/authors/references
-	% To cite two works by the same author: \citeauthor{ref-journal-1a} (\citeyear{ref-journal-1a}, \citeyear{ref-journal-1b}). This produces: Whittaker (1967, 1975)
-	% To cite two works by the same author with specific pages: \citeauthor{ref-journal-3a} (\citeyear{ref-journal-3a}, p. 328; \citeyear{ref-journal-3b}, p.475). This produces: Wong (1999, p. 328; 2000, p. 475)
-
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	%% for journal Sci
-	%\reviewreports{\\
-	%Reviewer 1 comments and authors’ response\\
-	%Reviewer 2 comments and authors’ response\\
-	%Reviewer 3 comments and authors’ response
-	%}
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\PublishersNote{}
 	%\isPreprints{}{% This command is only used for ``preprints''.
 \end{adjustwidth}
