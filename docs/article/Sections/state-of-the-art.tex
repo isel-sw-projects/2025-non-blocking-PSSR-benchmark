@@ -12,8 +12,8 @@ template engines described in the previous subsection.
 
 \textit{Web templates} have been the most widely adopted approach for
 constructing dynamic HTML pages.
-Web templates (such as JSP, Handlebars, or Thymeleaf), also known as a
-\textit{web pages} or \textit{web views}~\cite{Fowler02,Alur01}, are based on
+Web templates (such as JSP, Handlebars, or Thymeleaf), also known as
+\textit{web views}~\cite{Fowler02,Alur01}, are based on
 HTML documents augmented with template-specific markers (e.g., \texttt{<\%>},
 \texttt{\{\{\}\}}, or \texttt{\$\{\}}), which represent \textit{dynamic}
 information to be replaced at runtime with the results of corresponding
@@ -41,6 +41,68 @@ and client-side approaches, we focus solely on web template technologies for
 server-side rendering, as our work is centered on that approach.
 
 \subsubsection{Templating idiom}
+
+Web templates are based on a \textit{domain-specific language}
+(DSL)~\cite{landin1966next}, which defines a language tailored to a specific
+\textit{domain}~\cite{evans2004domain}—in this case, HTML for expressing web
+documents.
+The DSL constrains the template's syntax and semantics to match the structure
+and purpose of HTML.
+
+DSLs can be divided in two types: \textit{external} or
+\textit{internal}\cite{dslbook}.
+\textit{External} DSLs are languages created without any affiliation to a
+concrete programming language.
+An example of an \textit{external} DSL is the regular expressions search
+pattern\cite{thompson1968}, since it defines its own syntax without any
+dependency of programming languages. 
+On the other hand an \textit{internal} DSL is defined within a host programming
+language as a library and tends to be limited to the syntax of the host language,
+such as Java.
+JQuery\cite{resig2007pro} is one of the most well-known examples of an internal
+DSL in Javascript, designed to simplify HTML DOM\cite{dom} tree traversal and
+manipulation.
+
+Traditionally, web template technologies use an \textit{external} DSL to define
+control flow constructs and data binding primitives. Early web template engines
+such as JSP, ASP, Velocity, PHP, and others adopted this \textit{external} DSL
+approach as their templating dialect.
+For example, a \texttt{foreach} loop can be expressed in each technology using its 
+own DSL:
+\\\texttt{<\% for(String item : items) \%>} in JSP, \texttt{<\% For Each item 
+In items \%>} in legacy ASP with VBScript, \texttt{\#foreach(\$item in \$items)} in 
+Velocity, or \texttt{<?php foreach (\$items as \$item):?>} in PHP.
+
+On the other hand, \textit{internal} DSLs for HTML allow templates to be defined 
+directly within the \emph{host} language (such as Java, Kotlin, Groovy, Scala, or 
+other general-purpose programming languages), rather than using text-based 
+template files~\cite{carvalho2019hot}. In this case, a web template is not limited 
+to templating constructs but may instead leverage any available primitive of the 
+host language or any external API.
+
+For example, in Java, you may iterate over data using a \texttt{for} statement,
+or using the \texttt{java.util.streams} API, or any other JVM library such as
+Guava, Varv, StreamEx, or others—according to your preferences.
+
+Using an internal DSL can have several benefits over using textual templates:
+\begin{enumerate}
+  \item \emph{Type safety}: Because the templates are defined with the host
+  programming language, the compiler can check the syntax and types of the
+  templates at compile time, which can help catch errors earlier in the
+  development process.
+
+  \item \emph{IDE support}: Many modern IDEs provide code completion, syntax
+  highlighting, and other features, which can make it easier to write and
+  maintain templates.
+  
+  \item \emph{Flexibility}: Use all the features of the host programming language
+  to generate HTML, can make it easier to write complex templates and reuse code.
+  
+  \item \emph{Integration}: Because the templates are defined in Java code, for
+  example, you can easily integrate them with other Java code in your
+  application, such as controllers, services, repositories and models.
+  
+\end{enumerate}
 
 \subsubsection{Supported data model APIs}
 
