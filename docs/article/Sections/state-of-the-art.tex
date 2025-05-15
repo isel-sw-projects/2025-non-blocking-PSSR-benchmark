@@ -104,9 +104,134 @@ Using an internal DSL can have several benefits over using textual templates:
   
 \end{enumerate}
 
+DSLs for HTML provide an API where methods or functions correspond to the names of
+available HTML elements. 
+These methods, also known as \textit{builders}, can be combined in a chain of
+calls to mimic the construction of an HTML document in a fluent manner.
+Martin Fowler\cite{dslbook} identifies three different patterns for combining
+functions to create a DSL: 1) \textit{function sequence}; 2) \textit{nested
+function}, and 3) \textit{method chaining}, which are illustrated in the snippets of
+Figure~\ref{fig:dsl-idioms}.
+\begin{figure}[h]
+\centering
+
+% Subfloat 1
+\begin{minipage}[c]{0.33\linewidth}
+  \centering
+  \begin{lstlisting}[
+    language=java,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none
+  ]
+html();
+ head();
+  title();text("JT");end();
+ end();
+ body();
+  p();
+   text("Hi JATL");
+  end();
+ end();
+end();
+  \end{lstlisting}
+  \caption*{(a) Function sequence}
+\end{minipage}
+\hfil
+% Subfloat 2
+\begin{minipage}[c]{0.23\linewidth}
+  \centering
+  \begin{lstlisting}[
+    language=java,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none
+  ]
+html(
+ head(
+  title("ST")
+ ),
+ body(
+  p("Hi ScalaTags")
+ )
+);
+  \end{lstlisting}
+  \caption*{(b) Nested function}
+\end{minipage}
+\hfil
+% Subfloat 3
+\begin{minipage}[c]{0.32\linewidth}
+  \centering
+  \begin{lstlisting}[
+    language=java,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none
+  ]
+html()
+ .head()
+  .title().text("HF").__()
+ .__()
+ .body()
+  .p()
+   .text("Hi HtmlFlow")
+  .__()
+ .__()
+.__();
+  \end{lstlisting}
+  \caption*{(c) Method chaining}
+\end{minipage}
+
+\caption{Utilizing DSL for HTML libraries with JATL, ScalaTags, and HtmlFlow.}
+\label{fig:dsl-idioms}
+\end{figure}
+
+
+From the three examples depicted in Figure~\ref{fig:dsl-idioms}, the \textit{nested
+function} idiom used by \textbf{ScalaTags}, as shown in the snippet of
+Figure~\ref{fig:dsl-idioms}.b), is the least verbose, requiring fewer statements than
+the other two cases.
+This approach of combining function calls is also utilized by \textbf{Hiccup}
+Clojure Library and \textbf{j2html} Java library.
+One reason for verbosity in \textit{function sequence} and \textit{method
+chaining} approaches is the requirement of a dedicated HTML builder to emit the
+closing tag, exemplified by \texttt{end()} in \textbf{JATL} (Figure~\ref{fig:dsl-idioms}.a) and
+\texttt{\_\_()} in \textbf{HtmlFlow} (Figure~\ref{fig:dsl-idioms}.c).
+But the \textit{nested function} approach comes with a notable drawback: \textbf{they
+do not support PSSR} because the sequence of nested functions is evaluated
+backward to the order in which they are written. 
+In other words, arguments are evaluated before the functions are invoked. 
+Taking the example in Figure~\ref{fig:dsl-idioms}.b), the \texttt{title()} function is
+first evaluated, and its resulting paragraph becomes the argument for the
+\texttt{head()} call, which, in turn, becomes the argument for \texttt{html()},
+and so on.
+If HTML is emitted as functions are called, it will print tags in reverse order. 
+The aforementioned DSLs must collect resulting nodes into an internal data
+structure, which is later traversed to produce the HTML output. Therefore, they
+cannot progressively emit the output as builders are called.
+
+Two other JVM libraries, \textbf{Groovy MarkupBuilder} and
+\textbf{KotlinX.html}, also adopt a \textit{nested function} approach, but they
+address the backward evaluation issue by implementing \textit{lazy evaluation}
+of arguments~\cite{Landin65}, expressed in lambda expressions (also known as
+function literals).
+Due to the concise form of expressing lambdas with brackets (i.e.,
+\texttt{\{\}}) in both Groovy and Kotlin, translating the template shown in
+Figure~\ref{fig:dsl-idioms}.b) to use Groovy MarkupBuilder or KotlinX.html only
+requires replacing parentheses with brackets for parent elements.
+\textbf{HtmlFlow} also adopts this approach and provides a Kotlin-idiomatic API 
+as an alternative to its original Java API.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \subsubsection{Supported data model APIs}
 
 Restricted or unrestricted.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Asynchronous support}
 
@@ -119,7 +244,62 @@ Distinguish between template engines that support and do not support asynchronou
 2. Consegue usar qq API e.g Kotlinx.Html and Groovy  => usa mal => produzir HTML out of order
 3. Sim suporta => well-formed HTML => Thymleaf e o HtmlFlow
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsubsection{Type safety and HTML safety}
+
+Another key characteristic of such DSLs is \textbf{HTML safety}, which refers to
+whether they produce only valid HTML conforming to a well-formed document.
+To ensure HTML safety, a DSL API should only allow combining calls to builders
+that result in valid HTML. 
+However, most HTML DSLs using the \textit{function sequence} or \textit{nested
+function} approach cannot ensure HTML safety at compile time. 
+
+The \textit{function sequence} approach, as illustrated in the snippet of
+Figure~\ref{fig:dsl-idioms}.a), involves combining function calls as a sequence of
+statements, making it challenging to restrict the order of statements. 
+In the \textit{nested function} approach shown in
+Figure~\ref{fig:dsl-idioms}.b), variable-length arguments are often used to
+allow an undefined number of child elements, which cannot be strongly typed in
+every programming language.
+
+KotlinX.html, which utilizes the \textit{nested function} idiom with lazy
+evaluation, mitigates this issue through function types with a receiver. 
+In this approach, the receiver (i.e., \texttt{this} within the lambda) is
+strongly typed and provides a set of methods corresponding to legal child
+elements.
+This enables KotlinX.html to enforce HTML safety by restricting the available
+methods during compile time.
+
+To achieve this KotlinX.html provides HTML builders using \textit{function
+literals with receiver}~\cite{kotlinlang}.
+In Kotlin, a block of code enclosed in curly braces \texttt{\{...\}} is known as
+a \emph{lambda}, and can be used as an argument to
+a function that expects a \emph{function literal}.
+When we write, for example, \texttt{body \{ div \{ hr() \} \}}, we are
+invoking the \texttt{body} function with a lambda as its argument. This
+lambda, in turn, calls the \texttt{div} function with another lambda as an
+argument that creates a horizontal row (i.e. \texttt{hr}).
+Each call to an HTML builder (e.g., \texttt{body}, \texttt{div}, \texttt{hr})
+creates the child element within the element generated by the outer function
+call.
+
+HtmlFlow provides two APIs: one in idiomatic Kotlin, similar to the \texttt{KotlinX.html} 
+API, and another that employs the \textit{method chaining} idiom, as illustrated 
+in the snippet of Figure~\ref{fig:dsl-idioms}.c).
+In this approach, the receiver object is implicitly passed as an argument to
+each method call, enabling subsequent methods to be invoked on the result of the
+preceding one.
+This facilitates the composition of methods, with each call building upon the
+other.
+Similar to KotlinX.html, HtmlFlow ensures HTML safety, restricting the available
+HTML builders and attributes after the dot (\texttt{.}) operator.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Progressive rendering}
 
