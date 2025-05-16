@@ -1,14 +1,93 @@
-\section{State of the Art}
+\section{Background and Related Work}
 
-In this section, we first present the main properties that characterize each web
-template technology approach, along with the advantages and drawbacks resulting
-from these characteristics.
+In this section, we first examine the different design choices adopted by web 
+servers in their internal architectures, and how these choices impact the 
+behavior of the web template engines.
+Then, in Subsection~2.2, we present the main properties that characterize each 
+web template technology approach, along with the advantages and drawbacks that 
+result from these characteristics.
 
-Next, we delve into the different design choices adopted by web servers in their
-internal architectures, and how these choices impact the behavior of the web
-template engines described in the previous subsection.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Related Work}
+\subsection{Web Framework Architectures and Approaches to PSSR}
+
+In traditional thread-per-request architectures, each incoming request is
+handled by a dedicated thread. The web server maintains a thread pool from
+which a thread is assigned to handle each request. As the load increases, the
+number of active threads can grow rapidly, potentially exhausting the pool.
+This can lead to performance and scalability issues, as the system may become
+bogged down by context switching and thread management
+overhead~\cite{kant2000scalable}. Spring MVC is one of the most widely used
+frameworks that follows this model.
+
+On the other hand, in modern \textit{low-thread} architectures, the server uses
+a small number of threads to handle a large number of requests.
+\textit{Low-thread} servers, also known as
+\textit{event-driven}~\cite{event-driven-servers}, offer a significant
+advantage in efficiently managing a high number of concurrent I/O operations
+with minimal resource usage.
+
+The \textit{non-blocking} I/O model employed in low-thread servers is
+well-suited for handling large volumes of data asynchronously~\cite{Meijer12}.
+This combination of low-thread servers and asynchronous data models has
+facilitated the development of highly scalable, responsive, and resilient web
+applications capable of managing substantial data loads~\cite{Jin15}.
+The prominence of this concept increased with the advent of Node.js in
+2009, and subsequently, various technologies adopted this approach
+in the Java ecosystem, including Netty, Akka HTTP, Vert.X, and Spring WebFlux.
+% Among these, Spring WebFlux stands out as the most widely used web framework in
+% Java, according to surveys like JetBrains' State of Java report (2021) and
+% community metrics from platforms like Github and StackOverflow.
+The \textit{non-blocking} I/O model in low-thread servers functions optimally
+only when HTTP handlers avoid blocking.
+Therefore, HTML templates need to be proficient in dealing with the asynchronous
+APIs provided by data models.
+While most legacy web templates struggle with asynchronous models, DSLs for HTML
+face no such limitations, leveraging all constructions available in the host
+programming language.
+However, the unexpected intertwining of asynchronous handlers' completion and
+HTML builders' execution may potentially lead to malformed HTML with an
+unexpected layout, as demonstrated in the subsequent subsection~\ref{sec:async-support}.
+
+An alternative approach involves utilizing user-level threads, while maintaining
+a blocking I/O and a synchronous programming paradigm.
+However, this approach still requires a user-level I/O subsystem capable of
+mitigating system-level blocking, which is crucial for the performance of
+I/O-intensive applications. This technique offers a lightweight solution for
+efficiently managing a larger number of concurrent sessions by minimizing
+per-thread overhead.
+In 2020, Karsten~\cite{karsten2020} demonstrated how this strategy supports a
+synchronous programming style, effectively abstracting away the complexities
+associated with managing continuations in asynchronous programming.
+A similar idea has been followed in Kotlin with
+\textit{coroutines}~\cite{elizarov2021coroutines}, and most recently in the Java
+standard library with \textit{virtual threads} released in Java 21.
+% Both Spring WebFlux and Vert.X web frameworks provide native support for Kotlin
+% \textit{coroutines}, enabling developers to utilize a specific
+% \texttt{Dispatcher} to switch the execution thread context to a suitable
+% subsystem and reduce \textit{system-level} blocking.
+However, no work has yet leveraged this mechanism to enable legacy template
+engines to provide PSSR while preserving non-blocking progress.
+% We will demonstrate this capability by comparing it with our proposal of
+% \textit{suspendable web templates} in a benchmark using Spring WebFlux.
+
+% Determining the appropriate size of \emph{N} for the I/O susbsystem may hinge on
+% factors such as the nature of the workload and the frequency of
+% \textit{Blocking} I/O operations.
+
+\subsubsection{Spring WebFlux}
+
+\subsubsection{Spring MVC}
+
+\subsubsection{Quarkus}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Web Templates}
 
 \textit{Web templates} have been the most widely adopted approach for
 constructing dynamic HTML pages.
@@ -39,6 +118,10 @@ Web templates can be distinguished by several properties, namely:
 Although some of the aforementioned characteristics apply to both server-side 
 and client-side approaches, we focus solely on web template technologies for 
 server-side rendering, as our work is centered on that approach.
+
+Before detailing each of the aforementioned characteristics, Table~11 presents 
+a breakdown of state-of-the-art template engines, classified according to the 
+identified properties.
 
 \subsubsection{Templating idiom}
 
@@ -224,7 +307,6 @@ as an alternative to its original Java API.
 %-------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \subsubsection{Supported data model APIs}
 
 Restricted or unrestricted.
@@ -234,6 +316,7 @@ Restricted or unrestricted.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Asynchronous support}
+\label{sec:async-support}
 
 Explicar Observable e modelos reactivos
 
@@ -241,8 +324,36 @@ Distinguish between template engines that support and do not support asynchronou
 
 1. Nem se quer Existe API para iterar sobre um Async data model. 
    E.g JStachio, .... apenas suportam interface Iterable. => Compilation Error.
+
 2. Consegue usar qq API e.g Kotlinx.Html and Groovy  => usa mal => produzir HTML out of order
+
 3. Sim suporta => well-formed HTML => Thymleaf e o HtmlFlow
+
+
+One of the reasons for legacy web templates not supporting asynchronous APIs
+is the absence of a unified standard calling convention for asynchronous calls.
+While there is a single, straightforward way to use a synchronous API with a
+direct style, where the result of a method call corresponds to its returned
+value, there is no equivalent standard in the asynchronous approach. 
+Instead, we may encounter various asynchronous conventions depending on the
+programming language and runtime environment.
+Some of these approaches include \emph{continuation-passing style}
+(CPS)~\cite{scheme}, \textit{promises}~\cite{promise} async/await
+idiom~\cite{async_await}, reactive streams \cite{ReactiveStreams}, Kotlin
+Flow~\cite{kotlinlang}, and others.
+
+Many \textit{general-purpose languages} (GPLs) have embraced the
+\texttt{async}/\texttt{await} feature~\cite{async_await} enabling non-blocking
+routines to mimic the structure of synchronous ones, allowing developers to
+reason about instruction flow sequentially.
+The simplicity and broad adoption of this programming model have led to its
+incorporation into mainstream languages like C\#, JavaScript, Python, Perl,
+Swift, Kotlin, and others, excluding Java.
+However, implementing \texttt{async}/\texttt{a}wait requires compiler support to
+translate \textit{suspension points} (i.e., \texttt{await} statements) into state
+machines. Most template engines operate using an external DSL with their own
+templating dialect (e.g., Thymeleaf, JSP, Jade, Handlebars, and others), which do not
+inherently leverage asynchronous capabilities from their host GPLs.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------------------------------------------
@@ -302,15 +413,3 @@ HTML builders and attributes after the dot (\texttt{.}) operator.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Progressive rendering}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%-------------------------------------------------------------------
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsection{Web Framework Architectures and Approaches to PSSR}
-
-\subsubsection{Spring WebFlux}
-
-\subsubsection{Spring MVC}
-
-\subsubsection{Quarkus}
