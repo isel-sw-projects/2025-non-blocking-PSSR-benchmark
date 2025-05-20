@@ -61,25 +61,39 @@ per-thread overhead.
 In 2020, Karsten~\cite{karsten2020} demonstrated how this strategy supports a
 synchronous programming style, effectively abstracting away the complexities
 associated with managing continuations in asynchronous programming.
-A similar idea has been followed in Kotlin with
-\textit{coroutines}~\cite{elizarov2021coroutines}, and most recently in the Java
-standard library with \textit{virtual threads} released in Java 21.
-% Both Spring WebFlux and Vert.X web frameworks provide native support for Kotlin
-% \textit{coroutines}, enabling developers to utilize a specific
-% \texttt{Dispatcher} to switch the execution thread context to a suitable
-% subsystem and reduce \textit{system-level} blocking.
-However, no work has yet leveraged this mechanism to enable legacy template
-engines to provide PSSR while preserving non-blocking progress.
-% We will demonstrate this capability by comparing it with our proposal of
-% \textit{suspendable web templates} in a benchmark using Spring WebFlux.
 
-% Determining the appropriate size of \emph{N} for the I/O susbsystem may hinge on
-% factors such as the nature of the workload and the frequency of
-% \textit{Blocking} I/O operations.
+Among mainstream technologies, the Kotlin programming language introduces a new 
+abstraction for managing coroutines and provides structured concurrency, which 
+ensures that coroutines are \textit{scoped}, \textit{cancellable}, and 
+\textit{coordinated} within a well-defined 
+lifecycle~\cite{elizarov2021coroutines}.
+Although this model embraces the \texttt{async}/\texttt{await} 
+feature~\cite{async_await}, enabling non-blocking routines to mimic the 
+structure of synchronous ones and allowing developers to reason about control 
+flow sequentially, it still lacks a user-level I/O subsystem and relies on an 
+explicit I/O dispatcher tied to a dedicated thread pool that frees worker 
+threads for handling processing tasks.
+Moreover, web templates using their own templating dialects, such as JSP, 
+Thymeleaf, or Handlebars, are unable to take advantage of such constructs, as 
+they typically support only a limited subset of the host library's API—most 
+commonly just the \texttt{Iterable} interface.
 
-\subsubsection{Spring WebFlux}
+Only Java virtual threads, introduced in
+JEP~444~\footnote{\url{https://openjdk.org/jeps/444}}, adopt a similar approach
+to Karsten's proposal, using user-mode threads to preserve a synchronous
+programming model while still allowing blocking I/O operations without tying up
+platform threads. When a virtual thread performs a blocking I/O operation, the
+JVM intercepts the call and transparently parks the virtual thread, freeing the
+underlying platform thread to perform other tasks. Once the I/O operation
+completes, the virtual thread is rescheduled on a platform thread and resumes
+execution. This mechanism is enabled by the JVM's integration with non-blocking
+system calls at the OS level, allowing developers to write traditional
+synchronous code while benefiting from the scalability of non-blocking I/O.
+
 
 \subsubsection{Spring MVC}
+
+\subsubsection{Spring WebFlux}
 
 \subsubsection{Quarkus}
 
