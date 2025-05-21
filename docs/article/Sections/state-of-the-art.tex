@@ -221,6 +221,15 @@ classified according to the identified properties.
 		&\large{$\textcolor{PineGreen}{\checkmark}$}
 		\\
     \hline
+		\textbf{Clojure Hiccup}
+		&Nested Eager
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		\\
+    \hline
     \shortstack{\textbf{Groovy }\\\textbf{MarkupBuilder}}
 		&Nested Lazy
 		&All
@@ -256,6 +265,15 @@ classified according to the identified properties.
     &\textcolor{PineGreen}{\checkmark}$^{(2)}$
 		&\large{$\textcolor{PineGreen}{\checkmark}$}
 		\\
+    \hline
+		\textbf{ScalaTags}
+		&Nested Eager
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		\\
 		\hline                                                      
 	\end{tabular}
 	\caption{
@@ -271,9 +289,10 @@ The first half of Table~\ref{table:cmplibs} lists template engines that use thei
 own templating dialects, referred to as \textit{external DSLs}. The second half
 lists Java libraries that provide an \textit{internal DSL}, typically using a
 \textit{nested} or \textit{chaining} style to build HTML.
-Note that, by leveraging the host language (e.g., Groovy, Java, or Kotlin) as
-the templating idiom, the latter impose no restrictions on the data model and
-fully support all styles of data access APIs.
+Note that, by leveraging the host language (e.g., Clojure, Groovy, Java, Kotlin,
+or Scala) as the templating idiom, the latter impose no restrictions on the data
+model and fully support all styles of data access APIs. They also benefit from
+static type checking, which helps ensure type safety.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------------------------------------------
@@ -318,7 +337,6 @@ other general-purpose programming languages), rather than using text-based
 template files~\cite{carvalho2019hot}. In this case, a web template is not limited 
 to templating constructs but may instead leverage any available primitive of the 
 host language or any external API.
-
 For example, in Java, you may iterate over data using a \texttt{for} statement,
 or using the \texttt{java.util.streams} API, or any other JVM library such as
 Guava, Varv, StreamEx, or others—according to your preferences.
