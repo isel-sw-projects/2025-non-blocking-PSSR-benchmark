@@ -337,9 +337,6 @@ other general-purpose programming languages), rather than using text-based
 template files~\cite{carvalho2019hot}. In this case, a web template is not limited 
 to templating constructs but may instead leverage any available primitive of the 
 host language or any external API.
-For example, in Java, you may iterate over data using a \texttt{for} statement,
-or using the \texttt{java.util.streams} API, or any other JVM library such as
-Guava, Varv, StreamEx, or others—according to your preferences.
 
 Using an internal DSL can have several benefits over using textual templates:
 \begin{enumerate}
@@ -483,7 +480,27 @@ as an alternative to its original Java API.
 
 \subsubsection{Supported data model APIs}
 
-Restricted or unrestricted.
+Template engines with dedicated templating dialects typically rely on specific 
+control flow constructs—such as a \texttt{foreach}-like statement—to iterate 
+over elements in a data source. In the Java ecosystem, \texttt{Iterable} is the 
+common supertype implemented by most data structures and serves as the standard 
+API for iteration. However, other standard interfaces, such as 
+\texttt{java.util.Stream}, also represent sequences of elements but are not 
+compatible with \texttt{Iterable}.
+This fragmentation becomes more evident when considering other JVM languages, 
+such as Kotlin, which introduces additional abstractions like the 
+\texttt{Sequence} interface—also incompatible with \texttt{Iterable}. As a result, 
+template engines based on \textit{external} DSLs must explicitly support each of these 
+interfaces to accommodate the various iteration protocols across languages and 
+libraries.
+
+On the other hand, template engines that employ an \textit{internal} DSL do not 
+face such limitations, as they can leverage any available API within the host 
+programming language. This flexibility extends beyond the standard library to 
+include third-party APIs as well.
+For example, in Java, developers can iterate over data using a traditional 
+\texttt{for} loop, the \texttt{java.util.stream} API, or external libraries such 
+as Guava, Vavr, StreamEx, and others—depending on their specific needs or preferences.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------------------------------------------
