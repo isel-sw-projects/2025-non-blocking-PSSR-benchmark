@@ -19,8 +19,11 @@ which a thread is assigned to handle each request. As the load increases, the
 number of active threads can grow rapidly, potentially exhausting the pool.
 This can lead to performance and scalability issues, as the system may become
 bogged down by context switching and thread management
-overhead~\cite{kant2000scalable}. Spring MVC is one of the most widely used
-frameworks that follows this model.
+overhead~\cite{kant2000scalable}.
+In the Java ecosystem, Spring Boot is one of the most widely used frameworks that
+follow this model, according to several reports such as the Stack Overflow 2024
+Developer
+Survey~\footnote{~\url{https://survey.stackoverflow.co/2024/technology\#1-web-frameworks-and-technologies}}.
 
 On the other hand, in modern \textit{low-thread} architectures, the server uses
 a small number of threads to handle a large number of requests.
@@ -67,12 +70,11 @@ abstraction for managing coroutines and provides structured concurrency, which
 ensures that coroutines are \textit{scoped}, \textit{cancellable}, and 
 \textit{coordinated} within a well-defined 
 lifecycle~\cite{elizarov2021coroutines}.
-Although this model embraces the \texttt{async}/\texttt{await} 
-feature~\cite{async_await}, enabling non-blocking routines to mimic the 
-structure of synchronous ones and allowing developers to reason about control 
-flow sequentially, it still lacks a user-level I/O subsystem and relies on an 
-explicit I/O dispatcher tied to a dedicated thread pool that frees worker 
-threads for handling processing tasks.
+Although this model embraces the \texttt{async}/\texttt{await}
+feature~\cite{async_await}, enabling non-blocking routines to mimic the
+structure of synchronous ones, it still lacks a user-level I/O subsystem and
+relies on an explicit I/O dispatcher tied to a dedicated thread pool that frees
+worker threads for handling processing tasks.
 Moreover, web templates using their own templating dialects, such as JSP, 
 Thymeleaf, or Handlebars, are unable to take advantage of such constructs, as 
 they typically support only a limited subset of the host library's API—most 
