@@ -107,37 +107,177 @@ synchronous code while benefiting from the scalability of non-blocking I/O.
 
 \textit{Web templates} have been the most widely adopted approach for
 constructing dynamic HTML pages.
-Web templates (such as JSP, Handlebars, or Thymeleaf), also known as
-\textit{web views}~\cite{Fowler02,Alur01}, are based on
-HTML documents augmented with template-specific markers (e.g., \texttt{<\%>},
-\texttt{\{\{\}\}}, or \texttt{\$\{\}}), which represent \textit{dynamic}
-information to be replaced at runtime with the results of corresponding
-computations, producing the final HTML page.
+Web templates or \textit{web views}~\cite{Fowler02,Alur01} (e.g. JSP, Handlebars,
+or Thymeleaf), are based on HTML documents augmented with template-specific
+markers (e.g., \texttt{<\%>}, \texttt{\{\{\}\}}, or \texttt{\$\{\}}), which
+represent \textit{dynamic} information to be replaced at runtime with the
+results of corresponding computations, producing the final HTML page.
 The process of parsing and replacing these markers---i.e.,
 \textit{resolution}---is the primary responsibility of the \textit{template
 engine}~\cite{Parr04}.
-
 One key characteristic of \textit{web templates} is their ability to receive a 
 \textit{context object}---equivalent to the \textit{model} in the model-view 
 design pattern~\cite{mvc88,Parr04}---which provides the data used to fill 
 template placeholders at runtime.
-
 Web templates can be distinguished by several properties, namely:
 \begin{enumerate}
-    \item Templating idiom
+    \item \textit{Domain-specific language} idiom
     \item Supported data model APIs
     \item Asynchronous support
     \item Type safety and HTML safety
     \item Progressive rendering
 \end{enumerate}
 
-Although some of the aforementioned characteristics apply to both server-side 
-and client-side approaches, we focus solely on web template technologies for 
-server-side rendering, as our work is centered on that approach.
+Although some of the aforementioned characteristics apply to both \textit{server-side}
+and \textit{client-side} approaches, we focus solely on web template technologies for
+\textit{server-side rendering}, as our work is centered on that approach.
+Before getting deep on each of the aforementioned characteristics,
+Table~\ref{table:cmplibs} presents a breakdown of mainstream template engines,
+classified according to the identified properties.
 
-Before detailing each of the aforementioned characteristics, Table~11 presents 
-a breakdown of state-of-the-art template engines, classified according to the 
-identified properties.
+\begin{table}[h]
+  \small
+	\tabcolsep=0.1cm
+	\def\arraystretch{1.2}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline                                                                  
+		\textbf{Library}
+		&\textbf{DSL idiom}
+		&\textbf{Data Model APIs}
+    &\shortstack{\textbf{Asynchronous}\\\textbf{Support}}
+    &\shortstack{\textbf{Type}\\\textbf{Safety}}
+    &\shortstack{\textbf{HTML}\\\textbf{Safety}}
+		&\shortstack{\textbf{Progressive}\\\textbf{Rendering}}
+		\\
+		\hline
+		\textbf{Freemarker}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{JSP}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{red}{\times}$}
+    \\
+    \hline
+		\textbf{JStachio}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\\hline
+		\textbf{Pebble}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Rocker}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Thymeleaf}
+		&External DSL
+		&\shortstack{\texttt{Iterable}\\\texttt{Publisher}}
+		&\texttt{Publisher}$^{(1)}$
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Trimou}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Velocity}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+    \shortstack{\textbf{Groovy }\\\textbf{MarkupBuilder}}
+		&Nested Lazy
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+    \textbf{HtmlFlow}
+		&Chaining
+		&All
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{j2html}
+		&Nested Eager
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		\\
+    \hline
+		\textbf{KotlinX}
+		&Nested Lazy
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\textcolor{PineGreen}{\checkmark}$^{(2)}$
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+		\hline                                                      
+	\end{tabular}
+	\caption{
+    Comparison of web template technologies in the Java ecosystem.
+    \\$^{(1)}$ Limited to a single model per web template and compatible with
+    the reactive stream \texttt{Publisher}.
+    \\$^{(2)}$ Non-safety for HTML attributes.
+  }
+	\label{table:cmplibs}
+\end{table}
+
+The first half of Table~\ref{table:cmplibs} lists template engines that use their
+own templating dialects, referred to as \textit{external DSLs}. The second half
+lists Java libraries that provide an \textit{internal DSL}, typically using a
+\textit{nested} or \textit{chaining} style to build HTML.
+Note that, by leveraging the host language (e.g., Groovy, Java, or Kotlin) as
+the templating idiom, the latter impose no restrictions on the data model and
+fully support all styles of data access APIs.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Templating idiom}
 
