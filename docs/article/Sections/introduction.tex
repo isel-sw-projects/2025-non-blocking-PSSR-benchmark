@@ -1,41 +1,66 @@
 \section{Introduction}
 
-% Non-blocking Progressive Server-Side Rendering (PSSR) is a technique that
-% combines some of the advantages of both server-side and client-side rendering
-% to improve web application performance and user experience. By leveraging
-% non-blocking I/O operations, PSSR allows for efficient handling of multiple
-% concurrent requests while progressively streaming HTML content to the client.
-% 
-% This project consists of a benchmark that evaluates the performance of
-% different PSSR strategies on the Java Virtual Machine (JVM). The benchmark
-% focuses on evaluating the performance of non-blocking PSSR implementations
-% using approaches such as Kotlin coroutines, reactive-style programming, and
-% Java virtual threads. Its main objective is to evaluate virtual threads as an
-% alternative that ensures a non-blocking approach to PSSR while offering a more
-% straightforward programming model than traditional asynchronous programming
-% techniques.
-% 
-% This project aims to extend the previous work done in
-% \textit{spring-webflux-comparing-template-engines}
-% \citeauthor{spring-webflux-comparing-template-engines}, which compares the
-% performance of various template engines in a Spring WebFlux application using
-% different approaches to PSSR\@. It adds support for Java virtual threads and
-% evaluates non-blocking PSSR implementations in other frameworks compared to
-% Spring WebFlux.
-% 
-% Currently, this project features a working benchmark in Spring WebFlux, Spring
-% MVC, and Quarkus, comparing the performance of eight different template
-% engines: Rocker, JStachio, Pebble, Freemarker, Trimou, Thymeleaf, HtmlFlow, and
-% KotlinX. It includes Java Microbenchmark Harness (JMH) benchmarks for template
-% engine performance testing, as well as Apache Bench and Apache JMeter scripts
-% for evaluating throughput and scalability. In the future, the project could be
-% extended to include other frameworks such as Vert.x, if time allows. However,
-% the next objective is the completion of the written report and article
-% submission. The written report will include a more detailed analysis of the
-% benchmark results, along with a contextualization of the state of the art in
-% non-blocking PSSR and asynchronous programming.
-% 
-% This report will focus on detailing relevant aspects of the benchmark
-% implementation and methodology, and will also provide a brief overview of the
-% results obtained from the JMeter and Apache Bench tests, which evaluate the
-% throughput and scalability of the different implementations.
+% Falta adicionar referências
+
+Modern web applications rely on different rendering strategies to optimize
+performance, user experience, and \textit{scalability}. The two most dominant
+approaches are \textit{Server-Side Rendering (SSR)} and \textit{Client-Side
+    Rendering (CSR)}.
+
+SSR generates HTML content on the server before sending it to the client,
+resulting in faster initial page loads and better Search Engine Optimization
+(SEO). However, SSR can increase server load and reduce
+\textit{throughput}\footnote{The number of requests the server can handle per
+    second (RPS)} since each request requires additional processing before
+responding.
+
+In contrast, CSR shifts the rendering workload to the browser. The server
+initially sends a minimal HTML document with JavaScript, which dynamically
+loads the page content. While CSR reduces the server’s burden, it can lead to
+slower initial load times, as users must wait for JavaScript execution before
+meaningful content appears.
+
+\textit{Progressive Server-Side Rendering (PSSR)} combines benefits from both SSR and CSR
+by streaming HTML content progressively. This technique enhances user-perceived performance by
+allowing immediate rendering while data loads asynchronously. In this respect,
+PSSR is similar to CSR in that the server initially sends a minimal HTML
+document to the client and subsequently streams additional HTML fragments as data becomes available.
+However, unlike CSR, PSSR retains all rendering responsibilities on the server side,
+thereby reducing the load on the client. As a result, the client does
+not need to execute JavaScript or make additional requests to retrieve page content.
+To enable non-blocking PSSR, template engines require support for asynchronous
+data models and non-blocking I/O operations. While some template engines, such
+as HtmlFlow, and Thymeleaf, have support for these features, traditional
+template engines that use \textit{external} domain-specific languages (DSLs)
+often rely on blocking interfaces, such as \texttt{Iterable}, to define the
+data model. This reliance on blocking interfaces leads to the system thread
+being blocked until the entire HTML content is rendered, which can
+significantly impact performance and scalability.
+
+Efficient thread utilization is crucial for low-thread servers, necessitating
+asynchronous, non-blocking request handling. In these architectures,
+asynchronous I/O operations (e.g., database queries, and API calls) allow
+servers to manage multiple concurrent requests efficiently by avoiding blocking
+threads while waiting for I/O operations to complete. In these architectures,
+where idle time during I/O operations is reduced, non-blocking PSSR enhances a
+server's capacity to handle high request volumes with limited threads and
+immediately send partial responses to clients.
+
+With the introduction of \textit{Virtual Threads} in Java 21, it is now possible to execute blocking
+I/O operations in a non-blocking manner, allowing for the use of these 
+traditional template engines in non-blocking contexts without the need for
+complex asynchronous programming models. This advancement enables the 
+implementation of PSSR using familiar HTML syntax, simplifying template
+development and adoption. 
+
+This work will focus on exploring existing approaches to non-blocking PSSR,
+which include the use of \textit{reactive programming} and \textit{coroutines}
+to implement non-blocking I/O operations. As an alternative to these
+approaches, we will investigate the viability of \textit{Virtual Threads} in Java 21 
+for implementing non-blocking PSSR\@. Section 2 provides an overview
+of the state-of-the-art in non-blocking PSSR and HTML template engines. Section
+3 provides a more detailed description of the issues associated with
+traditional template engines for non-blocking PSSR, and how this work aims to
+address them. Section 4 describes the benchmark methodology and implementation.
+Finally, Sections 5 and 6 present the results and conclusions of this work,
+respectively.

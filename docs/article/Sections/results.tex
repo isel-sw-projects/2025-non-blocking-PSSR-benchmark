@@ -15,6 +15,12 @@ second) for each template engine, with the x-axis representing the number of
 concurrent users and the y-axis representing the throughput in requests per
 second.
 
+Both the Quarkus and Spring MVC implementations were configured with an output
+buffer size of 8KB, despite the Quarkus implementation not enabling PSSR at
+this size. This configuration was chosen to ensure consistency across Spring
+MVC and Quarkus, as the Spring MVC implementation does not support PSSR for the
+tested templates.
+
 Since the obtained results for JMeter and Apache Bench show no significant
 differences, only the JMeter results will be presented.
 
@@ -24,20 +30,21 @@ The results in Figure~\ref{fig:presentations-webflux-jmeter} depict the
 throughput (number of requests per second) for each template engine, with
 concurrent users ranging from 1 to 128, from left to right. The benchmarks
 include HtmlFlow using suspendable web templates (HtmlFlow-Susp), Jstachio
-using Virtual Threads with the Iterable interface (Jstachio-Virtual), and Thymeleaf using the reactive View
-Resolver driver (Thymeleaf-Rx). \textit{Sync} and \textit{Virtual} represent
-the average throughput of the blocking approaches (i.e., KotlinX, Rocker,
-Jstachio, Pebble, Freemarker, Trimou, HtmlFlow, and Thymeleaf) when run in the
-context of a separate coroutine dispatcher or Virtual Threads, respectively.
+using Virtual Threads with the \texttt{Iterable} interface (Jstachio-Virtual),
+and Thymeleaf using the reactive View Resolver driver (Thymeleaf-Rx).
+\textit{Sync} and \textit{Virtual} represent the average throughput of the
+blocking approaches (i.e., KotlinX, Rocker, Jstachio, Pebble, Freemarker,
+Trimou, HtmlFlow, and Thymeleaf) when run in the context of a separate
+coroutine dispatcher or Virtual Threads, respectively.
 
 We show the HtmlFlow-Susp, Jstachio-Virtual, and Thymeleaf-Rx engines
 separately to observe the performance of the non-blocking engines when using
 the Suspending, Virtual Thread, and Reactive approaches. The \textit{Sync} and
 \textit{Virtual} are aggregated due to the similar performance of different
-engines when using those approaches. 
+engines when using those approaches.
 
 \begin{figure}[h]
-     \centering
+     \isPreprints{\centering}{}
      \includegraphics[width=0.8\textwidth]{./Graphs/presentations-webflux-jmeter.png}
      \caption{Presentation Benchmark Results in Spring WebFlux with JMeter}\label{fig:presentations-webflux-jmeter}
 \end{figure}
@@ -54,7 +61,7 @@ Resolver driver, also scales to 128 users, albeit less effectively, achieving
 around 8,500 requests per second.
 
 \begin{figure}[h]
-     \centering
+     \isPreprints{\centering}{}
      \includegraphics[width=0.8\textwidth]{./Graphs/presentations-springmvc-jmeter.png}
      \caption{Presentation Benchmark Results in Spring MVC with JMeter}\label{fig:presentations-springmvc-jmeter}
 \end{figure}
@@ -69,7 +76,7 @@ these values are slightly lower than those observed in the Spring WebFlux
 implementation.
 
 \begin{figure}[h]
-     \centering
+     \isPreprints{\centering}{}
      \includegraphics[width=0.8\textwidth]{./Graphs/presentations-quarkus-jmeter.png}
      \caption{Presentation Benchmark Results in Quarkus with JMeter}\label{fig:presentations-quarkus-jmeter}
 \end{figure}
@@ -85,7 +92,7 @@ similar performance.
 \subsection{Stocks Results}
 
 \begin{figure}[h]
-     \centering
+     \isPreprints{\centering}{}
      \includegraphics[width=0.8\textwidth]{./Graphs/stocks-webflux-jmeter.png}
      \caption{Stocks Benchmark Results in Spring WebFlux with JMeter}\label{fig:stocks-webflux-jmeter}
 \end{figure}
@@ -96,13 +103,15 @@ with the more complex Stock class, including 20 instances. Despite the
 increased complexity and number of instances, the scalability of the engines
 remains largely unaffected. However, throughput is reduced by approximately 50
 percent across all engines, with HtmlFlow achieving 6,000 requests per second.
-The Thymeleaf implementation using the reactive View Resolver driver reaches
-5,000 requests per second, suggesting that the performance drop compared to the
-Presentation benchmark is not substantial.
-
+Since the \texttt{Stock} class\ contains more data properties than the
+\texttt{Presentation} class, the data binding to the template engine adds
+overhead, which explains the reduced performance. The Thymeleaf implementation
+using the reactive View Resolver driver reaches 5,000 requests per second,
+suggesting that the performance drop compared to the Presentation benchmark is
+not substantial.
 
 \begin{figure}[h]
-     \centering
+     \isPreprints{\centering}{}
      \includegraphics[width=0.8\textwidth]{./Graphs/stocks-springmvc-jmeter.png}
      \caption{Stocks Benchmark Results in Spring MVC with JMeter}\label{fig:stocks-springmvc-jmeter}
 \end{figure}
@@ -114,7 +123,7 @@ second, while no significant change is observed when using Virtual Threads. As
 such, both approaches scale effectively up to 128 concurrent users.
 
 \begin{figure}[h]
-     \centering
+     \isPreprints{\centering}{}
      \includegraphics[width=0.8\textwidth]{./Graphs/stocks-quarkus-jmeter.png}
      \caption{Stocks Benchmark Results in Quarkus with JMeter}\label{fig:stocks-quarkus-jmeter}
 \end{figure}
@@ -139,5 +148,5 @@ tested templates.
 
 Additionally, the results show that approaches using Virtual Threads are able
 to scale as effectively as those using reactive programming or Kotlin
-coroutines, with the advantage of being easier to implement and understand for 
-developers. 
+coroutines, allowing \textit{external} DSLs to be used in a non-blocking context, 
+effectively enabling PSSR\@. 

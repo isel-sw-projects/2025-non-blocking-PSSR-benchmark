@@ -40,50 +40,90 @@ March, 2025}
 
 \section{Introduction}
 
-Modern web applications rely on different rendering strategies to optimize performance, user experience, and \textit{scalability}. The two most dominant approaches are \textit{Server-Side Rendering (SSR)} and \textit{Client-Side Rendering (CSR)}.
+Modern web applications rely on different rendering strategies to optimize
+performance, user experience, and \textit{scalability}. The two most dominant
+approaches are \textit{Server-Side Rendering (SSR)} and \textit{Client-Side
+  Rendering (CSR)}.
 
-SSR generates HTML content on the server before sending it to the client, resulting in faster initial page loads and better Search Engine Optimization (SEO) \cite{prismic}. However, SSR can increase server load and reduce \textit{throughput}\footnote{The number of requests the server can handle per second (RPS)} since each request requires additional processing before responding.
+SSR generates HTML content on the server before sending it to the client,
+resulting in faster initial page loads and better Search Engine Optimization
+(SEO). However, SSR can increase server load and reduce
+\textit{throughput}\footnote{The number of requests the server can handle per
+  second (RPS)} since each request requires additional processing before
+responding.
 
-In contrast, CSR shifts the rendering workload to the browser. The server initially sends a minimal HTML document with JavaScript, which dynamically loads the page content. While CSR reduces the server’s burden, it can lead to slower initial load times, as users must wait for JavaScript execution before meaningful content appears \cite{nextjs}.
+In contrast, CSR shifts the rendering workload to the browser. The server
+initially sends a minimal HTML document with JavaScript, which dynamically
+loads the page content. While CSR reduces the server’s burden, it can lead to
+slower initial load times, as users must wait for JavaScript execution before
+meaningful content appears.
 
 \textit{Progressive Server-Side Rendering (PSSR)} combines benefits from both SSR and CSR by streaming HTML content progressively. This technique enhances user-perceived performance by allowing immediate rendering while data loads asynchronously.
 
-Efficient thread utilization is crucial for low-thread servers, necessitating asynchronous, non-blocking request handling \cite{webist23}. Non-blocking PSSR is particularly advantageous in event-driven architectures, where asynchronous I/O operations (e.g., database queries, and API calls) allow servers to manage multiple concurrent requests efficiently. By reducing idle time during I/O operations, non-blocking PSSR enhances a server's capacity to handle high request volumes with limited threads and immediately send partial responses to clients.
+Efficient thread utilization is crucial for low-thread servers, necessitating
+asynchronous, non-blocking request handling \cite{webist23}. Non-blocking PSSR
+is particularly advantageous in event-driven architectures, where asynchronous
+I/O operations (e.g., database queries, and API calls) allow servers to manage
+multiple concurrent requests efficiently. By reducing idle time during I/O
+operations, non-blocking PSSR enhances a server's capacity to handle high
+request volumes with limited threads and immediately send partial responses to
+clients.
 
-This work will focus on exploring Kotlin Coroutines and Structured Concurrency, as well as Java Virtual Threads as an alternative to asynchronous programming techniques, to evaluate their performance in non-blocking PSSR \cite{kotlin_coroutines, virtual_threads}.
+This work will focus on exploring Kotlin Coroutines and Structured Concurrency,
+as well as Java Virtual Threads as an alternative to asynchronous programming
+techniques, to evaluate their performance in non-blocking PSSR
+\cite{kotlin_coroutines, virtual_threads}.
 
-The benchmark will be built on Spring WebFlux and analyze methods such as those presented in \textit{Progressive Server-Side Rendering with Suspendable Web Templates} \cite{pssr-susp}. Additionally, it will build upon and extend the \textit{Spring WebFlux Comparing Template Engines} repository \cite{spring-comparing-template-engines} with the addition of approaches using Java Virtual Threads.
+The benchmark will be built on Spring WebFlux and analyze methods such as those
+presented in \textit{Progressive Server-Side Rendering with Suspendable Web
+  Templates} \cite{pssr-susp}. Additionally, it will build upon and extend the
+\textit{Spring WebFlux Comparing Template Engines} repository
+\cite{spring-comparing-template-engines} with the addition of approaches using
+Java Virtual Threads.
 
-To achieve this, benchmarking tools such as JMH, Apache Bench, and Apache JMeter will be utilized to assess performance metrics, including scalability, throughput, and latency \cite{benchmarking_web, jmh_benchmark}. The accuracy and setup complexity of these tools will also be compared.
+To achieve this, benchmarking tools such as JMH, Apache Bench, and Apache
+JMeter will be utilized to assess performance metrics, including scalability,
+throughput, and latency \cite{benchmarking_web, jmh_benchmark}. The accuracy
+and setup complexity of these tools will also be compared.
 
 \section{Deliverables}
 
-This project consists of three main components: the development of the benchmark, the creation of a report analyzing the state-of-the-art and benchmark results, and the submission of an article to a technology journal.
+This project consists of three main components: the development of the
+benchmark, the creation of a report analyzing the state-of-the-art and
+benchmark results, and the submission of an article to a technology journal.
 
 The main deliverables include:
 
 \begin{itemize}
   \item \textbf{A PSSR Benchmark in the JVM}
-  \begin{itemize}
-    \item Evaluate PSSR strategies with the use of currently existing libraries and frameworks (e.g., HtmlFlow, Thymeleaf, etc.).
-    \item Compare the performance of these implementations in terms of throughput, latency, and scalability.
-    \item Assess the feasibility of using Apache JMeter instead of Apache Bench for performance testing.
-    \item Compare the ease of setup and accuracy of results between the two tools.
-    \item Evaluate the performance and viability of using Java Virtual Threads for non-blocking PSSR.
-  \end{itemize}
+        \begin{itemize}
+          \item Evaluate PSSR strategies with the use of currently existing libraries and
+                frameworks (e.g., HtmlFlow, Thymeleaf, etc.).
+          \item Compare the performance of these implementations in terms of throughput,
+                latency, and scalability.
+          \item Assess the feasibility of using Apache JMeter instead of Apache Bench for
+                performance testing.
+          \item Compare the ease of setup and accuracy of results between the two tools.
+          \item Evaluate the performance and viability of using Java Virtual Threads for
+                non-blocking PSSR.
+        \end{itemize}
 
   \item \textbf{A Research Report}
-  \begin{itemize}
-    \item Provide an introduction and contextualization of progressive rendering and asynchronous request handling.
-    \item Analyze existing literature and state-of-the-art approaches in non-blocking web rendering.
-    \item Present an analysis of benchmark results, highlighting trade-offs between different PSSR implementations.
-  \end{itemize}
+        \begin{itemize}
+          \item Provide an introduction and contextualization of progressive rendering and
+                asynchronous request handling.
+          \item Analyze existing literature and state-of-the-art approaches in non-blocking web
+                rendering.
+          \item Present an analysis of benchmark results, highlighting trade-offs between
+                different PSSR implementations.
+        \end{itemize}
 
   \item \textbf{An Article submission}
-  \begin{itemize}
-    \item Written article for submission in a technology journal.
-    \item The article will present the benchmark results and analysis, providing insights into the performance of different PSSR strategies in the JVM.
-  \end{itemize}
+        \begin{itemize}
+          \item Written article for submission in a technology journal.
+          \item The article will present the benchmark results and analysis, providing insights
+                into the performance of different PSSR strategies in the JVM.
+        \end{itemize}
 \end{itemize}
 
 \section{Planning}
@@ -92,31 +132,31 @@ The main deliverables include:
   \centering
   \renewcommand{\arraystretch}{1.3}
   \begin{tabular}{|p{8cm}|c|c|p{6cm}|}
-      \hline
-      \textbf{Task} & \textbf{Duration} & \textbf{Deadline} \\
-      \hline
-      Research on PSSR, reactive data models, Spring WebFlux & 2 weeks & March 3 \\
-      \hline
-      Project proposal & 1 week & March 10 \\
-      \hline
-      Proposal presentation & 1 week & March 17 \\
-      \hline
-      Benchmark development & 3 weeks & April 7 \\
-      \hline
-      Initial writing phase – Introduction, contextualization & 3 weeks & April 28 \\
-      \hline
-      Project status presentation & 1 week & May 5 \\
-      \hline
-      Final writing phase – Refinements, result analysis, conclusions & 3 weeks & May 26 \\
-      \hline
-      Draft article, beta submission & 1 week & June 2 \\
-      \hline
-      Writing quality improvements & 3 weeks & June 30 \\
-      \hline
-      Final article version & 1 week & July 5 \\
-      \hline
-      Final submission & 1 week & July 12 \\
-      \hline
+    \hline
+    \textbf{Task}                                                   & \textbf{Duration} & \textbf{Deadline} \\
+    \hline
+    Research on PSSR, reactive data models, Spring WebFlux          & 2 weeks           & March 3           \\
+    \hline
+    Project proposal                                                & 1 week            & March 10          \\
+    \hline
+    Proposal presentation                                           & 1 week            & March 17          \\
+    \hline
+    Benchmark development                                           & 3 weeks           & April 7           \\
+    \hline
+    Initial writing phase – Introduction, contextualization         & 3 weeks           & April 28          \\
+    \hline
+    Project status presentation                                     & 1 week            & May 5             \\
+    \hline
+    Final writing phase – Refinements, result analysis, conclusions & 3 weeks           & May 26            \\
+    \hline
+    Draft article, beta submission                                  & 1 week            & June 2            \\
+    \hline
+    Writing quality improvements                                    & 3 weeks           & June 30           \\
+    \hline
+    Final article version                                           & 1 week            & July 5            \\
+    \hline
+    Final submission                                                & 1 week            & July 12           \\
+    \hline
   \end{tabular}
   \label{tab:planning}
 \end{table}
