@@ -1,185 +1,147 @@
 \section{Problem Statement}
 
-In this section we discuss the problems associated with progressive server-side
-rendering (PSSR) in modern web applications, focusing on the challenges and
-limitations of existing approaches. We then present the objective of our work,
-which aims to increase the available options for PSSR in web applications,
-particularly in the context of JVM based frameworks.
+In this section, we examine the challenges of implementing Progressive
+Server-Side Rendering (PSSR) in modern web applications, with a focus on the
+limitations of current template engine designs. Our goal is to broaden the
+range of options available for PSSR, particularly within JVM-based frameworks.
 
-\textit As we outlined in the previous section, \textit{external} DSLs for HTML such as Thymeleaf, Jstachio, Handlebars, and others define HTML
-templates within HTML documents with markers specific to the engine. Template engines that use \textit{internal} DSLs, such as KotlinX or HtmlFlow,
-define the HTML templates in the programming language itself, leveraging the language's
-syntax and features to create the templates.
+Reactive streams, such as those based on \texttt{Observable} (from RxJava) and
+\texttt{Flow} (from the Java 9+ standard library), are abstractions that enable
+progressive server-side rendering (PSSR) in environments utilizing
+\textit{internal} DSLs. These abstractions provide a non-blocking, asynchronous
+way to handle data streams, making them ideal for generating and sending HTML
+content incrementally as data becomes available. In PSSR, the server does not
+wait for the entire data model to be ready before beginning to render HTML.
+Instead, it processes and streams each piece of data to the client as soon as
+it arrives. Reactive types like \texttt{Observable<T>} or \texttt{Flow<T>}
+facilitate this by representing data as a sequence of asynchronous events.
+These streams emit values over time and support backpressure, allowing the
+rendering engine to consume data at a manageable rate without overwhelming
+system resources. A reactive stream might emit a sequence of
+\texttt{Presentation} objects, each representing a talk in a conference
+schedule. As each \texttt{Presentation} is emitted by the \texttt{Observable}
+or \texttt{Flow}, the internal DSL-based engine—such as HtmlFlow—can render the
+corresponding HTML fragment and immediately flush it to the client. This
+approach is demonstrated in \autoref{lst:presentation-observable}, where each
+presentation is rendered asynchronously as it is emitted by an
+\texttt{Observable}, and in \autoref{lst:presentation-flow}, which shows an
+equivalent coroutine-based implementation using Kotlin's \texttt{Flow}. Both
+examples highlight how internal DSLs can natively integrate with reactive types
+to enable non-blocking, progressive rendering on the server side.
 
-\textit{Internal} DSLs can more easily support asynchronous data models since
-they can leverage the language's existing features and libraries, thus enabling
-the progressive streaming of HTML content to the client, with \textit{external}
-DSLs supporting simpler blocking data models such as \texttt{Iterable} or
-\texttt{List}. While on the previous section we outlined several advantages of
-using \textit{internal} DSLs over textual templates for HTML, there are also
-advantages to using \textit{external} DSLs:
+\lstset{style=listingstyle}
+\begin{lstlisting}[
+    language=Kotlin,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none,
+    caption={\textit{HtmlFlow} presentation template with \texttt{Observable}},
+    label={lst:presentation-observable}
+]
+await { div, model: Observable<Presentation>, onCompletion ->
+    model
+        .doOnNext { 
+            presentationFragmentAsync
+                .renderAsync(it)
+                .thenApply { frag -> div.raw(frag) }
+        }
+        .doOnComplete { onCompletion.finish() }
+        .subscribe()
+}
+\end{lstlisting}
+\hfil
+\begin{lstlisting}[
+    language=Kotlin,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none,
+    label={lst:presentation-flow},
+    caption={\textit{HtmlFlow} presentation template with \texttt{Flow}},
+]
+suspending { model: Flow<Presentation> ->
+    model.collect {
+        presentationFragmentAsync
+            .renderAsync(it)
+            .thenApply { frag -> raw(frag) }
+    }
+}
+\end{lstlisting}
 
-\begin{enumerate}
-    \item \emph{Separation of Concerns}: \textit{External} DSLs allow for a clear separation between
-          the HTML structure and the application logic, making it easier to maintain and update
-          templates without modifying the underlying code. This ''
-          separation'' can be beneficial, as it allows front-end developers to work on the HTML
-          templates without needing to understand the underlying application logic or programming language.
-    \item \emph{Cross-Language Compatibility}: \textit{External} DSLs can be used across different programming languages
-          and frameworks, making them more versatile and easier to integrate into existing projects.
-          This is particularly useful in environments where multiple languages are used.
-    \item \emph{Familiarity}: Many developers are already familiar with HTML and its syntax, making
-          it easier to work with \textit{external} DSLs that use HTML-like syntax.
-\end{enumerate}
+By contrast, template engines that use \textit{external} DSLs—such as JStachio,
+Thymeleaf, or Handlebars—typically define templates within static HTML
+documents using custom markers, and rely on blocking interfaces like
+\texttt{Iterable} or \texttt{List}. These interfaces require the entire data
+model to be materialized before rendering can begin, which blocks server
+threads during template expansion and significantly limits scalability under
+high concurrency. These interfaces require the entire data model to be
+materialized before rendering can begin, which blocks server threads during
+template expansion and significantly limits scalability under high concurrency.
+Some reactive libraries, such as RxJava, provide bridging mechanisms like
+\texttt{Observable.blockingIterable()}, which allows asynchronous data sources
+to be exposed as Iterable by blocking the thread until new items are available.
+While useful for compatibility with traditional APIs, this approach
+reintroduces blocking behavior and undermines the benefits of non-blocking
+I/O—especially under high concurrency. \autoref{lst:presentation-jstachio}
+illustrates this model using a JStachio template, where the engine performs a
+blocking loop over \texttt{presentationItems}.
 
-Due to these advantages, many developers prefer to use \textit{external} DSLs
-for HTML templates, even if it means sacrificing some of the advantages of
-using \textit{internal} DSLs. However, this preference can lead to challenges
-when it comes to progressive server-side rendering (PSSR) and non-blocking I/O,
-as many \textit{external} DSLs do not support asynchronous data models.
-
-\autoref{lst:presentation-jstachio} shows the HTML template for a \texttt{Presentation} class using the JStachio template engine, 
-while \autoref{lst:presentation-htmlflow} presents the equivalent template using HtmlFlow.
+\vspace{1cm}
 
 \lstset{style=listingstyle}
 \begin{lstlisting}[
   language=Kotlin,
   numbers=none,
   basicstyle=\scriptsize\ttfamily,
-  caption={Presentation HTML template using \textit{JStachio}}
+  caption={Presentation HTML template using \textit{JStachio}},
   label={lst:presentation-jstachio}
 ]
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-compatible" content="IE=Edge">
-    <title>
-        JFall 2013 Presentations - JStachio
-    </title>
-    <link rel="Stylesheet" href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css">
-</head>
-<body>
-<div class="container">
-    <div class="pb-2 mt-4 mb-3 border-bottom">
-        <h1>
-            JFall 2013 Presentations - JStachio
-        </h1>
+{{#presentationItems}}
+<div class="card mb-3 shadow-sm rounded">
+    <div class="card-header">
+        <h5 class="card-title">
+            {{title}} - {{speakerName}}
+        </h5>
     </div>
-    {{#presentationItems}}
-    <div class="card mb-3 shadow-sm rounded">
-        <div class="card-header">
-            <h5 class="card-title">
-                {{title}} - {{speakerName}}
-            </h5>
-        </div>
-        <div class="card-body">
-            {{summary}}
-        </div>
+    <div class="card-body">
+        {{summary}}
     </div>
-    {{/presentationItems}}
 </div>
-</body>
-</html>
+{{/presentationItems}}
 \end{lstlisting}
-\vspace{0.5cm}
-\begin{lstlisting}[
-  language=Kotlin,
-  numbers=none,
-  basicstyle=\scriptsize\ttfamily,
-  caption={Presentation HTML template using \textit{HtmlFlow}}
-  label={lst:presentation-htmlflow}
-]
- val htmlFlowTemplate: HtmlViewAsync<Observable<Presentation>> =
-    HtmlFlow.viewAsync<Observable<Presentation>?> { view ->
-        view.html {
-            attrLang("en-us")
-            head {
-                meta { attrCharset("UTF-8") }
-                meta { attrName("viewport").attrContent("width=device-width, initial-scale=1.0") }
-                meta { addAttr("http-equiv", "X-UA-Compatible").attrContent("IE=Edge") }
-                title { text("JFall 2013 Presentations - HtmlFlow") }
-                link { attrRel(EnumRelType.STYLESHEET).attrHref("/webjars/bootstrap/5.3.0/css/bootstrap.min.css") }
-            }
-            body {
-                div {
-                    attrClass("container")
-                    div {
-                        attrClass("pb-2 mt-4 mb-3 border-bottom")
-                        h1 { text("JFall 2013 Presentations - HtmlFlow") }
-                    }
-                    await { div, model: Observable<Presentation>, onCompletion ->
-                        model
-                            .doOnNext { 
-                                presentationFragmentAsync
-                                    .renderAsync(it)
-                                    .thenApply { frag -> div.raw(frag) }
-                            }
-                            .doOnComplete { onCompletion.finish() }
-                            .subscribe()
-                    }
-                }
-            }
-        }
-    }.threadSafe()
-\end{lstlisting}
-\lstset{style=listingstyle}
 
-HtmlFlow is an example of an \textit{internal} DSL that uses calls to HTML
-builders as a way to emit HTML\@. It allows for the use of the
-\texttt{Observable} class as a data model, which in turn allows for the definition of a
-\texttt{Consumer<Presentation>} through the \texttt{doOnNext} method. Every
-time a new value is emitted to the \texttt{Observable}, the \texttt{doOnNext}
-method is called, emitting the HTML fragment for the \texttt{Presentation}
-object to the client.
+Despite these performance limitations, external DSLs remain popular due to
+several advantages:
 
-The Jstachio template engine, on the other hand, uses an \textit{external} DSL,
-where the HTML template is defined in a separate file. The template engine uses
-the \texttt{presentationItems} variable to define the data model, which is a
-list of \texttt{Presentation} objects. This allows the template engine to
-iterate over the list of \texttt{Presentation} objects and render the HTML for
-each one.
+\begin{enumerate}
+    \item \emph{Separation of Concerns}: HTML templates are decoupled from application logic, enabling front-end developers to contribute without modifying back-end code.
+    \item \emph{Cross-Language Compatibility}: External DSLs are portable across languages and frameworks, easing integration in multi-language environments.
+    \item \emph{Familiarity}: Many developers are comfortable with HTML syntax, lowering the barrier to entry and improving maintainability.
+\end{enumerate}
 
-As demonstrated, the HtmlFlow template enables PSSR by directly supporting the
-use of the \texttt{Observable} class as a data model. However, not all
-programmers are familiar with asynchronous programming models, which can make
-implementing this solution challenging. In contrast, Jstachio defines templates
-using standard HTML syntax with specific tags for the template engine,
-resulting in a simpler and more accessible template definition. However,
-because Jstachio templates rely on an \texttt{Iterable} interface,
-they block the calling thread until the entire HTML content is rendered and
-therefore do not support non-blocking PSSR\@.
+These strengths make external DSLs appealing—even when they come at the cost of
+blocking, synchronous rendering. However, this tradeoff becomes critical under
+high concurrency, where blocking threads severely degrades throughput. Emerging
+features in the Java ecosystem, particularly \textit{virtual threads}
+introduced in Java 21 as part of Project Loom, offer a promising solution to
+this challenge. Virtual threads drastically reduce the overhead of blocking
+operations by decoupling thread execution from OS-level threads. As a result,
+engines that rely on blocking interfaces—like those used in
+external DSLs—can potentially achieve scalability levels that approach those of
+non-blocking, asynchronous engines.
 
-% Mencionar que certas DSLs internas não suportam PSSR por 
-% causa de HTML mal formado? (KotlinX)
+% Incluir este parágrafo?
+% In previous work \cite{PSSR-WISE2024}, Carvalho benchmarked the performance of
+% HtmlFlow (an internal DSL) using suspendable templates within a Spring WebFlux
+% application. HtmlFlow scaled efficiently to 128 concurrent users and delivered
+% up to 4,000 requests per second. In contrast, blocking engines such as JStachio
+% saturated at just 4 concurrent users, maxing out at around 400 requests per
+% second—highlighting the scalability limitations of blocking models.This work
+% builds upon those findings by evaluating whether virtual threads can close this
+% performance gap for blocking template engines. Specifically, we aim to
+% determine whether external DSLs—traditionally unsuitable for PSSR due to their
+% reliance on blocking APIs—can become viable for progressive rendering when
+% powered by virtual threads.
 
-In previous work \cite{PSSR-WISE2024}, Carvalho developed a benchmark
-using Spring Webflux to evaluate the performance of HtmlFlow with suspendable
-web templates. In this benchmark, HtmlFlow's performance was compared to that
-of Thymeleaf using a reactive approach, as well as other template engines such
-as the one shown in \autoref{lst:presentation-JStachio}. The results
-demonstrated that HtmlFlow scaled efficiently up to 128 concurrent users,
-achieving a throughput of up to 4,000 requests per second. In contrast, the
-blocking template engines ceased to scale beyond 4 concurrent users, reaching a
-maximum throughput of approximately 400 requests per second. These findings
-indicate that engines which block the calling thread scale poorly and are not
-suitable for PSSR\@.
-
-% Expandir sobre virtual threads aqui?
-With the advent of Java 21 and the introduction of \textit{Virtual Threads}, it
-is now possible to execute code that would otherwise block the calling thread
-in a scalable, non-blocking manner. This advancement enables the use of these
-\textit{external} DSLs in non-blocking contexts. The objective of this work is
-to evaluate the performance of these template engines when leveraging Virtual
-Threads, and to determine whether they can be made viable for PSSR\@. We will
-also compare the performance of this approach with existing solutions based on
-reactive programming and Kotlin coroutines.
-
-If the performance of these engines proves comparable to that of current
-approaches, it would enable PSSR to be implemented using more familiar HTML
-syntax, simplifying template development and adoption. Furthermore, template
-engine developers seeking to support PSSR would no longer need to implement
-complex asynchronous programming models to achieve non-blocking I/O; instead,
-they could rely on the traditional approaches used for Server Side Rendering
-(SSR).
+If successful, this approach would enable developers to reap the ergonomic
+benefits of external DSLs while maintaining scalable performance, without
+adopting complex asynchronous paradigms. It would also simplify the
+implementation of PSSR across a broader range of frameworks and engines, making
+the technique more accessible to mainstream web development.
