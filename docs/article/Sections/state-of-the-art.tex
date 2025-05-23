@@ -161,6 +161,58 @@ delayed initial response.
 
 \subsubsection{Spring WebFlux}
 
+Spring WebFlux is a reactive web framework built on a non-blocking,
+event-driven architecture that enables efficient handling of a large number of
+concurrent connections with minimal resource usage. Unlike traditional
+servlet-based stacks that rely on a thread-per-request model, WebFlux operates
+on reactive runtimes like Netty, where a small, fixed-size event loop manages
+all I/O events. Incoming HTTP requests are routed to handler functions or
+annotated controllers, which return reactive types such as \texttt{Mono<T>} and
+\texttt{Flux<T>}—Publisher implementations defined by the Reactive Streams
+specification. A \texttt{Mono} represents a single asynchronous value (or
+none), while a \texttt{Flux} represents a stream of zero or more values. These
+abstractions allow the entire request lifecycle—from controller invocation to
+response rendering—to be orchestrated as a chain of non-blocking, asynchronous
+operations. I/O-bound tasks such as database queries or external API calls do
+not occupy threads during execution, enabling the framework to scale gracefully
+under high load and maintain responsiveness even in resource-constrained
+environments.
+
+Progressive Server-Side Rendering (PSSR) is natively supported in WebFlux via
+\texttt{Flux}-based controllers. When a controller returns a
+\texttt{Flux<String>} or another stream of HTML fragments, WebFlux can begin
+streaming content to the client as soon as the first elements are emitted. This
+allows browsers to incrementally render parts of the response without waiting
+for the entire payload, significantly reducing Time to First Byte (TTFB) and
+improving user-perceived performance. By integrating PSSR directly into the
+reactive processing pipeline, WebFlux facilitates responsive and resilient web
+applications well-suited for modern microservices architectures.
+
+An illustrative example of PSSR in WebFlux is shown below:
+
+\begin{lstlisting}[language=Java]
+@GetMapping(value = "/pssr", produces = MediaType.TEXT_HTML_VALUE)
+public Flux<String> renderChunks() {
+    return Flux.range(1, 10)
+               .delayElements(Duration.ofMillis(500))
+               .map(i -> "<p>Chunk " + i + "</p>\n");
+}
+\end{lstlisting}
+
+In this example, the method emits one HTML chunk every 500 milliseconds. As
+each chunk is generated, it is immediately written to the HTTP response,
+allowing the client to begin rendering content even as more data is still being
+produced. Unlike \texttt{StreamingResponseBody} in Spring MVC, which is
+constrained by servlet buffer thresholds and blocking semantics, WebFlux
+ensures that each emitted item is pushed to the client as soon as the network
+is ready, without occupying a dedicated thread. Moreover, WebFlux integrates
+seamlessly with reactive data sources such as R2DBC (Reactive Relational
+Database Connectivity) and reactive NoSQL drivers, making it possible to build
+end-to-end non-blocking applications. HTML builders and DSLs used in
+conjunction with WebFlux must be designed to accommodate reactive streams,
+ensuring that view generation does not violate the non-blocking contract by
+performing blocking I/O or awaiting asynchronous operations imperatively.
+
 \subsubsection{Quarkus}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
