@@ -90,8 +90,6 @@ synchronous code while benefiting from the scalability of non-blocking I/O.
 
 \subsubsection{Spring MVC}
 
-\subsubsection{Spring MVC}
-
 Spring MVC is a classical, synchronous web framework built on the
 thread-per-request model. When an HTTP request is received, it is handled by a
 dedicated thread from the server’s thread pool (e.g., Tomcat, Jetty, or
@@ -365,7 +363,7 @@ template engines, classified according to the identified properties.
     \hline
     \textbf{Thymeleaf}
      & External DSL
-     & \shortstack{\texttt{Iterable}               \\\texttt{Publisher}}
+     & \shortstack{\texttt{Iterable} \\\texttt{Publisher}}
      & \texttt{Publisher}$^{(1)}$
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
@@ -668,18 +666,6 @@ on their specific needs or preferences.
 \subsubsection{Asynchronous support}
 \label{sec:async-support}
 
-Explicar Observable e modelos reactivos
-
-Distinguish between template engines that support and do not support
-asynchronous data models.
-
-1. Nem se quer Existe API para iterar sobre um Async data model.
-E.g JStachio, .... apenas suportam interface Iterable. => Compilation Error.
-
-2. Consegue usar qq API e.g Kotlinx.Html and Groovy  => usa mal => produzir HTML out of order
-
-3. Sim suporta => well-formed HTML => Thymleaf e o HtmlFlow
-
 One of the reasons for legacy web templates not supporting asynchronous APIs is
 the absence of a unified standard calling convention for asynchronous calls.
 While there is a single, straightforward way to use a synchronous API with a
@@ -807,11 +793,10 @@ portion~\cite{schiller2007progressive}.
 
 Former techniques all describe methods of progressively adding content to a web
 page depending on client-side JavaScript.
-
-Introduce Thymeleaf
-
-Spring resolver does ot natively
-
+The Java Thymeleaf, the default SSR template engine for Spring web servers,
+added support for PSSR in 2018, through the use of a specific non-blocking
+Spring \texttt{ViewResolver} driver and without requiring client-side
+JavaScript.
 Carvalho~\cite{carvalho2023async} introduced an SSR solution that manages
 multiple data models and asynchronous APIs while ensuring well-formed HTML,
 PSSR, and non-blocking template resolution. That solution builds upon HtmlFlow,
