@@ -7,7 +7,7 @@ performance, user experience, and \textit{scalability}. The two most dominant
 approaches are \textit{Server-Side Rendering (SSR)} and \textit{Client-Side
     Rendering (CSR)}. SSR generates HTML content on the server before sending it to
 the client, resulting in a faster \textit{First Contentful Paint (FCP)}
-\cite{Edgar2024-FCP} and better Search Engine Optimization (SEO). However, SSR
+~\cite{Edgar2024-FCP} and better Search Engine Optimization (SEO). However, SSR
 can increase server load and reduce \textit{throughput}\footnote{The number of
     requests the server can handle per second (RPS)} since each request requires
 additional processing before responding. In contrast, CSR shifts the rendering
@@ -28,21 +28,21 @@ not need to execute JavaScript or make additional requests to retrieve page cont
 Efficient thread utilization is crucial for low-thread servers. These servers
 must handle many concurrent requests without being overwhelmed, which
 necessitates asynchronous, non-blocking request handling
-\cite{carvalho2023async}. By leveraging asynchronous I/O operations—such as
+~\cite{carvalho2023async}. By leveraging asynchronous I/O operations—such as
 database queries and API calls, servers can avoid blocking threads while
 waiting for data, thereby maximizing throughput and responsiveness. To support
 this non-blocking architecture, PSSR implementations require template engines
 that are compatible with asynchronous data models and I/O. Some modern template
-engines, such as HtmlFlow \cite{htmlflow} and Thymeleaf \cite{thymeleaf}, have
+engines, such as HtmlFlow~\cite{htmlflow} and Thymeleaf~\cite{thymeleaf}, have
 been designed with these capabilities in mind. However, many traditional
 template engines—particularly those using external domain-specific languages
-\cite{Fowler03} (DSLs)—still depend on blocking interfaces like
+~\cite{Fowler03} (DSLs)—still depend on blocking interfaces like
 \texttt{Iterable} for data processing. This blocking behavior forces server
 threads to remain idle until the entire HTML output is ready, undermining the
 performance benefits of non-blocking I/O and limiting scalability in
 high-concurrency environments. 
 
-With the introduction of \textit{Virtual Threads} \cite{oracle-virtual-threads}
+With the introduction of \textit{Virtual Threads}~\footnote{\url{https://openjdk.org/jeps/444}}
 in Java 21, it is now possible to execute blocking I/O operations in a
 scalable, lightweight manner. This capability allows traditional template
 engines—often reliant on blocking interfaces—to operate efficiently in
