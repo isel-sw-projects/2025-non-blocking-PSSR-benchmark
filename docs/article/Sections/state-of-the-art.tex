@@ -215,6 +215,59 @@ performing blocking I/O or awaiting asynchronous operations imperatively.
 
 \subsubsection{Quarkus}
 
+Quarkus is a modern, cloud-native Java framework that supports both imperative
+and reactive programming models. It is built on top of Vert.x,
+which provides a non-blocking, event-driven runtime similar to Netty. Incoming
+HTTP requests are processed asynchronously on a small, fixed-size event loop
+thread pool, allowing the framework to handle many concurrent connections
+efficiently without blocking threads. Quarkus supports Kotlin coroutines and
+reactive APIs such as Mutiny for asynchronous programming, enabling developers
+to write sequential-style code that runs in a non-blocking manner.
+
+For traditional imperative-style request handling, Quarkus provides integration
+with JAX-RS, where resource methods can return synchronous types or
+asynchronous constructs such as \texttt{CompletionStage}. To enable Progressive
+Server-Side Rendering (PSSR) in imperative endpoints, Quarkus leverages the
+JAX-RS \texttt{StreamingOutput} interface. By returning a
+\texttt{StreamingOutput} instance, developers can write parts of the HTTP
+response body incrementally as data becomes available. This approach allows the
+server to flush HTML fragments progressively to the client, improving the
+perceived responsiveness especially for long-running or large responses.
+However, like other streaming mechanisms based on servlet buffers, the initial
+data flush may be delayed until internal buffers (commonly around 8KB) are
+filled. However, Quarkus allows configuring the buffer size to a smaller value, which
+can help mitigate this issue.
+
+\begin{lstlisting}[language=java,caption={Quarkus example using StreamingOutput for progressive HTML streaming}]
+@GET
+@Path("/stream")
+@Produces(MediaType.TEXT_HTML)
+public StreamingOutput streamHtml() {
+    return output -> {
+        PrintWriter writer = new PrintWriter(output);
+        writer.println("<html><body>");
+        writer.flush(); // Flush initial HTML header
+
+        for (int i = 1; i <= 5; i++) {
+            writer.println("<p>Chunk " + i + "</p>");
+            writer.flush(); // Flush each chunk incrementally
+            Thread.sleep(500); // Simulate processing delay
+        }
+
+        writer.println("</body></html>");
+        writer.flush();
+    };
+}
+\end{lstlisting}
+
+This example demonstrates how \texttt{StreamingOutput} can be used to send
+partial HTML content in chunks, allowing browsers to progressively render the
+response while the server continues processing. Quarkus’ architecture ensures
+that the underlying event loop threads are not blocked by these writes, as the
+framework offloads blocking I/O operations to worker threads. This combination
+of non-blocking event-driven runtime and incremental response streaming enables
+efficient PSSR even within imperative programming styles.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
