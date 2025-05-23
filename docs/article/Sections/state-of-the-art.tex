@@ -1,10 +1,10 @@
 \section{Background and Related Work}
 
-In this section, we first examine the different design choices adopted by web 
-servers in their internal architectures, and how these choices impact the 
+In this section, we first examine the different design choices adopted by web
+servers in their internal architectures, and how these choices impact the
 behavior of the web template engines.
-Then, in Subsection~2.2, we present the main properties that characterize each 
-web template technology approach, along with the advantages and drawbacks that 
+Then, in Subsection~2.2, we present the main properties that characterize each
+web template technology approach, along with the advantages and drawbacks that
 result from these characteristics.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,8 +19,11 @@ which a thread is assigned to handle each request. As the load increases, the
 number of active threads can grow rapidly, potentially exhausting the pool.
 This can lead to performance and scalability issues, as the system may become
 bogged down by context switching and thread management
-overhead~\cite{kant2000scalable}. Spring MVC is one of the most widely used
-frameworks that follows this model.
+overhead~\cite{kant2000scalable}.
+In the Java ecosystem, Spring Boot is one of the most widely used frameworks that
+follow this model, according to several reports such as the Stack Overflow 2024
+Developer
+Survey~\footnote{~\url{https://survey.stackoverflow.co/2024/technology\#1-web-frameworks-and-technologies}}.
 
 On the other hand, in modern \textit{low-thread} architectures, the server uses
 a small number of threads to handle a large number of requests.
@@ -61,25 +64,38 @@ per-thread overhead.
 In 2020, Karsten~\cite{karsten2020} demonstrated how this strategy supports a
 synchronous programming style, effectively abstracting away the complexities
 associated with managing continuations in asynchronous programming.
-A similar idea has been followed in Kotlin with
-\textit{coroutines}~\cite{elizarov2021coroutines}, and most recently in the Java
-standard library with \textit{virtual threads} released in Java 21.
-% Both Spring WebFlux and Vert.X web frameworks provide native support for Kotlin
-% \textit{coroutines}, enabling developers to utilize a specific
-% \texttt{Dispatcher} to switch the execution thread context to a suitable
-% subsystem and reduce \textit{system-level} blocking.
-However, no work has yet leveraged this mechanism to enable legacy template
-engines to provide PSSR while preserving non-blocking progress.
-% We will demonstrate this capability by comparing it with our proposal of
-% \textit{suspendable web templates} in a benchmark using Spring WebFlux.
 
-% Determining the appropriate size of \emph{N} for the I/O susbsystem may hinge on
-% factors such as the nature of the workload and the frequency of
-% \textit{Blocking} I/O operations.
+Among mainstream technologies, the Kotlin programming language introduces a new
+abstraction for managing coroutines and provides structured concurrency, which
+ensures that coroutines are \textit{scoped}, \textit{cancellable}, and
+\textit{coordinated} within a well-defined
+lifecycle~\cite{elizarov2021coroutines}.
+Although this model embraces the \texttt{async}/\texttt{await}
+feature~\cite{async_await}, enabling non-blocking routines to mimic the
+structure of synchronous ones, it still lacks a user-level I/O subsystem and
+relies on an explicit I/O dispatcher tied to a dedicated thread pool that frees
+worker threads for handling processing tasks.
+Moreover, web templates using their own templating dialects, such as JSP,
+Thymeleaf, or Handlebars, are unable to take advantage of such constructs, as
+they typically support only a limited subset of the host library's API—most
+commonly just the \texttt{Iterable} interface.
 
-\subsubsection{Spring WebFlux}
+Only Java virtual threads, introduced in
+JEP~444~\footnote{\url{https://openjdk.org/jeps/444}}, adopt a similar approach
+to Karsten's proposal, using user-mode threads to preserve a synchronous
+programming model while still allowing blocking I/O operations without tying up
+platform threads. When a virtual thread performs a blocking I/O operation, the
+JVM intercepts the call and transparently parks the virtual thread, freeing the
+underlying platform thread to perform other tasks. Once the I/O operation
+completes, the virtual thread is rescheduled on a platform thread and resumes
+execution. This mechanism is enabled by the JVM's integration with non-blocking
+system calls at the OS level, allowing developers to write traditional
+synchronous code while benefiting from the scalability of non-blocking I/O.
+
 
 \subsubsection{Spring MVC}
+
+\subsubsection{Spring WebFlux}
 
 \subsubsection{Quarkus}
 
@@ -91,37 +107,196 @@ engines to provide PSSR while preserving non-blocking progress.
 
 \textit{Web templates} have been the most widely adopted approach for
 constructing dynamic HTML pages.
-Web templates (such as JSP, Handlebars, or Thymeleaf), also known as
-\textit{web views}~\cite{Fowler02,Alur01}, are based on
-HTML documents augmented with template-specific markers (e.g., \texttt{<\%>},
-\texttt{\{\{\}\}}, or \texttt{\$\{\}}), which represent \textit{dynamic}
-information to be replaced at runtime with the results of corresponding
-computations, producing the final HTML page.
+Web templates or \textit{web views}~\cite{Fowler02,Alur01} (e.g. JSP, Handlebars,
+or Thymeleaf), are based on HTML documents augmented with template-specific
+markers (e.g., \texttt{<\%>}, \texttt{\{\{\}\}}, or \texttt{\$\{\}}), which
+represent \textit{dynamic} information to be replaced at runtime with the
+results of corresponding computations, producing the final HTML page.
 The process of parsing and replacing these markers---i.e.,
 \textit{resolution}---is the primary responsibility of the \textit{template
 engine}~\cite{Parr04}.
-
-One key characteristic of \textit{web templates} is their ability to receive a 
-\textit{context object}---equivalent to the \textit{model} in the model-view 
-design pattern~\cite{mvc88,Parr04}---which provides the data used to fill 
+One key characteristic of \textit{web templates} is their ability to receive a
+\textit{context object}---equivalent to the \textit{model} in the model-view
+design pattern~\cite{mvc88,Parr04}---which provides the data used to fill
 template placeholders at runtime.
-
 Web templates can be distinguished by several properties, namely:
 \begin{enumerate}
-    \item Templating idiom
+    \item \textit{Domain-specific language} idiom
     \item Supported data model APIs
     \item Asynchronous support
     \item Type safety and HTML safety
     \item Progressive rendering
 \end{enumerate}
 
-Although some of the aforementioned characteristics apply to both server-side 
-and client-side approaches, we focus solely on web template technologies for 
-server-side rendering, as our work is centered on that approach.
+Although some of the aforementioned characteristics apply to both \textit{server-side}
+and \textit{client-side} approaches, we focus solely on web template technologies for
+\textit{server-side rendering}, as our work is centered on that approach.
+Before getting deep on each of the aforementioned characteristics,
+Table~\ref{table:cmplibs} presents a breakdown of mainstream template engines,
+classified according to the identified properties.
 
-Before detailing each of the aforementioned characteristics, Table~11 presents 
-a breakdown of state-of-the-art template engines, classified according to the 
-identified properties.
+\begin{table}[h]
+  \small
+	\tabcolsep=0.1cm
+	\def\arraystretch{1.2}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{Library}
+		&\textbf{DSL idiom}
+		&\textbf{Data Model APIs}
+    &\shortstack{\textbf{Asynchronous}\\\textbf{Support}}
+    &\shortstack{\textbf{Type}\\\textbf{Safety}}
+    &\shortstack{\textbf{HTML}\\\textbf{Safety}}
+		&\shortstack{\textbf{Progressive}\\\textbf{Rendering}}
+		\\
+		\hline
+		\textbf{Freemarker}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{JSP}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{red}{\times}$}
+    \\
+    \hline
+		\textbf{JStachio}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\\hline
+		\textbf{Pebble}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Rocker}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Thymeleaf}
+		&External DSL
+		&\shortstack{\texttt{Iterable}\\\texttt{Publisher}}
+		&\texttt{Publisher}$^{(1)}$
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Trimou}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Velocity}
+		&External DSL
+		&\texttt{Iterable}
+		&\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{Clojure Hiccup}
+		&Nested Eager
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		\\
+    \hline
+    \shortstack{\textbf{Groovy }\\\textbf{MarkupBuilder}}
+		&Nested Lazy
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{red}{\times}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+    \textbf{HtmlFlow}
+		&Chaining
+		&All
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{j2html}
+		&Nested Eager
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		\\
+    \hline
+		\textbf{KotlinX}
+		&Nested Lazy
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\textcolor{PineGreen}{\checkmark}$^{(2)}$
+		&\large{$\textcolor{PineGreen}{\checkmark}$}
+		\\
+    \hline
+		\textbf{ScalaTags}
+		&Nested Eager
+		&All
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{PineGreen}{\checkmark}$}
+    &\large{$\textcolor{red}{\times}$}
+    &\large{$\textcolor{red}{\times}$}
+		\\
+		\hline
+	\end{tabular}
+	\caption{
+    Comparison of web template technologies in the Java ecosystem.
+    \\$^{(1)}$ Limited to a single model per web template and compatible with
+    the reactive stream \texttt{Publisher}.
+    \\$^{(2)}$ Non-safety for HTML attributes.
+  }
+	\label{table:cmplibs}
+\end{table}
+
+The first half of Table~\ref{table:cmplibs} lists template engines that use their
+own templating dialects, referred to as \textit{external DSLs}. The second half
+lists Java libraries that provide an \textit{internal DSL}, typically using a
+\textit{nested} or \textit{chaining} style to build HTML.
+Note that, by leveraging the host language (e.g., Clojure, Groovy, Java, Kotlin,
+or Scala) as the templating idiom, the latter impose no restrictions on the data
+model and fully support all styles of data access APIs. They also benefit from
+static type checking, which helps ensure type safety.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Templating idiom}
 
@@ -138,7 +313,7 @@ DSLs can be divided in two types: \textit{external} or
 concrete programming language.
 An example of an \textit{external} DSL is the regular expressions search
 pattern\cite{thompson1968}, since it defines its own syntax without any
-dependency of programming languages. 
+dependency of programming languages.
 On the other hand an \textit{internal} DSL is defined within a host programming
 language as a library and tends to be limited to the syntax of the host language,
 such as Java.
@@ -150,22 +325,18 @@ Traditionally, web template technologies use an \textit{external} DSL to define
 control flow constructs and data binding primitives. Early web template engines
 such as JSP, ASP, Velocity, PHP, and others adopted this \textit{external} DSL
 approach as their templating dialect.
-For example, a \texttt{foreach} loop can be expressed in each technology using its 
+For example, a \texttt{foreach} loop can be expressed in each technology using its
 own DSL:
-\\\texttt{<\% for(String item : items) \%>} in JSP, \texttt{<\% For Each item 
-In items \%>} in legacy ASP with VBScript, \texttt{\#foreach(\$item in \$items)} in 
+\\\texttt{<\% for(String item : items) \%>} in JSP, \texttt{<\% For Each item
+In items \%>} in legacy ASP with VBScript, \texttt{\#foreach(\$item in \$items)} in
 Velocity, or \texttt{<?php foreach (\$items as \$item):?>} in PHP.
 
-On the other hand, \textit{internal} DSLs for HTML allow templates to be defined 
-directly within the \emph{host} language (such as Java, Kotlin, Groovy, Scala, or 
-other general-purpose programming languages), rather than using text-based 
-template files~\cite{carvalho2019hot}. In this case, a web template is not limited 
-to templating constructs but may instead leverage any available primitive of the 
+On the other hand, \textit{internal} DSLs for HTML allow templates to be defined
+directly within the \emph{host} language (such as Java, Kotlin, Groovy, Scala, or
+other general-purpose programming languages), rather than using text-based
+template files~\cite{carvalho2019hot}. In this case, a web template is not limited
+to templating constructs but may instead leverage any available primitive of the
 host language or any external API.
-
-For example, in Java, you may iterate over data using a \texttt{for} statement,
-or using the \texttt{java.util.streams} API, or any other JVM library such as
-Guava, Varv, StreamEx, or others—according to your preferences.
 
 Using an internal DSL can have several benefits over using textual templates:
 \begin{enumerate}
@@ -177,18 +348,18 @@ Using an internal DSL can have several benefits over using textual templates:
   \item \emph{IDE support}: Many modern IDEs provide code completion, syntax
   highlighting, and other features, which can make it easier to write and
   maintain templates.
-  
+
   \item \emph{Flexibility}: Use all the features of the host programming language
   to generate HTML, can make it easier to write complex templates and reuse code.
-  
+
   \item \emph{Integration}: Because the templates are defined in Java code, for
   example, you can easily integrate them with other Java code in your
   application, such as controllers, services, repositories and models.
-  
+
 \end{enumerate}
 
 DSLs for HTML provide an API where methods or functions correspond to the names of
-available HTML elements. 
+available HTML elements.
 These methods, also known as \textit{builders}, can be combined in a chain of
 calls to mimic the construction of an HTML document in a fluent manner.
 Martin Fowler\cite{dslbook} identifies three different patterns for combining
@@ -266,6 +437,7 @@ html()
 \label{fig:dsl-idioms}
 \end{figure}
 
+
 From the three examples depicted in Figure~\ref{fig:dsl-idioms}, the \textit{nested
 function} idiom used by \textbf{ScalaTags}, as shown in the snippet of
 Figure~\ref{fig:dsl-idioms}.b), is the least verbose, requiring fewer statements than
@@ -278,13 +450,13 @@ closing tag, exemplified by \texttt{end()} in \textbf{JATL} (Figure~\ref{fig:dsl
 \texttt{\_\_()} in \textbf{HtmlFlow} (Figure~\ref{fig:dsl-idioms}.c).
 But the \textit{nested function} approach comes with a notable drawback: \textbf{they
 do not support PSSR} because the sequence of nested functions is evaluated
-backward to the order in which they are written. 
-In other words, arguments are evaluated before the functions are invoked. 
+backward to the order in which they are written.
+In other words, arguments are evaluated before the functions are invoked.
 Taking the example in Figure~\ref{fig:dsl-idioms}.b), the \texttt{title()} function is
 first evaluated, and its resulting paragraph becomes the argument for the
 \texttt{head()} call, which, in turn, becomes the argument for \texttt{html()},
 and so on.
-If HTML is emitted as functions are called, it will print tags in reverse order. 
+If HTML is emitted as functions are called, it will print tags in reverse order.
 The aforementioned DSLs must collect resulting nodes into an internal data
 structure, which is later traversed to produce the HTML output. Therefore, they
 cannot progressively emit the output as builders are called.
@@ -298,7 +470,7 @@ Due to the concise form of expressing lambdas with brackets (i.e.,
 \texttt{\{\}}) in both Groovy and Kotlin, translating the template shown in
 Figure~\ref{fig:dsl-idioms}.b) to use Groovy MarkupBuilder or KotlinX.html only
 requires replacing parentheses with brackets for parent elements.
-\textbf{HtmlFlow} also adopts this approach and provides a Kotlin-idiomatic API 
+\textbf{HtmlFlow} also adopts this approach and provides a Kotlin-idiomatic API
 as an alternative to its original Java API.
 
 
@@ -308,7 +480,27 @@ as an alternative to its original Java API.
 
 \subsubsection{Supported data model APIs}
 
-Restricted or unrestricted.
+Template engines with dedicated templating dialects typically rely on specific
+control flow constructs—such as a \texttt{foreach}-like statement—to iterate
+over elements in a data source. In the Java ecosystem, \texttt{Iterable} is the
+common supertype implemented by most data structures and serves as the standard
+API for iteration. However, other standard interfaces, such as
+\texttt{java.util.Stream}, also represent sequences of elements but are not
+compatible with \texttt{Iterable}.
+This fragmentation becomes more evident when considering other JVM languages,
+such as Kotlin, which introduces additional abstractions like the
+\texttt{Sequence} interface—also incompatible with \texttt{Iterable}. As a result,
+template engines based on \textit{external} DSLs must explicitly support each of these
+interfaces to accommodate the various iteration protocols across languages and
+libraries.
+
+On the other hand, template engines that employ an \textit{internal} DSL do not
+face such limitations, as they can leverage any available API within the host
+programming language. This flexibility extends beyond the standard library to
+include third-party APIs as well.
+For example, in Java, developers can iterate over data using a traditional
+\texttt{for} loop, the \texttt{java.util.stream} API, or external libraries such
+as Guava, Vavr, StreamEx, and others—depending on their specific needs or preferences.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------------------------------------------
@@ -321,7 +513,7 @@ Explicar Observable e modelos reactivos
 
 Distinguish between template engines that support and do not support asynchronous data models.
 
-1. Nem se quer Existe API para iterar sobre um Async data model. 
+1. Nem se quer Existe API para iterar sobre um Async data model.
    E.g JStachio, .... apenas suportam interface Iterable. => Compilation Error.
 
 2. Consegue usar qq API e.g Kotlinx.Html and Groovy  => usa mal => produzir HTML out of order
@@ -333,7 +525,7 @@ One of the reasons for legacy web templates not supporting asynchronous APIs
 is the absence of a unified standard calling convention for asynchronous calls.
 While there is a single, straightforward way to use a synchronous API with a
 direct style, where the result of a method call corresponds to its returned
-value, there is no equivalent standard in the asynchronous approach. 
+value, there is no equivalent standard in the asynchronous approach.
 Instead, we may encounter various asynchronous conventions depending on the
 programming language and runtime environment.
 Some of these approaches include \emph{continuation-passing style}
@@ -363,20 +555,20 @@ inherently leverage asynchronous capabilities from their host GPLs.
 Another key characteristic of such DSLs is \textbf{HTML safety}, which refers to
 whether they produce only valid HTML conforming to a well-formed document.
 To ensure HTML safety, a DSL API should only allow combining calls to builders
-that result in valid HTML. 
+that result in valid HTML.
 However, most HTML DSLs using the \textit{function sequence} or \textit{nested
-function} approach cannot ensure HTML safety at compile time. 
+function} approach cannot ensure HTML safety at compile time.
 
 The \textit{function sequence} approach, as illustrated in the snippet of
 Figure~\ref{fig:dsl-idioms}.a), involves combining function calls as a sequence of
-statements, making it challenging to restrict the order of statements. 
+statements, making it challenging to restrict the order of statements.
 In the \textit{nested function} approach shown in
 Figure~\ref{fig:dsl-idioms}.b), variable-length arguments are often used to
 allow an undefined number of child elements, which cannot be strongly typed in
 every programming language.
 
 KotlinX.html, which utilizes the \textit{nested function} idiom with lazy
-evaluation, mitigates this issue through function types with a receiver. 
+evaluation, mitigates this issue through function types with a receiver.
 In this approach, the receiver (i.e., \texttt{this} within the lambda) is
 strongly typed and provides a set of methods corresponding to legal child
 elements.
@@ -396,8 +588,8 @@ Each call to an HTML builder (e.g., \texttt{body}, \texttt{div}, \texttt{hr})
 creates the child element within the element generated by the outer function
 call.
 
-HtmlFlow provides two APIs: one in idiomatic Kotlin, similar to the \texttt{KotlinX.html} 
-API, and another that employs the \textit{method chaining} idiom, as illustrated 
+HtmlFlow provides two APIs: one in idiomatic Kotlin, similar to the \texttt{KotlinX.html}
+API, and another that employs the \textit{method chaining} idiom, as illustrated
 in the snippet of Figure~\ref{fig:dsl-idioms}.c).
 In this approach, the receiver object is implicitly passed as an argument to
 each method call, enabling subsequent methods to be invoked on the result of the
@@ -412,3 +604,71 @@ HTML builders and attributes after the dot (\texttt{.}) operator.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Progressive rendering}
+
+Pursuing the optimal user experience for web users has been a consistent goal
+since the inception of the World Wide Web.
+Consequently, various approaches have been explored to deliver the initial
+meaningful content to the end-user as promptly as possible, while the remaining
+content \textit{progressively} (or incrementally) loads as the server streams
+the HTML content.
+
+\textit{\textbf{Progressive rendering}} and \textit{\textbf{progressive loading}}
+encompass different concepts. The former pertains to the \textit{dynamic} content of a
+\textit{dynamic web page}, encompassing elements with logic and placeholders
+that are fulfilled by data from an object \textit{model} constructed at runtime.
+On the other hand, the latter is associated with \textit{render-blocking
+resources} such as scripts, stylesheets, and HTML imports, which may hinder the
+browser from rendering page content to the screen~\cite{progressive-2022}.
+The notion of \textit{progressive rendering} has typically been aligned with
+\textit{client-side rendering} (CSR), where a single HTML page with static
+content is delivered upfront, while the dynamic content is fetched as the data
+becomes available to complete the web page.
+However, despite being overlooked, HTTP and browsers were designed from their
+inception to also support this feature in the context of SSR approaches,
+which offers the advantage of not being dependent on
+\textit{rendering-blocking resources}, such as the required JavaScript for CSR.
+% \textit{Progressive server-side rendering} (PSSR) is the
+% ability of streaming HTML content to the client in chunks or data frames, as it
+% gets resolved on the server at runtime.
+% This lets the user-interface to be rendered incrementally (i.e.
+% \textit{progressively}) by the browser in line with the availability of the data.
+% However, most SSR template engines do not inherently support this feature at the
+% template level, requiring developers to manually break down web pages into
+% fragments or partials to enable PSSR.
+An example of this limitation in SSR web templates
+was highlighted by Jeff Atwood in 2005, who criticized Microsoft ASP.NET for loading the
+entire web page into memory before sending any data to the browser~\cite{pssr2005}.
+% This practice delays the display of content to the user until the server
+% completes its processing, contradicting the original design intent of HTML to
+% render progressively as content is received.
+% Notably, both Netscape and Internet Explorer were capable of rendering partial
+% HTML content from their inception.
+Despite historical critiques and HTML's inherent capabilities, most Web application
+frameworks, such as ASP.Net, Express.js, Spring, and others,
+persistently lack support for progressive rendering, leading to the
+appearance of alternative techniques leveraging client-side JavaScript.
+Since 2007, various patents have addressed the PSSR issue, with Microsoft's
+patent enabling the infinite scrolling technique by displaying a single page of
+results~\cite{scroll2007}, and Yahoo's patent focusing on differentiating
+elements based on their position relative to the visible
+portion~\cite{schiller2007progressive}.
+
+Former techniques all describe methods of progressively adding content to a web
+page depending on client-side JavaScript.
+
+Introduce Thymeleaf
+
+Spring resolver does ot natively
+
+Carvalho~\cite{carvalho2023async} introduced an SSR solution that manages
+multiple data models and asynchronous APIs while ensuring well-formed HTML,
+PSSR, and non-blocking template resolution.
+That solution builds upon HtmlFlow, a Java DSL for HTML, with an internal
+processing mechanism that streams HTML in chunks as data items become available
+from data sources, without requiring client-side JavaScript.
+Like Thymeleaf, their proposal avoids the use of client-side JavaScript;
+however, unlike Thymeleaf, it supports a wide range of asynchronous APIs and
+multiple data sources, not limited to the \texttt{Publisher} API.
+However, the main counter-argument is the non-trivial management of the
+\emph{resume} callback in continuations~\cite{von2003events,callbackhell}, which
+is used to linearize the execution flow between asynchronous calls.
