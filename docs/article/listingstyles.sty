@@ -1,0 +1,55 @@
+\usepackage{xcolor} % import the xcolor package for syntax highlighting
+
+% Define custom language for HTML
+\lstdefinelanguage{HTML}{
+  sensitive=true,
+  keywords={html,head,title,meta,body,h1,h2,h3,h4,h5,h6,p,a,img,div,span,br,hr,table,th,tr,td,ul,ol,li,b,footer,small},
+  keywordstyle=\color{blue}\bfseries,
+  morecomment=[s]{<!--}{-->},
+  commentstyle=\color{gray}\textit,
+  stringstyle=\color{brown}\ttfamily
+}
+
+
+\lstset{emph={%  
+    record%
+    },emphstyle={\color{blue}\bfseries}%
+}%
+
+% Set up syntax highlighting style
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\textit,
+  stringstyle=\color{red}\ttfamily,
+  showstringspaces=false,
+  breaklines=true,
+  frame=tblr,
+  % numbers=left,
+  numberstyle=\tiny\color{gray},
+  language=HTML,
+  captionpos=b,
+  aboveskip=0.8em,
+  belowskip=0.4em,
+}
+
+% Define custom language for kotlin
+\definecolor{kotlinorange}{RGB}{255,152,0}
+\definecolor{kotlinpurple}{RGB}{138,43,226}
+
+\lstdefinelanguage{kotlin}{
+  comment=[l]{//},
+  commentstyle={\color{gray}\ttfamily},
+  emph={delegate, filter, firstOrNull, forEach, lazy, map, mapNotNull, println, return@},
+  emphstyle={\color{kotlinorange}},
+  identifierstyle=\color{black},
+  keywords={abstract, actual, as, break, by, catch, class, companion, const, constructor, continue, data, delegate, do, else, enum, expect, false, final, for, fun, if, import, in, infix, init, inline, inner, interface, is, lateinit, noinline, null, object, open, operator, out, override, package, private, protected, public, reified, return, sealed, super, suspend, tailrec, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+  keywordstyle={\color{kotlinpurple}\bfseries},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  morestring=[s]{"""*}{*"""},
+  ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmStatic, @JvmOverloads, @JvmSynthetic},
+  ndkeywordstyle={\color{kotlinpurple}\bfseries},
+  sensitive=true,
+  stringstyle={\color{brown}\ttfamily},
+}

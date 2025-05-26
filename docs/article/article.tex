@@ -8,59 +8,7 @@
 
 \usepackage{xcolor}
 \usepackage{listings}
-
-\definecolor{KotlinKeyword}{RGB}{127, 0, 85}      % Purple
-\definecolor{KotlinString}{RGB}{0, 0, 0}          % Black
-\definecolor{KotlinComment}{RGB}{128, 128, 128}   % Gray
-\definecolor{KotlinAnnotation}{RGB}{187, 181, 41} % Yellow-brown
-\definecolor{KotlinFunction}{RGB}{38, 127, 153}   % Blue
-\definecolor{KotlinType}{RGB}{43, 145, 175}       % Teal
-\definecolor{KotlinIdentifier}{RGB}{0, 0, 0}      % Black
-
-\lstdefinelanguage{Kotlin}{
-  comment=[l]{//},
-  morecomment=[s]{/*}{*/},
-  commentstyle={\color{KotlinComment}\ttfamily},
-  stringstyle={\color{KotlinString}\ttfamily},
-  morestring=[b]",
-  morestring=[s]{"""*}{*"""},
-  emph={filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println},
-  emphstyle={\color{KotlinFunction}},
-  keywords={
-    !in, !is, abstract, actual, annotation, as, as?, break, by, catch, class,
-    companion, const, constructor, continue, crossinline, data, delegate, do,
-    dynamic, else, enum, expect, external, false, field, file, final, finally,
-    for, fun, get, if, import, in, infix, init, inline, inner, interface,
-    internal, is, lateinit, noinline, null, object, open, operator, out,
-    override, package, param, private, property, protected, public, receiver,
-    reified, return, return@, sealed, set, setparam, super, suspend, tailrec,
-    this, throw, true, try, typealias, typeof, val, var, vararg, when, where,
-    while
-  },
-  keywordstyle={\color{KotlinKeyword}\bfseries},
-  ndkeywords={
-    @Composable, @Preview, @Deprecated, @JvmField, @JvmName, @JvmOverloads,
-    @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer,
-    Iterable, Long, Runnable, Short, String, Any, Unit, Nothing
-  },
-  ndkeywordstyle={\color{KotlinAnnotation}\bfseries},
-  identifierstyle=\color{KotlinIdentifier},
-  escapeinside={//(`}{`)},
-  sensitive=true
-}
-
-\lstdefinestyle{listingstyle}{
-  backgroundcolor=\color{lightgray!20},
-  basicstyle=\ttfamily\small,
-  breaklines=true,
-  frame=single,
-  captionpos=b,
-  numbers=left,
-  numberstyle=\tiny,
-  keywordstyle=\color{blue},
-  commentstyle=\color{gray},
-  stringstyle=\color{orange},
-}
+\usepackage{listingstyles}
 
 %\documentclass[preprints,article,submit,pdftex,moreauthors]{Definitions/mdpi} 
 % For posting an early version of this manuscript as a preprint, you may use "preprints" as the journal. Changing "submit" to "accept" before posting will remove line numbers.
