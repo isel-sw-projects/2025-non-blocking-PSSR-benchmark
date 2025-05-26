@@ -78,7 +78,7 @@ The Spring WebFlux core implementation uses Project Reactor to support a
 reactive programming model: each method returns a \texttt{Flux<String>} as the
 response body, which acts as a publisher that progressively streams the HTML
 content to the client. The implementation includes three main approaches to
-PSSR:
+PSSR\@:
 \begin{itemize}
   \item \textbf{Reactive}: The template engine is used in a reactive context,
         where the HTML content rendered using the reactive programming model.
@@ -92,7 +92,7 @@ PSSR:
         consequence only support the blocking \texttt{Iterable} interface, or
         because they do not support the asynchronous rendering of HTML content.
   \item \textbf{Suspendable}: The template engine is used in a suspendable
-        context, where the HTML content is rendered within the context of a suspending function
+        context, where the HTML content is rendered within the context of a suspending function.
         An example of this approach is the HtmlFlow template engine, which
         supports suspendable templates with the use of the \texttt{Flow} class from the
         Kotlin standard library.
