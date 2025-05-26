@@ -256,7 +256,7 @@ open class StockIntegrationTest {
 
     companion object {
         private fun trimLines(lines: String): String {
-            val nl = System.lineSeparator()
+            val nl = "\n"
             return Arrays.stream<String>(
                 lines
                     .replace("<", System.lineSeparator() + "<")
@@ -284,20 +284,20 @@ open class StockIntegrationTest {
                 	color: #333333;
                 	line-height: 150%;
                 }
-
+                
                 thead {
                 	font-weight: bold;
                 	background-color: #CCCCCC;
                 }
-
+                
                 .odd {
                 	background-color: #FFCCCC;
                 }
-
+                
                 .even {
                 	background-color: #CCCCFF;
                 }
-
+                
                 .minus {
                 	color: #FF0000;
                 }

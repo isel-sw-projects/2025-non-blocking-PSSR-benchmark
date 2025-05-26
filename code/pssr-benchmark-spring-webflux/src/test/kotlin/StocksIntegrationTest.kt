@@ -16,6 +16,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import java.net.URI
 import java.util.Arrays
+import java.util.Locale
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -229,14 +230,14 @@ internal class StocksIntegrationTest {
         var client: WebTestClient? = null
 
         private fun trimLines(lines: String): String {
-            val nl = System.lineSeparator()
+            val nl = "\n"
             return Arrays.stream<String>(
                 lines
                     .replace("<", System.lineSeparator() + "<")
                     .replace(">", ">" + System.lineSeparator())
                     .split(nl.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
             )
-                .map<String?> { line: String? -> line!!.trim { it <= ' ' }.replace("\t", "").lowercase() }
+                .map<String?> { line: String? -> line!!.trim { it <= ' ' }.replace("\t", "").lowercase(Locale.getDefault()) }
                 .filter { line: String? -> !line!!.isEmpty() && !line.contains("stock prices") } // Skip title that is different for each template
                 .collect(Collectors.joining(nl))
         }
