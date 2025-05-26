@@ -2,7 +2,7 @@
 
 The benchmark is designed with a modular architecture, separating the
 \textit{view} and \textit{model} layers from the \textit{controller} layer
-\cite{Bucanek2009}, which allows for easy extension and integration of new
+~\cite{Bucanek2009}, which allows for easy extension and integration of new
 template engines and frameworks. It also includes a set of tests to ensure the
 correctness of implementations and to validate the \textit{HTML} output. It
 includes two different data models, defined as \texttt{Presentation} and
@@ -12,10 +12,10 @@ represents a presentation with a title, speaker name, and summary, while the
 \texttt{Stock} class represents a stock with a name, URL, symbol, price,
 change, and ratio.
 
-\lstset{style=listingstyle}
-\begin{minipage}{0.5\textwidth}
+\begin{center}
+\begin{minipage}{0.48\textwidth}
   \begin{lstlisting}[
-  language=Kotlin,
+  language=kotlin,
   numbers=none,
   basicstyle=\scriptsize\ttfamily,
   caption={\texttt{Stock} class},
@@ -33,9 +33,9 @@ data class Stock(
 \end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}{0.4\textwidth}
+\begin{minipage}{0.48\textwidth}
   \begin{lstlisting}[
-    language=Kotlin,
+    language=kotlin,
     basicstyle=\scriptsize\ttfamily,
     numbers=none,
     caption={\texttt{Presentation} class},
@@ -49,6 +49,8 @@ data class Presentation(
 )
 \end{lstlisting}
 \end{minipage}
+\end{center}
+
 
 The application's repository contains a list of 10 instances of the
 \texttt{Presentation} class and 20 instances of the \texttt{Stock} class. Each
@@ -107,7 +109,6 @@ blocking the servlet container thread. According to the Spring documentation,
 this class is \textit{a controller method return value type for asynchronous
   request processing where the application can write directly to the response
   OutputStream without holding up the Servlet container thread}
-\cite{Spring-StreamingResponseBody}.
 
 In Spring MVC, \texttt{StreamingResponseBody} enables asynchronous writing
 relative to the request-handling thread, but the underlying I/O remains

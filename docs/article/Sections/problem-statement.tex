@@ -43,7 +43,6 @@ equivalent suspend-based implementation using Kotlin's \texttt{Flow}~\cite{PSSR-
 Both examples highlight how internal DSLs can natively integrate with reactive types
 to enable non-blocking, progressive rendering on the server side.
 
-\lstset{style=listingstyle}
 \begin{center}
 \begin{minipage}{0.50\textwidth}
 \begin{lstlisting}[
@@ -100,11 +99,10 @@ Some reactive libraries, such as RxJava, provide bridging mechanisms like
 to be exposed as \texttt{Iterable} by blocking the thread until new items are available.
 While useful for compatibility with traditional APIs, this approach
 reintroduces blocking behavior and undermines the benefits of non-blocking
-I/O—especially under high concurrency. \autoref{lst:presentation-jstachio}
+I/O—especially under high concurrency.\autoref{lst:presentation-jstachio}
 illustrates this model using a JStachio template, where the engine performs a
 blocking loop over \texttt{presentationItems}.
 
-\lstset{style=listingstyle}
 \begin{center}
 \begin{minipage}{0.70\textwidth}
 \begin{lstlisting}[
