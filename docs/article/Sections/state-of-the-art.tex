@@ -90,7 +90,7 @@ synchronous code while benefiting from the scalability of non-blocking I/O.
 
 \subsubsection{Spring MVC}
 
-Spring MVC is a classical, synchronous web framework built on the
+Spring MVC is a synchronous web framework built on the
 thread-per-request model. When an HTTP request is received, it is handled by a
 dedicated thread from the server’s thread pool (e.g., Tomcat, Jetty, or
 Undertow). This thread is responsible for executing the full request lifecycle
@@ -109,10 +109,10 @@ perform \textit{Progressive Server-Side Rendering (PSSR)}, as traditional
 rendering waits for all data before sending any output. This results in higher
 latency for clients and less responsive page loads, particularly for
 data-intensive views. However, Spring MVC provides a mechanism for response
-streaming via the \texttt{StreamingResponseBody} interface, introduced in
+streaming via the \texttt{StreamingResponseBody}\footnote{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html} interface, introduced in
 Spring 4.2. When a controller method returns a \texttt{StreamingResponseBody},
 Spring writes directly to the \texttt{HttpServletResponse} output stream,
-allowing developers to send parts of the response incrementally as they become
+allowing the server to send parts of the response incrementally as they become
 available. This is particularly useful for:
 \begin{itemize}
   \item Sending large responses without buffering the entire output in memory.
@@ -120,8 +120,13 @@ available. This is particularly useful for:
   \item Reducing Time to First Byte (TTFB) and improving perceived performance.
 \end{itemize}
 
-A regular usage might look like the following:
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[
+    language=Java,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none,
+    caption={StreamingResponseBody handler in Spring MVC},
+    label={lst:streaming-response-body}
+]
   @GetMapping("/stream")
   fun handleStream(): StreamingResponseBody? {
       return StreamingResponseBody { outputStream ->
@@ -135,7 +140,7 @@ A regular usage might look like the following:
   }
 \end{lstlisting}
 
-In this example, HTML content is written and flushed in discrete chunks,
+In the example shown in \autoref{lst:streaming-response-body}, HTML content is written and flushed in discrete chunks,
 allowing the client to progressively render the response as it arrives, while
 the server continues processing additional data. Although
 \texttt{StreamingResponseBody} does not eliminate the blocking nature inherent
@@ -186,9 +191,13 @@ improving user-perceived performance. By integrating PSSR directly into the
 reactive processing pipeline, WebFlux facilitates responsive and resilient web
 applications well-suited for modern microservices architectures.
 
-An illustrative example of PSSR in WebFlux is shown below:
-
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[
+    language=Java,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none,
+    caption={Progressive Server-Side Rendering in Spring WebFlux},
+    label={lst:pssr-webflux}
+]
 @GetMapping(value = "/pssr", produces = MediaType.TEXT_HTML_VALUE)
 public Flux<String> renderChunks() {
     return Flux.range(1, 10)
@@ -197,7 +206,7 @@ public Flux<String> renderChunks() {
 }
 \end{lstlisting}
 
-In this example, the method emits one HTML chunk every 500 milliseconds. As
+\autoref{lst:pssr-webflux} shows a method that emits one HTML chunk every 500 milliseconds. As
 each chunk is generated, it is immediately written to the HTTP response,
 allowing the client to begin rendering content even as more data is still being
 produced. Unlike \texttt{StreamingResponseBody} in Spring MVC, which is
@@ -236,7 +245,13 @@ data flush may be delayed until internal buffers (commonly around 8KB) are
 filled. However, Quarkus allows configuring the buffer size to a smaller value, which
 can help mitigate this issue.
 
-\begin{lstlisting}[language=java,caption={Quarkus example using StreamingOutput for progressive HTML streaming}]
+\begin{lstlisting}[
+  language=java,
+  basicstyle=\scriptsize\ttfamily,
+  numbers=none,
+  caption={Progressive Server-Side Rendering in Quarkus using StreamingOutput},
+  label={lst:pssr-quarkus}
+]
 @GET
 @Path("/stream")
 @Produces(MediaType.TEXT_HTML)
@@ -245,20 +260,18 @@ public StreamingOutput streamHtml() {
         PrintWriter writer = new PrintWriter(output);
         writer.println("<html><body>");
         writer.flush(); // Flush initial HTML header
-
         for (int i = 1; i <= 5; i++) {
             writer.println("<p>Chunk " + i + "</p>");
             writer.flush(); // Flush each chunk incrementally
             Thread.sleep(500); // Simulate processing delay
         }
-
         writer.println("</body></html>");
         writer.flush();
     };
 }
 \end{lstlisting}
 
-This example demonstrates how \texttt{StreamingOutput} can be used to send
+\autoref{lst:pssr-quarkus} shows how \texttt{StreamingOutput} can be used to send
 partial HTML content in chunks, allowing browsers to progressively render the
 response while the server continues processing. Quarkus’ architecture ensures
 that the underlying event loop threads are not blocked by these writes, as the
@@ -363,7 +376,7 @@ template engines, classified according to the identified properties.
     \hline
     \textbf{Thymeleaf}
      & External DSL
-     & \shortstack{\texttt{Iterable} \\\texttt{Publisher}}
+     & \shortstack{\texttt{Iterable} \\\texttt{Stream} \\\texttt{Publisher}}
      & \texttt{Publisher}$^{(1)}$
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
@@ -381,7 +394,7 @@ template engines, classified according to the identified properties.
     \hline
     \textbf{Velocity}
      & External DSL
-     & \texttt{Iterable}
+     & \shortstack{\texttt{Iterable} \\\texttt{Sequence}}
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
@@ -397,7 +410,7 @@ template engines, classified according to the identified properties.
      & \large{$\textcolor{red}{\times}$}
     \\
     \hline
-    \shortstack{\textbf{Groovy }                   \\\textbf{MarkupBuilder}}
+    \shortstack{\textbf{Groovy } \\\textbf{MarkupBuilder}}
      & Nested Lazy
      & All
      & \large{$\textcolor{red}{\times}$}
@@ -532,13 +545,13 @@ are illustrated in the snippets of Figure~\ref{fig:dsl-idioms}.
   \centering
 
   % Subfloat 1
-  \begin{minipage}[c]{0.33\linewidth}
-    \centering
-    \begin{lstlisting}[
-    language=java,
-    basicstyle=\scriptsize\ttfamily,
-    numbers=none
-  ]
+\begin{minipage}[c]{0.33\linewidth}
+  \centering
+  \begin{lstlisting}[
+  language=java,
+  basicstyle=\scriptsize\ttfamily,
+  numbers=none
+]
 html();
  head();
   title();text("JT");end();
@@ -793,7 +806,7 @@ portion~\cite{schiller2007progressive}.
 
 Former techniques all describe methods of progressively adding content to a web
 page depending on client-side JavaScript.
-The Java Thymeleaf, the default SSR template engine for Spring web servers,
+Java Thymeleaf, the default SSR template engine for Spring web servers,
 added support for PSSR in 2018, through the use of a specific non-blocking
 Spring \texttt{ViewResolver} driver and without requiring client-side
 JavaScript.
