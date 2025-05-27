@@ -39,10 +39,10 @@ template engines, classified according to the identified properties.
     \textbf{Library}
      & \textbf{DSL idiom}
      & \textbf{Data Model APIs}
-     & \shortstack{\textbf{Asynchronous}           \\\textbf{Support}}
-     & \shortstack{\textbf{Type}                   \\\textbf{Safety}}
-     & \shortstack{\textbf{HTML}                   \\\textbf{Safety}}
-     & \shortstack{\textbf{Progressive}            \\\textbf{Rendering}}
+     & \shortstack{\textbf{Asynchronous} \\\textbf{Support}}
+     & \shortstack{\textbf{Type}         \\\textbf{Safety}}
+     & \shortstack{\textbf{HTML}         \\\textbf{Safety}}
+     & \shortstack{\textbf{Progressive}  \\\textbf{Rendering}}
     \\
     \hline
     \textbf{Freemarker}
@@ -91,7 +91,7 @@ template engines, classified according to the identified properties.
     \hline
     \textbf{Thymeleaf}
      & External DSL
-     & \shortstack{\texttt{Iterable} \\\texttt{Stream} \\\texttt{Publisher}}
+     & \shortstack{\texttt{Iterable} \\\texttt{Stream} \\\texttt{Publisher}$^{(1)}$}
      & \texttt{Publisher}$^{(1)}$
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
@@ -109,7 +109,7 @@ template engines, classified according to the identified properties.
     \hline
     \textbf{Velocity}
      & External DSL
-     & \shortstack{\texttt{Iterable} \\\texttt{Sequence}}
+     & \shortstack{\texttt{Iterable} \\\texttt{Sequence}$^{(2)}$}
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
@@ -157,7 +157,7 @@ template engines, classified according to the identified properties.
      & All
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{PineGreen}{\checkmark}$}
-     & \textcolor{PineGreen}{\checkmark}$^{(2)}$
+     & \textcolor{PineGreen}{\checkmark}$^{(3)}$
      & \large{$\textcolor{PineGreen}{\checkmark}$}
     \\
     \hline
@@ -173,9 +173,10 @@ template engines, classified according to the identified properties.
   \end{tabular}
   \caption{
     Comparison of web template technologies in the Java ecosystem.
-    \\$^{(1)}$ Limited to a single model per web template and compatible with
-    the reactive stream \texttt{Publisher}.
-    \\$^{(2)}$ Non-safety for HTML attributes.
+    \\$^{(1)}$ \texttt{Publisher} of Reactive Streams~\cite{ReactiveStreams}.
+    Limited to a single model per web template.
+    \\$^{(2)}$ \texttt{kotlin.sequences.Sequence}
+    \\$^{(3)}$ Non-safety for HTML attributes.
   }
   \label{table:cmplibs}
 \end{table}
@@ -187,20 +188,19 @@ typically using a \textit{nested} or \textit{chaining} style to build HTML.
 Note that, by leveraging the host language (e.g., Clojure, Groovy, Java,
 Kotlin, or Scala) as the templating idiom, the latter impose no restrictions on
 the data model and fully support all styles of data access APIs. They also
-benefit from static type checking, which helps ensure type safety.
+benefit from static type checking, which helps ensure \textit{type safety}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Templating idiom}
+\subsubsection{Domain-specific language idiom}
 
 Web templates are based on a \textit{domain-specific language}
 (DSL)~\cite{landin1966next}, which defines a language tailored to a specific
 \textit{domain}~\cite{evans2004domain}—in this case, HTML for expressing web
 documents. The DSL constrains the template's syntax and semantics to match the
 structure and purpose of HTML.
-
 DSLs can be divided in two types: \textit{external} or
 \textit{internal}\cite{dslbook}. \textit{External} DSLs are languages created
 without any affiliation to a concrete programming language. An example of an
@@ -217,15 +217,18 @@ Traditionally, web template technologies use an \textit{external} DSL to define
 control flow constructs and data binding primitives. Early web template engines
 such as JSP, ASP, Velocity, PHP, and others adopted this \textit{external} DSL
 approach as their templating dialect. For example, a \texttt{foreach} loop can
-be expressed in each technology using its own DSL: \\\texttt{<\% for(String
-  item : items) \%>} in JSP, \texttt{<\% For Each item In items \%>} in legacy
-ASP with VBScript, \texttt{\#foreach(\$item in \$items)} in Velocity, or
-\texttt{<?php foreach (\$items as \$item):?>} in PHP.
+be expressed in each technology using its own DSL:
+\begin{itemize}
+  \item \texttt{<\% for(String item : items) \%>} in JSP
+  \item \texttt{<\% For Each item In items \%>} in legacy ASP with VBScript
+  \item \texttt{\#foreach(\$item in \$items)} in Velocity
+  \item \texttt{<?php foreach (\$items as \$item):?>} in PHP
+\end{itemize}
 
 On the other hand, \textit{internal} DSLs for HTML allow templates to be
 defined directly within the \emph{host} language (such as Java, Kotlin, Groovy,
 Scala, or other general-purpose programming languages), rather than using
-text-based template files~\cite{carvalho2019hot}. In this case, a web template
+text-based template files~\cite{carvalho2020}. In this case, a web template
 is not limited to templating constructs but may instead leverage any available
 primitive of the host language or any external API.
 
@@ -379,6 +382,18 @@ abstractions like the \texttt{Sequence} interface—also incompatible with
 DSLs must explicitly support each of these interfaces to accommodate the
 various iteration protocols across languages and libraries.
 
+For example, Thymeleaf supports both Java \texttt{Iterable} and \texttt{Stream}
+iteration protocols but is incompatible with Kotlin's \texttt{Sequence}
+interface.
+Velocity, on the other hand, uses internal reflection-based template processing
+that allows it to iterate over any type defining an \texttt{iterator()} method
+returning an \texttt{Iterator}. This enables support for both Java
+\texttt{Iterable} and Kotlin \texttt{Sequence}, but it cannot handle Java
+\texttt{Stream} since \texttt{Stream} does not expose a compatible
+\texttt{iterator()} method.
+The remaining analyzed template engines that use external DSLs support only Java
+\texttt{Iterable} as their sole iteration protocol.
+
 On the other hand, template engines that employ an \textit{internal} DSL do not
 face such limitations, as they can leverage any available API within the host
 programming language. This flexibility extends beyond the standard library to
@@ -402,8 +417,8 @@ value, there is no equivalent standard in the asynchronous approach. Instead,
 we may encounter various asynchronous conventions depending on the programming
 language and runtime environment. Some of these approaches include
 \emph{continuation-passing style} (CPS)~\cite{scheme},
-\textit{promises}~\cite{promise} async/await idiom~\cite{async_await}, reactive
-streams \cite{ReactiveStreams}, Kotlin Flow~\cite{kotlinlang}, and others.
+\textit{promises}~\cite{promise}, async/await idiom~\cite{async_await},
+or \textit{suspend functions}~\cite{elizarov2021coroutines}.
 
 Many \textit{general-purpose languages} (GPLs) have embraced the
 \texttt{async}/\texttt{await} feature~\cite{async_await} enabling non-blocking
@@ -416,15 +431,43 @@ compiler support to translate \textit{suspension points} (i.e., \texttt{await}
 statements) into state machines. Most template engines operate using an
 external DSL with their own templating dialect (e.g., Thymeleaf, JSP, Jade,
 Handlebars, and others), which do not inherently leverage asynchronous
-capabilities from their host GPLs.
+capabilities from their host programming languages.
+
+An alternative approach to asynchronous programming involves handling data as
+a sequence of asynchronous events, commonly known as a \textit{reactive stream}.
+Instead of materializing all items in memory, reactive streams emit values over
+time, allowing clients to subscribe and consume data incrementally as it becomes
+available.
+This idea was first proposed by Meijer~\cite{rx-observable} in the .NET
+framework, leading to the development of \textit{Reactive Extensions} (Rx).
+Subsequently, several alternative implementations emerged in the Java ecosystem,
+such as Rx Java~\cite{rxjava}, Project Reactor~\cite{projectreactor}, or the
+Akka Streams~\cite{akka} library.
+Later, due to the proliferation of alternative implementations, the need arose to
+create a common interface to ensure interoperability between different reactive
+stream libraries. This led to the formation of a working group that included
+engineers from notable companies such as Lightbend, Pivotal, and Netflix.
+The group began defining the \textit{Reactive Streams}
+specification~\cite{ReactiveStreams}, which established a standard for
+asynchronous stream processing using non-blocking, backpressure-aware data
+pipelines.
+The more recent Mutiny~\cite{mutiny2021}, while conforming to the
+\textit{Reactive Streams} standard, proposes a different approach that avoids
+complex optimizations, resulting in more straightforward and easier-to-maintain
+code.
+
+Thymeleaf was one of the first web template engines—and remains the only one
+among external DSLs for HTML—to support reactive streams based on the
+\texttt{Publisher} model. However, it is limited to using a single
+\texttt{Publisher} within a given template.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Type safety and HTML safety}
+\subsubsection{HTML safety}
 
-Another key characteristic of such DSLs is \textbf{HTML safety}, which refers
+Another key characteristic of such DSLs is \textit{HTML safety}, which refers
 to whether they produce only valid HTML conforming to a well-formed document.
 To ensure HTML safety, a DSL API should only allow combining calls to builders
 that result in valid HTML. However, most HTML DSLs using the \textit{function

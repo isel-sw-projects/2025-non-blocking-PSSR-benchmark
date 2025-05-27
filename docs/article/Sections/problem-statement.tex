@@ -1,28 +1,24 @@
 \section{Problem Statement}
 
-In this section, we examine the challenges of implementing Progressive
-Server-Side Rendering (PSSR) in modern web applications, with a focus on the
+In this section, we examine the challenges of implementing \textit{Progressive
+Server-Side Rendering} (PSSR) in modern web applications, with a focus on the
 limitations of current template engine designs. Our goal is to broaden the
 range of options available for PSSR, particularly within JVM-based frameworks.
-
-Reactive streams~\cite{ReactiveStreams}, such as those based on
-\texttt{Observable} (from RxJava)~\cite{rx-observable} and \texttt{Flow} (from
-the Java 9+ standard library~\footnote{~\url{https://openjdk.org/jeps/266}}),
-are abstractions that provide a non-blocking, asynchronous
-way to handle data streams.
-These abstractions support the incremental generation and transmission of HTML
-content as data becomes available, enabling \textit{progressive server-side
-rendering} (PSSR)~\cite{pssr2005}.
+% Reactive streams~\cite{ReactiveStreams}, such as those based on
+% \texttt{Observable} (from RxJava)~\cite{rx-observable} and \texttt{Flow} (from
+% the Java 9+ standard library~\footnote{~\url{https://openjdk.org/jeps/266}}),
+% are abstractions that provide a non-blocking, asynchronous
+% way to handle data streams.
+% These abstractions support the incremental generation and transmission of HTML
+% content as data becomes available, enabling \textit{progressive server-side
+% rendering} (PSSR)~\cite{pssr2005}.
 In PSSR, the server does not
 wait for the entire data model to be ready before beginning to render HTML.
 Instead, it processes and streams each piece of data to the client as soon as
 it arrives. 
 
-Reactive types like \texttt{Observable<T>} or \texttt{Flow<T>}
+Reactive types like \texttt{Observable<T>} of ReactiveX~\cite{rxjava} or Kotlin \texttt{Flow<T>}~\cite{kotlinlang}
 facilitate this by representing data as a sequence of asynchronous events.
-These streams emit values over time, allowing the
-rendering engine to consume data at a manageable rate without overwhelming
-system resources.
 For example, a reactive stream might emit a sequence of \texttt{Presentation}
 objects, each representing a talk in a conference schedule.
 As each \texttt{Presentation} is emitted by the \texttt{Observable}
@@ -39,7 +35,7 @@ HtmlFlow pauses the rendering process until \texttt{onCompletion} is called,
 similar to how the \emph{resume} function works in continuations and
 coroutines~\cite{coroutines_continuations}.
 In \autoref{lst:presentation-flow}, we show an
-equivalent suspend-based implementation using Kotlin's \texttt{Flow}~\cite{PSSR-WISE2024}.
+equivalent suspend-based implementation using Kotlin's \texttt{Flow}~\cite{wise2024pssr}.
 Both examples highlight how internal DSLs can natively integrate with reactive types
 to enable non-blocking, progressive rendering on the server side.
 
@@ -49,7 +45,7 @@ to enable non-blocking, progressive rendering on the server side.
     language=Kotlin,
     basicstyle=\scriptsize\ttfamily,
     numbers=none,
-    caption={\textit{HtmlFlow} presentation template with \texttt{Observable}},
+    caption={\textit{HtmlFlow} presentation template in Koltin with an \texttt{Observable} model},
     label={lst:presentation-observable}
 ]
 await { div, model, onCompletion ->
@@ -71,7 +67,7 @@ await { div, model, onCompletion ->
     basicstyle=\scriptsize\ttfamily,
     numbers=none,
     label={lst:presentation-flow},
-    caption={\textit{HtmlFlow} presentation template with \texttt{Flow}},
+    caption={\textit{HtmlFlow} presentation template in Kotlin with a \texttt{Flow} model},
 ]
 suspending { model ->
   model
@@ -90,16 +86,17 @@ suspending { model ->
 By contrast, template engines that use \textit{external} DSLs—such as JStachio,
 Thymeleaf, or Handlebars—typically define templates within static HTML
 documents using custom markers, and rely on blocking interfaces like
-\texttt{Iterable} or \texttt{List}. These interfaces require the entire data
+\texttt{java.util.Iterable} or \texttt{java.util.stream.Stream}.
+These interfaces require the entire data
 model, to be materialized in memory before rendering can begin, which blocks server
 threads during template expansion and significantly limits scalability under
 high concurrency.
 Some reactive libraries, such as RxJava, provide bridging mechanisms like
 \texttt{Observable.blockingIterable()}, which allows asynchronous data sources
-to be exposed as \texttt{Iterable} by blocking the thread until new items are available.
+to be exposed as \texttt{Iterable} by blocking the thread until all items are available.
 While useful for compatibility with traditional APIs, this approach
 reintroduces blocking behavior and undermines the benefits of non-blocking
-I/O—especially under high concurrency.\autoref{lst:presentation-jstachio}
+I/O—especially under high concurrency. \autoref{lst:presentation-jstachio}
 illustrates this model using a JStachio template, where the engine performs a
 blocking loop over \texttt{presentationItems}.
 
@@ -139,7 +136,7 @@ several advantages:
 
 These strengths make external DSLs appealing—even when they come at the cost of
 blocking, synchronous rendering. However, this tradeoff becomes critical under
-high concurrency, where blocking threads severely degrades throughput~\cite{PSSR-WISE2024}.
+high concurrency, where blocking threads severely degrades throughput~\cite{wise2024pssr}.
 Emerging features in the Java ecosystem, particularly \textit{virtual threads}
 introduced in Java 21 as part of Project Loom~\cite{Veen2024}, offer a promising solution to
 this challenge. Virtual threads drastically reduce the overhead of blocking
