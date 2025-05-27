@@ -21,6 +21,7 @@ dependencies {
     implementation("io.quarkus:quarkus-rest")
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-kotlin")
+    implementation("io.quarkiverse.qute.web:quarkus-qute-web")
 
     implementation(project(":pssr-benchmark-repository"))
     implementation(project(":pssr-benchmark-repository-mem"))

@@ -77,6 +77,12 @@ open class PresentationIntegrationTest {
                 RouteAndExpected("/presentations/htmlFlow", wellFormedHtmlAssertion()),
             ),
             Arguments.of(
+                RouteAndExpected("/presentations/reactive/qute", wellFormedHtmlAssertion()),
+            ),
+            Arguments.of(
+                RouteAndExpected("/presentations/reactive/htmlFlow", wellFormedHtmlAssertion()),
+            ),
+            Arguments.of(
                 RouteAndExpected("/presentations/kotlinx", wellFormedHtmlAssertion().replace("<!DOCTYPE html>", "")),
             ),
         )

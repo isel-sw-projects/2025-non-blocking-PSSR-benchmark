@@ -54,6 +54,42 @@ open class StockIntegrationTest {
     }
 
     @Test
+    fun testQuteTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/reactive/qute"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testQuteTemplate() {
+        val response = getResponse("/stocks/reactive/qute")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testHtmlFlowReactiveTemplate() {
+        val response = getResponse("/stocks/reactive/htmlFlow")
+        assertNotNull(response)
+        val trimmedResponse = trimLines(response)
+        val trimmedExpected = trimLines(wellFormedHtmlAssertion())
+        assertEquals(trimmedExpected, trimmedResponse)
+    }
+
+    @Test
+    fun testHtmlFlowReactiveTemplateOk() {
+        RestAssured.given()
+            .`when`()
+            .get(URI.create("/stocks/reactive/htmlFlow"))
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
     fun testPebbleTemplate() {
         val response = getResponse("/stocks/pebble")
         assertNotNull(response)
