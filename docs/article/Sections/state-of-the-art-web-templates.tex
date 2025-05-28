@@ -67,7 +67,7 @@ template engines, classified according to the identified properties.
      & External DSL
      & \texttt{Iterable}
      & \large{$\textcolor{red}{\times}$}
-     & \large{$\textcolor{red}{\times}$}
+     & \textcolor{PineGreen}{\checkmark}$^{(4)}$
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{PineGreen}{\checkmark}$}
     \\\hline
@@ -76,6 +76,15 @@ template engines, classified according to the identified properties.
      & \texttt{Iterable}
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
+     & \large{$\textcolor{red}{\times}$}
+     & \large{$\textcolor{PineGreen}{\checkmark}$}
+    \\
+    \hline
+    \textbf{Qute}
+     & External DSL
+     & \texttt{Iterable}
+     & \large{$\textcolor{red}{\times}$}
+     & \large{$\textcolor{PineGreen}{*}$}$^{(5)}$
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{PineGreen}{\checkmark}$}
     \\
@@ -177,6 +186,8 @@ template engines, classified according to the identified properties.
     Limited to a single model per web template.
     \\$^{(2)}$ \texttt{kotlin.sequences.Sequence}
     \\$^{(3)}$ Non-safety for HTML attributes.
+    \\$^{(4)}$ Enforced via annotation processor that checks templates against typed interfaces at compile time.
+    \\$^{(5)}$ Compile-time expression validation available via \texttt{@CheckedTemplate} and build-time metadata in Quarkus.
   }
   \label{table:cmplibs}
 \end{table}
