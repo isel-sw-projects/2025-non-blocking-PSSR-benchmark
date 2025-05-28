@@ -67,7 +67,7 @@ template engines, classified according to the identified properties.
      & External DSL
      & \texttt{Iterable}
      & \large{$\textcolor{red}{\times}$}
-     & \textcolor{PineGreen}{\checkmark}$^{(4)}$
+     & \textcolor{PineGreen}{\checkmark}$^{(1)}$
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{PineGreen}{\checkmark}$}
     \\\hline
@@ -84,7 +84,7 @@ template engines, classified according to the identified properties.
      & External DSL
      & \texttt{Iterable}
      & \large{$\textcolor{red}{\times}$}
-     & \large{$\textcolor{PineGreen}{*}$}$^{(5)}$
+     & \textcolor{PineGreen}{\checkmark}$^{(2)}$
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{PineGreen}{\checkmark}$}
     \\
@@ -100,8 +100,8 @@ template engines, classified according to the identified properties.
     \hline
     \textbf{Thymeleaf}
      & External DSL
-     & \shortstack{\texttt{Iterable} \\\texttt{Stream} \\\texttt{Publisher}$^{(1)}$}
-     & \texttt{Publisher}$^{(1)}$
+     & \shortstack{\texttt{Iterable} \\\texttt{Stream} \\\texttt{Publisher}$^{(3)}$}
+     & \texttt{Publisher}$^{(3)}$
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{PineGreen}{\checkmark}$}
@@ -118,7 +118,7 @@ template engines, classified according to the identified properties.
     \hline
     \textbf{Velocity}
      & External DSL
-     & \shortstack{\texttt{Iterable} \\\texttt{Sequence}$^{(2)}$}
+     & \shortstack{\texttt{Iterable} \\\texttt{Sequence}$^{(4)}$}
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{red}{\times}$}
@@ -166,7 +166,7 @@ template engines, classified according to the identified properties.
      & All
      & \large{$\textcolor{red}{\times}$}
      & \large{$\textcolor{PineGreen}{\checkmark}$}
-     & \textcolor{PineGreen}{\checkmark}$^{(3)}$
+     & \textcolor{PineGreen}{\checkmark}$^{(5)}$
      & \large{$\textcolor{PineGreen}{\checkmark}$}
     \\
     \hline
@@ -182,12 +182,11 @@ template engines, classified according to the identified properties.
   \end{tabular}
   \caption{
     Comparison of web template technologies in the Java ecosystem.
-    \\$^{(1)}$ \texttt{Publisher} of Reactive Streams~\cite{ReactiveStreams}.
-    Limited to a single model per web template.
-    \\$^{(2)}$ \texttt{kotlin.sequences.Sequence}
-    \\$^{(3)}$ Non-safety for HTML attributes.
-    \\$^{(4)}$ Enforced via annotation processor that checks templates against typed interfaces at compile time.
-    \\$^{(5)}$ Compile-time expression validation available via \texttt{@CheckedTemplate} and build-time metadata in Quarkus.
+    \\$^{(1)}$ Enforced via annotation processor that checks templates against typed interfaces at compile time.
+    \\$^{(2)}$ Compile-time expression validation available via \texttt{@CheckedTemplate} and build-time metadata in Quarkus.
+    \\$^{(3)}$ \texttt{Publisher} of Reactive Streams~\cite{ReactiveStreams}. Limited to a single model per web template.
+    \\$^{(4)}$ \texttt{kotlin.sequences.Sequence}
+    \\$^{(5)}$ Non-safety for HTML attributes.
   }
   \label{table:cmplibs}
 \end{table}
