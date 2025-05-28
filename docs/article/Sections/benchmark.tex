@@ -1,20 +1,22 @@
 \section{Benchmark Implementation}
 
-The benchmark is designed with a modular architecture, separating the
-\textit{view} and \textit{model} layers from the \textit{controller} layer
-~\cite{Bucanek2009}, which allows for easy extension and integration of new
-template engines and frameworks. It also includes a set of tests to ensure the
-correctness of implementations and to validate the \textit{HTML} output. It
-includes two different data models, defined as \texttt{Presentation} and
-\texttt{Stock}, shown in \autoref{lst:stock-class} and
-\autoref{lst:presentation-class}, respectively. The \texttt{Presentation} class
-represents a presentation with a title, speaker name, and summary, while the
-\texttt{Stock} class represents a stock with a name, URL, symbol, price,
-change, and ratio.
+The benchmark\footnote{\url{https://github.com/fmcarvalho/comparing-non-blocking-progressive-ssr}}
+is designed with a modular architecture, separating the \textit{view} and
+\textit{model} layers from the \textit{controller} layer ~\cite{Bucanek2009},
+which allows for easy extension and integration of new template engines and
+frameworks. It also includes a set of tests to ensure the correctness of
+implementations and to validate the \textit{HTML} output. It includes two
+different data models, defined as \texttt{Presentation} and \texttt{Stock}, as
+shown in \autoref{lst:stock-class} and \autoref{lst:presentation-class},
+following the same model as
+\textit{spring-webflux-comparing-template-engines}~\footnote{\url{https://github.com/xmlet/spring-webflux-comparing-template-engines}}.
+The \texttt{Presentation} class represents a presentation with a title, speaker
+name, and summary, while the \texttt{Stock} class represents a stock with a
+name, URL, symbol, price, change, and ratio.
 
 \begin{center}
-\begin{minipage}{0.48\textwidth}
-  \begin{lstlisting}[
+      \begin{minipage}{0.48\textwidth}
+            \begin{lstlisting}[
   language=kotlin,
   numbers=none,
   basicstyle=\scriptsize\ttfamily,
@@ -51,7 +53,6 @@ data class Presentation(
 \end{minipage}
 \end{center}
 
-
 The application's repository contains a list of 10 instances of the
 \texttt{Presentation} class and 20 instances of the \texttt{Stock} class. Each
 list is used to generate a respective HTML view. Although the instances are
@@ -77,7 +78,7 @@ released and reused for other requests.
 The Spring WebFlux core implementation uses Project Reactor to support a
 reactive programming model: each method returns a \texttt{Flux<String>} as the
 response body, which acts as a publisher that progressively streams the HTML
-content to the client. The implementation includes three main approaches to
+content to the client. The implementation includes four main approaches to
 PSSR\@:
 \begin{itemize}
   \item \textbf{Reactive}: The template engine is used in a reactive context,
@@ -107,8 +108,8 @@ utilize the \texttt{StreamingResponseBody} interface, which allows the
 application to write directly to the response \texttt{OutputStream} without
 blocking the servlet container thread. According to the Spring documentation,
 this class is \textit{a controller method return value type for asynchronous
-  request processing where the application can write directly to the response
-  OutputStream without holding up the Servlet container thread}
+request processing where the application can write directly to the response
+OutputStream without holding up the Servlet container thread.}
 
 In Spring MVC, \texttt{StreamingResponseBody} enables asynchronous writing
 relative to the request-handling thread, but the underlying I/O remains
@@ -128,6 +129,15 @@ This is because the response is only sent once the content written to the
 As a result, the client receives the response only after the entire HTML
 content is rendered, defeating the purpose of PSSR in this context.
 
+This implementation includes two main approaches to PSSR\@:
+\begin{itemize}
+      \item \textbf{Blocking}: The template engine is used in a blocking context,
+            where the HTML content is rendered using the blocking interface of the
+            \texttt{Observable} class.
+      \item \textbf{Virtual}: The template engine is used in a non-blocking context,
+            where the HTML content is rendered within the context of Virtual Threads.
+\end{itemize}
+
 The Quarkus implementation also uses handlers based on the blocking interface
 of the \texttt{Observable} class. It implements the \texttt{StreamingOutput}
 interface from the JAX-RS specification to enable PSSR, allowing HTML content
@@ -140,3 +150,16 @@ The Quarkus implementation supports PSSR for these templates by configuring the
 response buffer size in the \textit{application.properties} file. The default
 buffer size is 8KB, but we reduced it to 512 bytes, which allows the response
 to be sent to the client progressively as the HTML content is rendered.
+
+This implementation includes three main approaches to PSSR\@:
+\begin{itemize}
+      \item \textbf{Blocking}: The template engine is used in a blocking context,
+            where the HTML content is rendered using the blocking interface of the
+            \texttt{Observable} class.
+      \item \textbf{Virtual}: The template engine is used in a non-blocking context,
+            where the HTML content is rendered within the context of Virtual Threads.
+      \item \textbf{Reactive}: The template engine is used in a reactive context,
+            where the HTML content is rendered using the reactive programming model.
+            In this case, we use the HtmlFlow template engine, which
+            supports asynchronous rendering through the \texttt{writeAsync} method.
+\end{itemize}
