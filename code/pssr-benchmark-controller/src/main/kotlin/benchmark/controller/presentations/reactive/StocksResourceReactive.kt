@@ -21,7 +21,7 @@ class StocksResourceReactive
         private val stocksIter = stocks.findAllIterable()
         private val stocksFlux = stocks.findAllReactive()
 
-        @Location("qute/stocks-qute")
+        @Location("qute/stocks")
         lateinit var template: Template
 
         @GET
@@ -36,11 +36,11 @@ class StocksResourceReactive
         @Produces(MediaType.TEXT_HTML)
         fun getHtmlFlow(): Multi<String> {
             val view =
-                AppendableSink().also { sink ->
+                AppendableMulti().also { sink ->
                     StocksHtmlFlow.htmlFlowTemplate
                         .writeAsync(sink, stocksFlux)
                         .thenAccept { sink.close() }
                 }
-            return view.asMulti()
+            return view.toMulti()
         }
     }

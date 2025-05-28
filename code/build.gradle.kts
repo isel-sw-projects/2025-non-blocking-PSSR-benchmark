@@ -9,9 +9,3 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
 }
-
-allprojects {
-    if (name != "im-database") {
-        apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    }
-}

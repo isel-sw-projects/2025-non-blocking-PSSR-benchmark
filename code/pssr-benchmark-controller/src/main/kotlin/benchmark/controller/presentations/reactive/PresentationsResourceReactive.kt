@@ -1,10 +1,14 @@
 package benchmark.controller.presentations.reactive
 
+import benchmark.model.Presentation
+import benchmark.model.Stock
 import benchmark.repository.PresentationRepository
 import benchmark.view.appendable.AppendableSink
 import benchmark.view.presentations.PresentationsHtmlFlow
+import io.quarkus.qute.CheckedTemplate
 import io.quarkus.qute.Location
 import io.quarkus.qute.Template
+import io.quarkus.qute.TemplateInstance
 import io.smallrye.mutiny.Multi
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
@@ -21,7 +25,7 @@ class PresentationsResourceReactive
         private val presentationsIter = presentations.findAllIterable()
         private val presentationsFlux = presentations.findAllReactive()
 
-        @Location("qute/presentations-qute")
+        @Location("qute/presentations")
         lateinit var template: Template
 
         @GET
@@ -35,22 +39,13 @@ class PresentationsResourceReactive
         @Path("/htmlFlow")
         @Produces(MediaType.TEXT_HTML)
         fun getHtmlFlow(): Multi<String> {
-            val view =
-                AppendableSink().also { sink ->
+            val view = AppendableMulti().also { sink ->
                     PresentationsHtmlFlow.htmlFlowTemplate
                         .writeAsync(sink, presentationsFlux)
                         .thenAccept { sink.close() }
                 }
-            return view.asMulti()
+            return view.toMulti()
         }
+
     }
 
-fun AppendableSink.asMulti(): Multi<String> {
-    return Multi.createFrom().emitter { emitter ->
-        this.asFlux().subscribe(
-            { value -> emitter.emit(value) },
-            { error -> emitter.fail(error) },
-            { emitter.complete() },
-        )
-    }
-}
