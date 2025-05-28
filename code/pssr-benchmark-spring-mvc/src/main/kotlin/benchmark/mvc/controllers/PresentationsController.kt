@@ -47,7 +47,6 @@ class PresentationsController(
     fun handleTemplateRockerSync(): ResponseEntity<StreamingResponseBody> {
         val stream =
             StreamingResponseBody { out ->
-                println(Thread.currentThread().name)
                 rocker
                     .presentations
                     .template(presentationsIter)

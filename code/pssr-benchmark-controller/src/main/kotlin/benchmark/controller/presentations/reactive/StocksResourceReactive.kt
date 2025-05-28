@@ -1,7 +1,6 @@
 package benchmark.controller.presentations.reactive
 
 import benchmark.repository.StockRepository
-import benchmark.view.appendable.AppendableSink
 import benchmark.view.stocks.StocksHtmlFlow
 import io.quarkus.qute.Location
 import io.quarkus.qute.Template
@@ -35,8 +34,7 @@ class StocksResourceReactive
         @Path("/htmlFlow")
         @Produces(MediaType.TEXT_HTML)
         fun getHtmlFlow(): Multi<String> {
-            val view =
-                AppendableMulti().also { sink ->
+            val view = AppendableMulti().also { sink ->
                     StocksHtmlFlow.htmlFlowTemplate
                         .writeAsync(sink, stocksFlux)
                         .thenAccept { sink.close() }

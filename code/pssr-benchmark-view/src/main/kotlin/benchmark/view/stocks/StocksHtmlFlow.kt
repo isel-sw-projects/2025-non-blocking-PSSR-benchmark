@@ -103,9 +103,10 @@ object StocksHtmlFlow {
                         }
                         tbody {
                             await { tbody, model: Observable<Stock>, onCompletion ->
-                                Observable
-                                    .zip(model, Observable.range(0, Int.MAX_VALUE)) { stock, idx -> StockDto(stock, idx + 1) }
-                                    .doOnNext { dto ->
+                                var index = 0
+                                model
+                                    .doOnNext {
+                                        val dto = StockDto(it, ++index)
                                         stockPartialAsync.renderAsync(dto).thenApply { frag -> tbody.raw(frag) }
                                     }
                                     .doOnComplete { onCompletion.finish() }
@@ -209,9 +210,10 @@ object StocksHtmlFlow {
                         }
                         tbody {
                             dyn { model: Observable<Stock> ->
-                                Observable
-                                    .zip(model, Observable.range(0, Int.MAX_VALUE)) { stock, idx -> StockDto(stock, idx + 1) }
-                                    .doOnNext { dto ->
+                                var index = 0
+                                model
+                                    .doOnNext {
+                                        val dto = StockDto(it, ++index)
                                         stockPartialAsync.renderAsync(dto).thenApply { frag -> raw(frag) }
                                     }
                                     .blockingLast()

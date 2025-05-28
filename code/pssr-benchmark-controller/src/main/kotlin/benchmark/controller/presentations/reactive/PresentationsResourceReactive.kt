@@ -1,14 +1,9 @@
 package benchmark.controller.presentations.reactive
 
-import benchmark.model.Presentation
-import benchmark.model.Stock
 import benchmark.repository.PresentationRepository
-import benchmark.view.appendable.AppendableSink
 import benchmark.view.presentations.PresentationsHtmlFlow
-import io.quarkus.qute.CheckedTemplate
 import io.quarkus.qute.Location
 import io.quarkus.qute.Template
-import io.quarkus.qute.TemplateInstance
 import io.smallrye.mutiny.Multi
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
@@ -46,6 +41,5 @@ class PresentationsResourceReactive
                 }
             return view.toMulti()
         }
-
     }
 
