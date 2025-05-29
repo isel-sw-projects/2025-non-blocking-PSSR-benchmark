@@ -19,7 +19,7 @@ ROUTES=(
   presentations/htmlFlow/suspending
   presentations/htmlFlow/sync
   presentations/htmlFlow/virtualSync
-  presentations/kotlinx
+#  presentations/kotlinx
   presentations/kotlinx/sync
   presentations/kotlinx/virtualSync
   presentations/rocker/sync
