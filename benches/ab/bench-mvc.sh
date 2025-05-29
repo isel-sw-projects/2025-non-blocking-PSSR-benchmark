@@ -34,6 +34,7 @@ ROUTES=(
 #   stocks/velocity
    stocks/thymeleaf
    stocks/htmlFlow
+   stocks/kotlinx
 )
 
 #
@@ -55,14 +56,12 @@ echo "##########################################"
 ./run-ab.sh "${ROUTES[@]}" | tee spring-mvc-results.log
 
 
-# Gracefully terminate the Spring Boot application when running on local machine.
+# Gracefully terminate the Spring Boot application.
 # It will send a SIGTERM corresponding to Exit code 143.
-if [ "$GH" != "true" ]; then
-  kill $PID_GRADLE
+kill $PID_GRADLE
 
-  # Wait for the process to exit
-  wait $PID_GRADLE
-fi
+# Wait for the process to exit
+wait $PID_GRADLE
 
 echo ":::::::::::::::::::::::::::::::     Sync Bench Done"
 

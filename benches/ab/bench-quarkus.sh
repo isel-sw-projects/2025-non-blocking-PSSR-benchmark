@@ -19,23 +19,26 @@ echo ":::::::::::::::::::::::::::::::     Quarkus running PID = $PID_QUARKUS"
 # Define routes for benchmark
 #
 ROUTES=(
-  presentations/rocker
-  presentations/jstachio
-  presentations/pebble
-  presentations/freemarker
-  presentations/trimou
-#  presentations/velocity
-  presentations/thymeleaf
-  presentations/htmlFlow
-  presentations/kotlinx
-  stocks/rocker
-  stocks/jstachio
-  stocks/pebble
-  stocks/freemarker
-  stocks/trimou
-#  stocks/velocity
-  stocks/thymeleaf
-  stocks/htmlFlow
+   presentations/rocker
+   presentations/jstachio
+   presentations/pebble
+   presentations/freemarker
+   presentations/trimou
+#   presentations/velocity
+   presentations/thymeleaf
+   presentations/htmlFlow
+   presentations/kotlinx
+   presentations/reactive/htmlFlow
+   stocks/rocker
+   stocks/jstachio
+   stocks/pebble
+   stocks/freemarker
+   stocks/trimou
+#   stocks/velocity
+   stocks/thymeleaf
+   stocks/htmlFlow
+   stocks/kotlinx
+   stocks/reactive/htmlFlow
 )
 
 #
@@ -57,15 +60,14 @@ echo "##########################################"
 ./run-ab.sh "${ROUTES[@]}" | tee quarkus-results.log
 
 
-# Gracefully terminate the Spring Boot application when running on local machine.
+# Gracefully terminate the Spring Boot application.
 # It will send a SIGTERM corresponding to Exit code 143.
-if [ "$GH" != "true" ]; then
-  kill $PID_GRADLE
-  kill $PID_QUARKUS
+kill $PID_GRADLE
+kill $PID_QUARKUS
 
-  # Wait for the process to exit
-  wait $PID_GRADLE
-fi
+# Wait for the process to exit
+wait $PID_GRADLE
+
 
 echo ":::::::::::::::::::::::::::::::     Sync Bench Done"
 

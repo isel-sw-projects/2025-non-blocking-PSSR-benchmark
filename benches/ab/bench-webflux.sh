@@ -48,14 +48,14 @@ ROUTES=(
 #   presentations/velocity/sync
 #   presentations/velocity/virtualSync
    presentations/thymeleaf
-    stocks/thymeleaf
+   stocks/thymeleaf
    stocks/thymeleaf/sync
    stocks/thymeleaf/virtualSync
-#   stocks/htmlFlow
+   stocks/htmlFlow
    stocks/htmlFlow/suspending
    stocks/htmlFlow/sync
    stocks/htmlFlow/virtualSync
-#   stocks/kotlinx
+   stocks/kotlinx
    stocks/kotlinx/sync
    stocks/kotlinx/virtualSync
    stocks/rocker/sync
