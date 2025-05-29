@@ -41,7 +41,7 @@ ROUTES=(
   stocks/htmlFlow/suspending
   stocks/htmlFlow/sync
   stocks/htmlFlow/virtualSync
-  stocks/kotlinx
+#  stocks/kotlinx
   stocks/kotlinx/sync
   stocks/kotlinx/virtualSync
   stocks/rocker/sync
