@@ -45,7 +45,7 @@ to enable non-blocking, progressive rendering on the server side.
     language=Kotlin,
     basicstyle=\scriptsize\ttfamily,
     numbers=none,
-    caption={\textit{HtmlFlow} presentation template in Koltin with an \texttt{Observable} model},
+    caption={\textit{HtmlFlow reactive} presentation template in Koltin with an \texttt{Observable} model},
     label={lst:presentation-observable}
 ]
 await { div, model, onCompletion ->
@@ -67,7 +67,7 @@ await { div, model, onCompletion ->
     basicstyle=\scriptsize\ttfamily,
     numbers=none,
     label={lst:presentation-flow},
-    caption={\textit{HtmlFlow} presentation template in Kotlin with a \texttt{Flow} model},
+    caption={\textit{HtmlFlow suspend} presentation template in Kotlin with a \texttt{Flow} model},
 ]
 suspending { model ->
   model
