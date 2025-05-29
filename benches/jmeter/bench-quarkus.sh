@@ -81,7 +81,7 @@ echo ":::::::::::::::::::::::::::::::     Quarkus running PID = $PID_QUARKUS"
 echo "##########################################"
 echo "############# RUN BENCH ##################"
 echo "##########################################"
-./run-jmeter.sh "${ROUTES[@]}" | tee quarkus-virtual-results.log
+./run-jmeter.sh "${ROUTES[@]}" | tee quarkus-results-virtual.log
 
 if [ "$GH" != "true" ]; then
   kill $PID_GRADLE

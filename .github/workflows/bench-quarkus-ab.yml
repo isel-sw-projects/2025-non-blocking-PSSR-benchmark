@@ -29,14 +29,14 @@ jobs:
       - name: Upload result artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-results-jmeter-quarkus-${{runner.os}}
+          name: benchmark-results-ab-quarkus-${{runner.os}}
           path: ${{ github.workspace }}/benches/ab/quarkus-results.log
 
       - name: Upload result artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-results-jmeter-quarkus-virtual-${{runner.os}}
-          path: ${{ github.workspace }}/benches/ab/quarkus-virtual-results.log
+          name: benchmark-results-ab-quarkus-virtual-${{runner.os}}
+          path: ${{ github.workspace }}/benches/ab/quarkus-results-virtual.log
   jmeter:
     runs-on: ubuntu-22.04
     env:
