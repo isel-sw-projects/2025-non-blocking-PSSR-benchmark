@@ -1,11 +1,30 @@
 \section{Conclusion}
 
-Through benchmarking across Spring WebFlux, Spring MVC, and Quarkus, we
-evaluated eight different template engines and found that non-blocking
-implementations—especially those using virtual threads—consistently deliver
-performance on par with traditional blocking approaches under high concurrency.
-These results highlight virtual threads as a promising alternative to complex
-asynchronous programming models, offering a simpler development experience
-without sacrificing scalability or responsiveness.
+In recent decades, non-blocking I/O has become the standard approach for building
+highly responsive and scalable web servers. However, traditional synchronous
+programming models are not compatible with non-blocking APIs, which typically
+rely on callback-based conventions such as
+\textit{continuation-passing style} (CPS)~\cite{scheme} or
+\textit{promises}~\cite{promise}. These approaches not only hinder
+sequential readability but also increase code verbosity, making them more
+error-prone.
+Alternatives like the \texttt{async}/\texttt{await} idiom~\cite{async_await}
+or \textit{suspend functions}~\cite{elizarov2021coroutines} simplify
+asynchronous programming by mimicking a sequential style without blocking
+threads.
+Recent proposals~\cite{carvalho2023async,wise2024pssr} have applied contemporary
+asynchronous idioms to SSR web templates, demonstrating how they can overcome
+the scalability bottlenecks present in traditional web template engines.
 
-\pagebreak
+As an alternative, Java Virtual Threads can be applied to any blocking I/O call,
+leveraging the Java runtime to transparently intercept and convert it into non-blocking I/O,
+without requiring any changes to the calling code or exposing its internal complexities.
+In this work, we explored how this technique can be applied to traditional
+web template engines and whether it can achieve performance competitive with
+reactive approaches provided by frameworks such as Thymeleaf~\cite{webflux} and HtmlFlow~\cite{htmlflow}.
+Our benchmarks across Spring WebFlux, Spring MVC, and Quarkus show that synchronous
+non-blocking execution using virtual threads consistently delivers performance
+comparable to asynchronous non-blocking approaches under high concurrency.
+These findings highlight virtual threads as a promising alternative to complex
+asynchronous programming models, offering a simpler development experience
+without compromising scalability or responsiveness.

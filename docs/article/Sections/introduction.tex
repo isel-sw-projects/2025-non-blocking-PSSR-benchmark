@@ -37,7 +37,7 @@ this non-blocking architecture, PSSR implementations require template engines
 that are compatible with asynchronous data models~\cite{carvalho2023async}.
 Some modern template
 engines, such as HtmlFlow~\cite{htmlflow} and Thymeleaf~\cite{thymeleaf}, have
-been designed with these capabilities in mind. However, many traditional
+been designed with these capabilities in mind. However, many legacy
 template engines—particularly those using external domain-specific languages
 (DSLs)~\cite{Fowler03}—still depend on blocking interfaces like
 \texttt{Iterable} for data processing. This blocking behavior forces server
@@ -47,7 +47,7 @@ high-concurrency environments.
 
 With the introduction of \textit{Virtual Threads}~\footnote{\url{https://openjdk.org/jeps/444}}
 in Java 21, it is now possible to execute blocking I/O operations in a
-scalable, lightweight manner. This capability allows traditional template
+scalable, lightweight manner. This capability allows legacy template
 engines—often reliant on blocking interfaces—to operate efficiently in
 high-concurrency, non-blocking environments without requiring complex
 asynchronous programming models. As a result, PSSR
