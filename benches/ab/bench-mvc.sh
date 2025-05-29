@@ -1,6 +1,6 @@
 cd ../../code || exit
 
-./gradlew runMVC -DbenchTimeout=1 -DXms=1024m -DXmx=16G > ../benches/ab/spring-mvc.log &
+./gradlew runMVC -DbenchTimeout=1 -Dorg.gradle.jvmargs="-Xms512M -Xmx16g" > ../benches/ab/spring-mvc.log &
 PID_GRADLE=$!
 
 cd ../benches/ab || exit
@@ -67,7 +67,7 @@ echo ":::::::::::::::::::::::::::::::     Sync Bench Done"
 
 cd ../../code || exit
 
-./gradlew runMVCVirtual -DbenchTimeout=1 -DXms=1024m -DXmx=16G > ../benches/ab/spring-mvc.log &
+./gradlew runMVCVirtual -DbenchTimeout=1 -Dorg.gradle.jvmargs="-Xms512M -Xmx16g" > ../benches/ab/spring-mvc.log &
 PID_GRADLE=$!
 
 cd ../benches/ab || exit

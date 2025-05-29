@@ -1,6 +1,6 @@
 cd ../../code || exit
 
-./gradlew runWebflux -DbenchTimeout=1 -DXms=1024m -DXmx=16G > ../benches/jmeter/spring-webflux.log &
+./gradlew runWebflux -DbenchTimeout=1 -Dorg.gradle.jvmargs="-Xms512M -Xmx16g" > ../benches/jmeter/spring-webflux.log &
 
 PID_GRADLE=$!
 
