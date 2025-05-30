@@ -1,16 +1,15 @@
 \section{Benchmark Implementation}
 \label{sec:bench}
 
-The benchmark\footnote{\url{https://github.com/fmcarvalho/comparing-non-blocking-progressive-ssr}}
+This benchmark\footnote{\url{https://github.com/xmlet/comparing-non-blocking-progressive-ssr}}
 is designed with a modular architecture, separating the \textit{view} and
 \textit{model} layers from the \textit{controller} layer ~\cite{Bucanek2009},
 which allows for easy extension and integration of new template engines and
 frameworks. It also includes a set of tests to ensure the correctness of
 implementations and to validate the \textit{HTML} output. It includes two
 different data models, defined as \texttt{Presentation} and \texttt{Stock}, as
-shown in \autoref{lst:stock-class} and \autoref{lst:presentation-class},
-following the same model as
-\textit{spring-webflux-comparing-template-engines}~\footnote{\url{https://github.com/xmlet/spring-webflux-comparing-template-engines}}.
+shown in \autoref{lst:stock-class} and \autoref{lst:presentation-class}, 
+following the proposal of the benchmarks~\cite{templatesbenchmark,springbenchmark}.
 The \texttt{Presentation} class represents a presentation with a title, speaker
 name, and summary, while the \texttt{Stock} class represents a stock with a
 name, URL, symbol, price, change, and ratio.
