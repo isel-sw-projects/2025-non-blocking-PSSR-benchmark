@@ -1,9 +1,10 @@
 \section{Results}
 
-All the following benchmarks were conducted on a local machine running Ubuntu
-22.04 LTS with a 6-core, 12-thread CPU and 32GB of RAM\@. All tests were
-conducted on the OpenJDK VM Corretto 21. The JVM was configured with a minimum
-heap size of 1024MB and a maximum heap size of 16GB\@.
+All the following benchmarks were conducted on a Github-hosted virtual machine
+under GitHub Actions, running Ubuntu 22.04 LTS with a 4-core, 8-thread CPU and
+16GB of RAM\@. All tests were conducted on the OpenJDK VM Corretto 21. The JVM
+was configured with a minimum heap size of 512MB and a maximum heap size of
+16GB\@.
 
 For both the Apache Bench and JMeter tests, we simulate a 1000-request warmup
 period for each route with a concurrent user load of 32 users. The warmup
@@ -33,17 +34,16 @@ include HtmlFlow using suspendable web templates (\textit{HtmlFlow-Susp},
 equivalent to the approach shown in Listing~\ref{lst:presentation-flow}),
 Jstachio using Virtual Threads with the \texttt{Iterable} interface
 (\textit{Jstachio-Virtual}), and Thymeleaf using the reactive View Resolver
-driver (Thymeleaf-Rx).
-\textit{Blocking} and \textit{Virtual} represent the average throughput of the
-blocking approaches (i.e., KotlinX, Rocker, Jstachio, Pebble, Freemarker,
-Trimou, HtmlFlow, and Thymeleaf) when run in the context of a separate
-coroutine dispatcher or Virtual Threads, respectively.
+driver (Thymeleaf-Rx). \textit{Blocking} and \textit{Virtual} represent the
+average throughput of the blocking approaches (i.e., KotlinX, Rocker, Jstachio,
+Pebble, Freemarker, Trimou, HtmlFlow, and Thymeleaf) when run in the context of
+a separate coroutine dispatcher or Virtual Threads, respectively.
 
-We show the \textit{HtmlFlow-Susp}, \textit{Jstachio-Virtual}, and \textit{Thymeleaf-Rx} engines
-separately to observe the performance of the non-blocking engines when using
-the Suspending, Virtual Thread, and Reactive approaches. The \textit{Blocking}
-and \textit{Virtual} are aggregated due to the similar performance of different
-engines when using those approaches.
+We show the \textit{HtmlFlow-Susp}, \textit{Jstachio-Virtual}, and
+\textit{Thymeleaf-Rx} engines separately to observe the performance of the
+non-blocking engines when using the Suspending, Virtual Thread, and Reactive
+approaches. The \textit{Blocking} and \textit{Virtual} are aggregated due to
+the similar performance of different engines when using those approaches.
 
 \begin{figure}[h]
      \centering
@@ -51,16 +51,26 @@ engines when using those approaches.
      \caption{Presentation Benchmark Results in Spring WebFlux with JMeter}\label{fig:presentations-webflux-jmeter}
 \end{figure}
 
-The results show that when using the blocking template engines with a separate
-coroutine dispatcher, the engines are unable to scale effectively beyond 16
-concurrent users. In contrast, the non-blocking engines scale effectively up to
-128 concurrent users, with HtmlFlow achieving approximately 11,000 requests per
-second. When using the blocking approaches in the context of Virtual Threads
-(achieving non-blocking I/O), the engines scale effectively up to 128
-concurrent users, with Jstachio matching HtmlFlow`s performance at
-approximately 11,000 requests per second. Thymeleaf, using the reactive View
-Resolver driver, also scales to 128 users, albeit less effectively, achieving
-around 8,500 requests per second.
+The results in Figure~\ref{fig:presentations-webflux-jmeter} show that when
+using blocking template engines with a separate coroutine dispatcher, the
+engines are unable to scale effectively beyond 4 concurrent users. In contrast,
+the non-blocking engines scale efficiently up to 128 concurrent users, with
+HtmlFlow achieving 4,487 requests per second. When blocking approaches are
+executed in the context of Virtual Threads—thus enabling non-blocking I/O—the
+engines also scale up to 128 concurrent users, with Jstachio using Virtual
+Threads reaching 3,514 requests per second. The Thymeleaf implementation using
+the reactive View Resolver driver also scales up to 128 concurrent users, but
+achieves a lower throughput of approximately 2,559 requests per second.
+
+It is important to note that the differences in scalability and throughput
+between the \textit{HtmlFlow-Susp}, \textit{Jstachio-Virtual}, and
+\textit{Thymeleaf-Rx} approaches may be influenced by the specific template
+engines used, rather than the approach itself. When comparing the
+\textit{Reactive}, \textit{Suspendable}, and \textit{Virtual} approaches
+specifically with HtmlFlow, we found that all three achieve similar
+performance: HtmlFlow using a blocking approach with Virtual Threads reaches
+4,691 requests per second, while HtmlFlow using a reactive approach achieves
+4,792 requests per second.
 
 \begin{figure}[h]
      \centering
@@ -76,19 +86,21 @@ around 8,500 requests per second.
 % achieving a slightly higher throughput of 9,000 requests per second. However,
 % these values are slightly lower than those observed in the Spring WebFlux
 % implementation.
-
 The results for the Spring MVC implementation, shown in
 Figure~\ref{fig:presentations-springmvc-jmeter}, compare two synchronous
 approaches: \textit{Blocking}, which uses platform threads with
 \texttt{StreamingResponseBody}, and \textit{Virtual}, which uses Virtual
-Threads. Note that for Spring MVC, which follows a thread-per-request
-architecture, neither of the asynchronous approaches—\textbf{Reactive} nor
-\textbf{Suspendable}—described in Section~\ref{sec:bench} are applicable. Regarding the
-synchronous strategy, both \textit{Blocking} and \textit{Virtual} scale
-effectively up to 128 concurrent users, with the Virtual Threads approach
-achieving a slightly higher throughput of approximately 9,000 requests per
-second. However, these values are slightly lower than those observed in the
-Spring WebFlux implementation.
+Threads. Since Spring MVC follows a thread-per-request architecture, the
+asynchronous approaches—\textbf{Reactive} and \textbf{Suspendable}—described in
+Section~\ref{sec:bench} are not applicable. Both the \textit{Blocking} and
+\textit{Virtual} strategies scale effectively up to 128 concurrent users, with
+the Virtual Threads approach achieving a slightly higher maximum throughput of
+2,797 requests per second, compared to 2,498 requests per second for the
+blocking approach. These results indicate that while Spring MVC can handle a
+moderate level of concurrency, it does not reach the scalability of the
+reactive or suspendable approaches available in Spring WebFlux. Furthermore,
+Spring MVC does not enable Progressive Server-Side Rendering (PSSR) for the
+tested templates, as previously discussed in Section~\ref{sec:bench}.
 
 \begin{figure}[h]
      \centering
@@ -99,21 +111,21 @@ Spring WebFlux implementation.
 The results for the Quarkus implementation, shown in
 Figure~\ref{fig:presentations-quarkus-jmeter}, indicate that Quarkus handles
 synchronous approaches more efficiently than Spring WebFlux. The blocking
-engines scale up to 128 concurrent users, achieving up to 10,000 requests per
-second. While the use of Virtual Threads results in a slightly higher
-throughput, the difference is negligible, with both approaches delivering
-comparable performance.
+engines scale up to 128 concurrent users, achieving up to 3744 requests per
+second. When using Virtual Threads, the throughput increases even further,
+reaching 4856 requests per second. This demonstrates that Quarkus's
+implementation of Virtual Threads is effective for enabling PSSR\@, and
+comparable to the \textit{Suspendable} and \textit{Reactive} used approaches in
+Spring WebFlux in terms of scalability and throughput.
 
 Additionally, \textit{HtmlFlow-Rx}, a reactive implementation of the HtmlFlow
 template engine (equivalent to the approach shown in
 Listing~\ref{lst:presentation-observable}) that utilizes Quarkus's reactive
-programming model, achieved throughput similar to the \textit{Blocking} and
-\textit{Virtual}
-approaches—approximately 10,000 requests per second. This demonstrates that
-Quarkus's reactive programming model is effective for enabling PSSR\@. However,
-there is no significant difference in performance between the reactive and
-synchronous approaches, indicating that the reactive model does not provide a
-substantial advantage over synchronous approaches in this context.
+programming model, achieved a lower throughput than the the \textit{Blocking}
+and \textit{Virtual} approaches—3088 requests per second. This demonstrates
+that Quarkus's reactive programming model is effective for enabling PSSR\@,
+although it does not achieve the same level of performance as the same approach
+in Spring WebFlux.
 
 \subsection{Stocks Results}
 
@@ -125,16 +137,29 @@ substantial advantage over synchronous approaches in this context.
 
 The results in Figure~\ref{fig:stocks-webflux-jmeter} use the same template
 engines and approaches as the previous benchmark, but replace the data model
-with the more complex Stock class, including 20 instances. Despite the
-increased complexity and number of instances, the scalability of the engines
-remains largely unaffected. However, throughput is reduced by approximately 50
-percent across all engines, with HtmlFlow achieving 6,000 requests per second.
-Since the \texttt{Stock} class\ contains more data properties than the
-\texttt{Presentation} class, the data binding to the template engine adds
-overhead, which explains the reduced performance. The Thymeleaf implementation
-using the reactive View Resolver driver reaches 5,000 requests per second,
-suggesting that the performance drop compared to the Presentation benchmark is
-not substantial.
+with the more complex Stock class, including 20 instances. When using this data
+model, we observe that the scalability of the engines is not significantly
+affected, however the throughput is reduced across all engines. When compared
+to the Presentation benchmark, we observe that particularly the approaches
+using Virtual Threads took a greater performance hit when compared to the
+\textit{Reactive} and \textit{Suspending} approaches, with Jstachio using
+Virtual Threads now achieving 1509 requests per second, compared to the 1,750
+requests per achieved by the Thymeleaf implementation using the reactive View
+Resolver driver.
+
+It is again important to note that the differences in scalability and
+throughput between the \textit{HtmlFlow-Susp}, \textit{Jstachio-Virtual}, and
+\textit{Thymeleaf-Rx} approaches may be influenced by the specific template
+engines used, rather than the approach itself. When comparing the
+\textit{Reactive}, \textit{Suspendable}, and \textit{Virtual} approaches
+specifically with HtmlFlow, we found that all three achieve similar
+performance: HtmlFlow using a blocking approach with Virtual Threads reaches
+3,090 requests per second, while HtmlFlow using a reactive approach achieves
+3,026 requests per second.
+
+The overall throughput reduction is expected, as the Stock class contains more
+data properties than the \texttt{Presentation} class, adding overhead related
+to the data binding process of each template engine.
 
 \begin{figure}[h]
      \centering
@@ -142,11 +167,14 @@ not substantial.
      \caption{Stocks Benchmark Results in Spring MVC with JMeter}\label{fig:stocks-springmvc-jmeter}
 \end{figure}
 
-The results observed in Figure~\ref{fig:stocks-springmvc-jmeter} show that the
+The results shown in Figure~\ref{fig:stocks-springmvc-jmeter} indicate that the
 Spring MVC implementation using the blocking approach with
-\texttt{StreamingResponseBody} achieves a throughput of up to 5500 requests per
-second, while no significant change is observed when using Virtual Threads. As
-such, both approaches scale effectively up to 128 concurrent users.
+\texttt{StreamingResponseBody} achieves a throughput of up to 1,916 requests
+per second, with no significant improvement observed when using Virtual
+Threads. Both approaches scale effectively up to 128 concurrent users. Although
+these approaches achieve higher throughput in Spring MVC than in Spring
+WebFlux, their overall performance remains lower than that of the reactive and
+suspendable approaches.
 
 \begin{figure}[h]
      \centering
@@ -157,15 +185,13 @@ such, both approaches scale effectively up to 128 concurrent users.
 The results depicted in Figure~\ref{fig:stocks-quarkus-jmeter} show that the
 Quarkus implementation scales effectively up to 128 concurrent users, achieving
 performance comparable to the Spring WebFlux implementation. The blocking
-engines reach approximately 5,500 requests per second, and once again, there is
-no significant difference between the \textit{Blocking} and \textit{Virtual}
-approaches, with both achieving similar results.
+approach reaches a throughput of 3,019 requests per second, while the Virtual
+Threads approach achieves a throughput of 3,357 requests per second.
 
 In addition to the blocking engines, the \textit{HtmlFlow-Rx} approach also
-achieves a throughput of approximately 5,500 requests per second, matching the
-performance of the \textit{Blocking} and \textit{Virtual} approaches. This
-further demonstrates that there is no significant difference in performance
-between the reactive and synchronous approaches in this context.
+achieves a throughput of 1760 requests per second, indicating that this
+approach achieves lower performance in Quarkus than in Spring WebFlux, where it
+reached 3,026 requests per second, as previously mentioned.
 
 The results of the benchmarks show that non-blocking engines, through the use
 of reactive programming, Kotlin coroutines, or Java virtual threads, are able
