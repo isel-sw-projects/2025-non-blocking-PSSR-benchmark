@@ -29,7 +29,7 @@ ROUTES=(
   #   presentations/pebble/sync
      presentations/pebble/virtualSync
   #   presentations/freemarker/sync
-     presentations/freemarker/virtualSync
+#     presentations/freemarker/virtualSync
   #   presentations/trimou/sync
      presentations/trimou/virtualSync
   #   presentations/velocity/sync
@@ -52,7 +52,7 @@ ROUTES=(
   #   stocks/pebble/sync
      stocks/pebble/virtualSync
   #   stocks/freemarker/sync
-     stocks/freemarker/virtualSync
+#     stocks/freemarker/virtualSync
   #   stocks/trimou/sync
      stocks/trimou/virtualSync
   #   stocks/velocity/sync
