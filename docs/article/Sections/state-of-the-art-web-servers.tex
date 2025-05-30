@@ -219,7 +219,7 @@ Quarkus provides support for reactive APIs like Mutiny~\cite{mutiny2021}, a
 modern alternative to Spring Reactor~\cite{projectreactor}. Like Reactor,
 Mutiny complies with the Reactive Streams specification~\cite{ReactiveStreams}.
 For traditional imperative-style request handling, Quarkus provides integration
-with JAX-RS, where resource methods can return synchronous types or
+with JAX-RS~\cite{burke2013restful}, where resource methods can return synchronous types or
 asynchronous constructs such as \texttt{CompletionStage}. To enable 
 PSSR in imperative endpoints, Quarkus leverages the
 JAX-RS \texttt{StreamingOutput} interface. By returning a
