@@ -26,7 +26,7 @@ ANSWER:
 - **clock speed**: 3.24 GHz operating frequency
 - **disk I/O characteristics**: 75GB SSD with ext4 filesystem, achieving 1.5 GB/s write throughput
 - **network bandwidth/latency to test client**: 1500 MTU Ethernet interface
-- **JVM arguments**: OpenJDK 21 (Temurin build) with max heap size of 16GB
+- **JVM arguments**: OpenJDK 21 (Correto build) with initial heap size of 512MB and max heap size of 16GB
 - **garbage collector used**: G1 garbage collector enabled by default
 - **platform thread pool size**: Unlimited for both Spring MVC and Quarkus
 
