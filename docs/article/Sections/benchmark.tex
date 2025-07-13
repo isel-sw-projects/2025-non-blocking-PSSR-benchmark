@@ -8,11 +8,12 @@ which allows for easy extension and integration of new template engines and
 frameworks. It also includes a set of tests to ensure the correctness of
 implementations and to validate the \textit{HTML} output. It includes two
 different data models, defined as \texttt{Presentation} and \texttt{Stock}, as
-shown in \autoref{lst:stock-class} and \autoref{lst:presentation-class}, 
-following the proposal of the benchmarks~\cite{templatesbenchmark,springbenchmark}.
-The \texttt{Presentation} class represents a presentation with a title, speaker
-name, and summary, while the \texttt{Stock} class represents a stock with a
-name, URL, symbol, price, change, and ratio.
+shown in \autoref{lst:stock-class} and \autoref{lst:presentation-class},
+following the proposal of the
+benchmarks~\cite{templatesbenchmark,springbenchmark}. The \texttt{Presentation}
+class represents a presentation with a title, speaker name, and summary, while
+the \texttt{Stock} class represents a stock with a name, URL, symbol, price,
+change, and ratio.
 
 \begin{center}
       \begin{minipage}{0.48\textwidth}
@@ -33,10 +34,10 @@ data class Stock(
     val ratio: Double
 )
 \end{lstlisting}
-\end{minipage}
-\hfill
-\begin{minipage}{0.48\textwidth}
-  \begin{lstlisting}[
+      \end{minipage}
+      \hfill
+      \begin{minipage}{0.48\textwidth}
+            \begin{lstlisting}[
     language=kotlin,
     basicstyle=\scriptsize\ttfamily,
     numbers=none,
@@ -50,7 +51,7 @@ data class Presentation(
     val summary: String
 )
 \end{lstlisting}
-\end{minipage}
+      \end{minipage}
 \end{center}
 
 The application's repository contains a list of 10 instances of the
@@ -81,22 +82,25 @@ response body, which acts as a publisher that progressively streams the HTML
 content to the client. The implementation includes four main approaches to
 PSSR\@:
 \begin{itemize}
-  \item \textbf{Reactive}: The template engine is used in a reactive context,
-        where the HTML content rendered using the reactive programming model.
-        An example of this approach is the Thymeleaf template engine
-        when using the \texttt{ReactiveDataDriverContextVariable} in conjunction with a
-        non-blocking Spring \texttt{ViewResolver}.
-  \item \textbf{Virtual}: The template engine is used in a non-blocking
-        context, where the HTML content is rendered within the context of Virtual
-        Threads. This method is used for the template engines that do not traditionally
-        support non-blocking I/O, be it either because they use external DSLs and in
-        consequence only support the blocking \texttt{Iterable} interface, or
-        because they do not support the asynchronous rendering of HTML content.
-  \item \textbf{Suspendable}: The template engine is used in a suspendable
-        context, where the HTML content is rendered within the context of a suspending function.
-        An example of this approach is the HtmlFlow template engine, which
-        supports suspendable templates with the use of the \texttt{Flow} class from the
-        Kotlin standard library.
+      \item \textbf{Reactive}: The template engine is used in a reactive context,
+            where the HTML content rendered using the reactive programming model.
+            An example of this approach is the Thymeleaf template engine
+            when using the \texttt{ReactiveDataDriverContextVariable} in conjunction with a
+            non-blocking Spring \texttt{ViewResolver}.
+      \item \textbf{Suspendable}: The template engine is used in a suspendable
+            context, where the HTML content is rendered within the context of a suspending function.
+            An example of this approach is the HtmlFlow template engine, which
+            supports suspendable templates with the use of the \texttt{Flow} class from the
+            Kotlin standard library.
+      \item \textbf{Virtual}: The template engine is used in a non-blocking
+            context, where the HTML content is rendered within the context of Virtual
+            Threads. This method is used for the template engines that do not traditionally
+            support non-blocking I/O, be it either because they use external DSLs and in
+            consequence only support the blocking \texttt{Iterable} interface, or
+            because they do not support the asynchronous rendering of HTML content.
+      \item \textbf{Blocking}: The template engine is used in a blocking
+            context, where the HTML content is rendered using the blocking interface of the
+            \texttt{Observable} class, within the context of a OS-thread.
 \end{itemize}
 % It also includes methods using Kotlin coroutines and other
 % asynchronous mechanisms supported by template engines, such as the
@@ -106,7 +110,7 @@ The Spring MVC implementation uses handlers based solely on the blocking
 interface of the \texttt{Observable} class. To enable PSSR in this context, we
 utilize the \texttt{StreamingResponseBody} interface, which allows the
 application to write directly to the response \texttt{OutputStream} without
-blocking the servlet container thread. According to the Spring documentation,
+blocking the servlet container thread. According to the Spring documentation\footnote{\url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}},
 this class is \textit{a controller method return value type for asynchronous
 request processing where the application can write directly to the response
 OutputStream without holding up the Servlet container thread.}
@@ -124,10 +128,18 @@ create a thread for each request.
 
 However, the Spring MVC implementation does not effectively support PSSR for
 these templates, as HTML content is not streamed progressively to the client.
-This is because the response is only sent once the content written to the
-\texttt{OutputStream} exceeds the output buffer size, which defaults to 8KB\@.
-As a result, the client receives the response only after the entire HTML
-content is rendered, defeating the purpose of PSSR in this context.
+This limitation occurs because the response is only flushed to the client once
+the content written to the \texttt{OutputStream} exceeds the configured output
+buffer size, as explained in Section~\ref{sec:web-frameworks}. Consequently,
+the client receives the complete response only after the entire HTML content
+has been rendered and buffered, which negates the primary benefits of
+PSSR—namely, reduced time-to-first-byte and progressive content delivery.
+Furthermore, Spring MVC does not provide configuration options for the response
+buffer size, preventing developers from reducing it to smaller values that
+would enable more frequent flushing and achieve true progressive streaming of
+HTML content. This architectural constraint makes Spring MVC unsuitable for
+implementing effective PSSR compared to reactive frameworks like Spring
+WebFlux.
 
 This implementation includes two main approaches to PSSR\@:
 \begin{itemize}
@@ -142,7 +154,7 @@ The Quarkus implementation also uses handlers based on the blocking interface
 of the \texttt{Observable} class. It implements the \texttt{StreamingOutput}
 interface from the JAX-RS specification to enable PSSR, allowing HTML content
 to be streamed to the client. While \texttt{StreamingOutput} also uses blocking
-I/O, it operates on Vert.x worker threads, which prevents blocking of the event
+I/O, it operates on Vert.X worker threads, which prevents blocking of the event
 loop. When Virtual Threads are used, the I/O operations are handled
 efficiently, as they are executed in lightweight threads.
 

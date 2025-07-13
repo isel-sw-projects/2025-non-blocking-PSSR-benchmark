@@ -216,7 +216,7 @@ DSLs can be divided in two types: \textit{external} or
 without any affiliation to a concrete programming language. An example of an
 \textit{external} DSL is the regular expressions search
 pattern\cite{thompson1968}, since it defines its own syntax without any
-dependency of programming languages. On the other hand an \textit{internal} DSL
+dependency of programming languages. On the other hand, an \textit{internal} DSL
 is defined within a host programming language as a library and tends to be
 limited to the syntax of the host language, such as Java.
 JQuery\cite{resig2007pro} is one of the most well-known examples of an internal
@@ -350,7 +350,7 @@ Java library. One reason for verbosity in \textit{function sequence} and
 builder to emit the closing tag, exemplified by \texttt{end()} in \textbf{JATL}
 (Figure~\ref{fig:dsl-idioms}.a) and \texttt{\_\_()} in \textbf{HtmlFlow}
 (Figure~\ref{fig:dsl-idioms}.c). But the \textit{nested function} approach
-comes with a notable drawback: \textbf{they do not support PSSR} because the
+comes with a notable drawback: \textbf{it does not support PSSR} because the
 sequence of nested functions is evaluated backward to the order in which they
 are written. In other words, arguments are evaluated before the functions are
 invoked. Taking the example in Figure~\ref{fig:dsl-idioms}.b), the
@@ -498,7 +498,7 @@ typed and provides a set of methods corresponding to legal child elements. This
 enables KotlinX.html to enforce HTML safety by restricting the available
 methods during compile time.
 
-To achieve this KotlinX.html provides HTML builders using \textit{function
+To achieve this, KotlinX.html provides HTML builders using \textit{function
   literals with receiver}~\cite{kotlinlang}. In Kotlin, a block of code enclosed
 in curly braces \texttt{\{...\}} is known as a \emph{lambda}, and can be used
 as an argument to a function that expects a \emph{function literal}. When we
@@ -545,7 +545,7 @@ becomes available to complete the web page.
 However, despite being overlooked, HTTP and browsers were designed from their
 inception to also support this feature in the context of SSR approaches,
 which offers the advantage of not being dependent on
-\textit{rendering-blocking resources}, such as the required JavaScript for CSR.
+\textit{render-blocking resources}, such as the required JavaScript for CSR.
 % \textit{Progressive server-side rendering} (PSSR) is the
 % ability of streaming HTML content to the client in chunks or data frames, as it
 % gets resolved on the server at runtime.

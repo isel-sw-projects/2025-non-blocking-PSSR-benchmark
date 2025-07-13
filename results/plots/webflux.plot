@@ -7,7 +7,7 @@ set output 'presentations-webflux.png'
 set datafile separator ","
 
 set style data histogram
-set style histogram clustered gap
+set style histogram clustered gap 1
 set style fill solid border -1
 set boxwidth 1
 
@@ -16,7 +16,7 @@ set xlabel "Approach"
 set ylabel "req/sec"
 set grid ytics
 
-set key outside right top vertical Left reverse noenhanced autotitle columnhead
+set key title "Concurrent Users" outside right top vertical Left reverse noenhanced autotitle columnhead
 
 set palette defined (1 '#e74c3c', 2 '#3498db', 3 '#2ecc71', 4 '#f39c12', 5 '#9b59b6')
 

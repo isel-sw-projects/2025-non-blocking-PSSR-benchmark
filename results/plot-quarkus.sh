@@ -1,7 +1,7 @@
 #!/bin/bash
 
 INPUT_BLOCKING="quarkus-results.log"
-INPUT_VIRTUAL="quarkus-virtual-results.log"
+INPUT_VIRTUAL="quarkus-results-virtual.log"
 
 PRESENTATIONS_CSV="presentations-quarkus.csv"
 STOCKS_CSV="stocks-quarkus.csv"

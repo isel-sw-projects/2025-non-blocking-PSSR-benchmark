@@ -1,4 +1,5 @@
 \subsection{Web Framework Architectures and Approaches to PSSR}
+\label{sec:web-frameworks}
 
 In traditional thread-per-request architectures, each incoming request is
 handled by a dedicated thread. The web server maintains a thread pool from
@@ -75,36 +76,45 @@ execution. This mechanism is enabled by the JVM's integration with non-blocking
 system calls at the OS level, allowing developers to write traditional
 synchronous code while benefiting from the scalability of non-blocking I/O.
 
+The primary advantage of virtual threads lies in their ability to eliminate the
+need for complex asynchronous programming models. Unlike reactive or structured
+concurrency approaches that require developers to adopt complex paradigms, virtual
+threads enable non-blocking execution of existing synchronous APIs without code
+modification. This significantly reduces the learning curve and maintenance
+burden associated with asynchronous programming while maintaining comparable
+performance characteristics.
+
 \subsubsection{Spring MVC}
 
-Spring MVC is a synchronous web framework built on the
-thread-per-request model. When an HTTP request is received, it is handled by a
-dedicated thread from the server’s thread pool (e.g., Tomcat, Jetty, or
-Undertow). This thread is responsible for executing the full request lifecycle
-synchronously, including invoking controllers, executing business logic, and
-rendering the response view. Because the model is blocking, the thread remains
-occupied throughout the request—even during I/O operations such as database
-queries or external API calls—which can lead to performance bottlenecks under
-high concurrency.
+Spring MVC is a synchronous web framework built on the thread-per-request
+model. When an HTTP request is received, it is handled by a dedicated thread
+from the server’s thread pool (e.g., Tomcat, Jetty, or Undertow). This thread
+is responsible for executing the full request lifecycle synchronously,
+including invoking controllers, executing business logic, and rendering the
+response view. Because the model is blocking, the thread remains occupied
+throughout the request—even during I/O operations such as database queries or
+external API calls—which can lead to performance bottlenecks under high
+concurrency.
 
 Controllers in Spring MVC typically return Java objects or models that are
 processed by view resolvers in conjunction with template engines like JSP,
 Thymeleaf, or FreeMarker. These templates generate the full HTML response in
 one pass, which is then sent to the client only after all necessary data has
 been gathered and rendered. By default, this architecture limits the ability to
-perform PSSR, as traditional
-rendering waits for all data before sending any output. This results in higher
-latency for clients and less responsive page loads, particularly for
-data-intensive views. However, Spring MVC provides a mechanism for response
-streaming via the \texttt{StreamingResponseBody}\footnote{\url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}} interface, introduced in
-Spring 4.2. When a controller method returns a \texttt{StreamingResponseBody},
-Spring writes directly to the \texttt{HttpServletResponse} output stream,
-allowing the server to send parts of the response incrementally as they become
-available. This is particularly useful for:
+perform PSSR, as traditional rendering waits for all data before sending any
+output. This results in higher latency for clients and less responsive page
+loads, particularly for data-intensive views. However, Spring MVC provides a
+mechanism for response streaming via the
+\texttt{StreamingResponseBody}\footnote{\url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}}
+interface, introduced in Spring 4.2. When a controller method returns a
+\texttt{StreamingResponseBody}, Spring writes directly to the
+\texttt{HttpServletResponse} output stream, allowing the server to send parts
+of the response incrementally as they become available. This is particularly
+useful for:
 \begin{itemize}
-  \item Sending large responses without buffering the entire output in memory.
-  \item Writing dynamic HTML in fragments as data is fetched or computed.
-  \item Reducing Time to First Byte (TTFB) and improving perceived performance.
+    \item Sending large responses without buffering the entire output in memory.
+    \item Writing dynamic HTML in fragments as data is fetched or computed.
+    \item Reducing Time to First Byte (TTFB) and improving perceived performance.
 \end{itemize}
 
 \begin{lstlisting}[
@@ -127,23 +137,22 @@ available. This is particularly useful for:
   }
 \end{lstlisting}
 
-In the example shown in \autoref{lst:streaming-response-body}, HTML content is written and flushed in discrete chunks,
-allowing the client to progressively render the response as it arrives, while
-the server continues processing additional data.
-However, this technique has two limitations. First, it does not eliminate the
-blocking nature inherent in Spring MVC, as the handling thread remains active
-during the streaming process.
-Second, it is constrained by the servlet response buffer.
-By default, most servlet containers (e.g., Tomcat) use a
-response buffer size of approximately 8KB. Data written to the response output
-stream is held in this buffer until it reaches capacity. Consequently, if the
-total size of the initial HTML content is less than the buffer threshold, the
-server will not transmit any data to the client until the buffer is filled.
-This buffering behavior introduces a delay in sending the first chunk of
-content, thereby negating the benefits of progressive rendering. In scenarios
-where the rendered HTML template does not produce sufficient data to exceed the
-buffer threshold early, PSSR becomes ineffective, and the client experiences a
-delayed initial response.
+In the example shown in \autoref{lst:streaming-response-body}, HTML content is
+written and flushed in discrete chunks, allowing the client to progressively
+render the response as it arrives, while the server continues processing
+additional data. However, this technique has two limitations. First, it does
+not eliminate the blocking nature inherent in Spring MVC, as the handling
+thread remains active during the streaming process. Second, it is constrained
+by the servlet response buffer. By default, most servlet containers (e.g.,
+Tomcat) use a response buffer size of approximately 8KB. Data written to the
+response output stream is held in this buffer until it reaches capacity.
+Consequently, if the total size of the initial HTML content is less than the
+buffer threshold, the server will not transmit any data to the client until the
+buffer is filled. This buffering behavior introduces a delay in sending the
+first chunk of content, thereby negating the benefits of progressive rendering.
+In scenarios where the rendered HTML template does not produce sufficient data
+to exceed the buffer threshold early, PSSR becomes ineffective, and the client
+experiences a delayed initial response.
 
 \subsubsection{Spring WebFlux}
 
@@ -152,26 +161,25 @@ event-driven architecture that enables efficient handling of a large number of
 concurrent connections with minimal resource usage. Unlike traditional
 servlet-based stacks that rely on a thread-per-request model, WebFlux operates
 on reactive runtimes like Netty, where a small, fixed-size event loop manages
-all I/O events.
-Incoming HTTP requests are routed to handler functions or annotated controllers,
-which return reactive types such as \texttt{Mono<T>} and
-\texttt{Flux<T>}—\texttt{Publisher} implementations provided by the Project Reactor
-library~\cite{projectreactor}. These implementations adhere to the Reactive
-Streams specification~\cite{ReactiveStreams}, enabling interoperability with
-other compliant reactive stream libraries.
-A \texttt{Mono} represents a single asynchronous value (or
-none)~\cite{promise}, while a \texttt{Flux} represents a stream of zero or more values~\cite{rx-observable}. These
-abstractions allow the entire request lifecycle—from controller invocation to
-response rendering—to be orchestrated as a chain of non-blocking, asynchronous
-operations. I/O-bound tasks such as database queries or external API calls do
-not occupy threads during execution, enabling the framework to scale gracefully
-under high load and maintain responsiveness even in resource-constrained
-environments.
+all I/O events. Incoming HTTP requests are routed to handler functions or
+annotated controllers, which return reactive types such as \texttt{Mono<T>} and
+\texttt{Flux<T>}—\texttt{Publisher} implementations provided by the Project
+Reactor library~\cite{projectreactor}. These implementations adhere to the
+Reactive Streams specification~\cite{ReactiveStreams}, enabling
+interoperability with other compliant reactive stream libraries. A
+\texttt{Mono} represents a single asynchronous value (or none)~\cite{promise},
+while a \texttt{Flux} represents a stream of zero or more
+values~\cite{rx-observable}. These abstractions allow the entire request
+lifecycle—from controller invocation to response rendering—to be orchestrated
+as a chain of non-blocking, asynchronous operations. I/O-bound tasks such as
+database queries or external API calls do not occupy threads during execution,
+enabling the framework to scale gracefully under high load and maintain
+responsiveness even in resource-constrained environments.
 
-PSSR is natively supported in WebFlux via
-\texttt{Flux}-based controllers. When a controller returns a
-\texttt{Flux<String>} or another stream of HTML fragments, WebFlux can begin
-streaming content to the client as soon as the first elements are emitted.
+PSSR is natively supported in WebFlux via \texttt{Flux}-based controllers. When
+a controller returns a \texttt{Flux<String>} or another stream of HTML
+fragments, WebFlux can begin streaming content to the client as soon as the
+first elements are emitted.
 % This allows browsers to incrementally render parts of the response without waiting
 % for the entire payload, significantly reducing Time to First Byte (TTFB) and
 % improving user-perceived performance. By integrating PSSR directly into the
@@ -210,27 +218,26 @@ performing blocking I/O or awaiting asynchronous operations imperatively.
 \subsubsection{Quarkus}
 
 Quarkus is a modern, cloud-native Java framework that supports both imperative
-and reactive programming models. It is built on top of Vert.x,
-which provides a non-blocking, event-driven runtime similar to Netty. Incoming
-HTTP requests are processed asynchronously on a small, fixed-size event loop
-thread pool, allowing the framework to handle many concurrent connections
-efficiently without blocking threads. 
-Quarkus provides support for reactive APIs like Mutiny~\cite{mutiny2021}, a
-modern alternative to Spring Reactor~\cite{projectreactor}. Like Reactor,
-Mutiny complies with the Reactive Streams specification~\cite{ReactiveStreams}.
-For traditional imperative-style request handling, Quarkus provides integration
-with JAX-RS~\cite{burke2013restful}, where resource methods can return synchronous types or
-asynchronous constructs such as \texttt{CompletionStage}. To enable 
-PSSR in imperative endpoints, Quarkus leverages the
-JAX-RS \texttt{StreamingOutput} interface. By returning a
-\texttt{StreamingOutput} instance, developers can write parts of the HTTP
-response body incrementally as data becomes available. This approach allows the
-server to flush HTML fragments progressively to the client, improving the
-perceived responsiveness especially for long-running or large responses.
-However, like other streaming mechanisms based on servlet buffers, the initial
-data flush may be delayed until internal buffers (commonly around 8KB) are
-filled. However, Quarkus allows configuring the buffer size to a smaller value, which
-can help mitigate this issue.
+and reactive programming models. It is built on top of Vert.X, which provides a
+non-blocking, event-driven runtime similar to Netty. Incoming HTTP requests are
+processed asynchronously on a small, fixed-size event loop thread pool,
+allowing the framework to handle many concurrent connections efficiently
+without blocking threads. Quarkus provides support for reactive APIs like
+Mutiny~\cite{mutiny2021}, a modern alternative to Spring
+Reactor~\cite{projectreactor}. Like Reactor, Mutiny complies with the Reactive
+Streams specification~\cite{ReactiveStreams}. For traditional imperative-style
+request handling, Quarkus provides integration with
+JAX-RS~\cite{burke2013restful}, where resource methods can return synchronous
+types or asynchronous constructs such as \texttt{CompletionStage}. To enable
+PSSR in imperative endpoints, Quarkus leverages the JAX-RS
+\texttt{StreamingOutput} interface. By returning a \texttt{StreamingOutput}
+instance, developers can write parts of the HTTP response body incrementally as
+data becomes available. This approach allows the server to flush HTML fragments
+progressively to the client, improving the perceived responsiveness especially
+for long-running or large responses. Like other streaming mechanisms
+based on servlet buffers, the initial data flush may be delayed until internal
+buffers (commonly around 8KB) are filled. However, Quarkus allows configuring
+the buffer size to a smaller value, which can help mitigate this issue.
 
 \begin{lstlisting}[
   language=java,

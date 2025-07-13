@@ -1812,7 +1812,7 @@
 			\raggedright\textbf{Copyright: }\copyright{} {\@ \the\year} by the \@authornum. %
 			Submitted to {\em\journalname} for %
 			possible open access publication %
-			under the terms and conditions of the Creative Commons Attri- bution %
+			under the terms and conditions of the Creative Commons Attribution %
 			\ifthenelse{\equal{\@journal}{ijtpp}}{(CC BY-NC-ND)}{(CC BY)} %
 			license %
 			\ifthenelse{\equal{\@journal}{ijtpp}}{%
