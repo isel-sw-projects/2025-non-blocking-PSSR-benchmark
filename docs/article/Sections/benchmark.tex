@@ -154,7 +154,7 @@ The Quarkus implementation also uses handlers based on the blocking interface
 of the \texttt{Observable} class. It implements the \texttt{StreamingOutput}
 interface from the JAX-RS specification to enable PSSR, allowing HTML content
 to be streamed to the client. While \texttt{StreamingOutput} also uses blocking
-I/O, it operates on Vert.X worker threads, which prevents blocking of the event
+I/O, it operates on Vert.x worker threads, which prevents blocking of the event
 loop. When Virtual Threads are used, the I/O operations are handled
 efficiently, as they are executed in lightweight threads.
 

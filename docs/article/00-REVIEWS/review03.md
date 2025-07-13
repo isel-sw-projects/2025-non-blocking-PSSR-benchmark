@@ -126,3 +126,5 @@ before resubmission.
 ANSWER
 
 - PAPER and REPLY: REMOVED repetition.
+
+- Done (?): Removed "this work explores how" and "as a result" from the text. Also reduced the use of "However" in the text.

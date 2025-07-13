@@ -7,7 +7,7 @@ performance, user experience, and \textit{scalability}. The two most dominant
 approaches are \textit{Server-Side Rendering (SSR)} and \textit{Client-Side
     Rendering (CSR)}. SSR generates HTML content on the server before sending it to
 the client, resulting in a faster \textit{First Contentful Paint (FCP)}
-~\cite{Edgar2024-FCP} and better Search Engine Optimization (SEO). However, SSR
+~\cite{Edgar2024-FCP} and better Search Engine Optimization (SEO). Nevertheless, SSR
 can increase server load and reduce \textit{throughput}\footnote{The number of
     requests the server can handle per second (RPS)} since each request requires
 additional processing before responding. In contrast, CSR shifts the rendering
@@ -23,8 +23,8 @@ allowing progressive rendering as data becomes available, significantly reducing
 SSR approaches~\cite{wise2024pssr}. In this respect,
 PSSR is similar to CSR in that the server initially sends a minimal HTML
 document to the client and subsequently streams additional HTML fragments.
-However, unlike CSR, PSSR retains all rendering responsibilities on the server side,
-thereby reducing the load on the client. As a result, the client does
+Even so, unlike CSR, PSSR retains all rendering responsibilities on the server side,
+thereby reducing the load on the client. Consequently, the client does
 not need to execute JavaScript or make additional requests to retrieve page content.
 The streaming nature of PSSR allows users to see content progressively as it becomes
 available, rather than waiting for the complete page to be rendered server-side,
@@ -55,11 +55,10 @@ With the introduction of \textit{Virtual
 possible to execute blocking I/O operations in a scalable, lightweight manner.
 This capability allows legacy template engines—often reliant on blocking
 interfaces—to operate efficiently in high-concurrency, non-blocking
-environments without requiring complex asynchronous programming models. As a
-result, PSSR can now be implemented using familiar HTML templates, simplifying
+environments without requiring complex asynchronous programming models. Due to this, PSSR can now be implemented using familiar HTML templates, simplifying
 development and improving maintainability.
 
-This work explores the current landscape of non-blocking PSSR, focusing on two
+We investigate the current landscape of non-blocking PSSR, focusing on two
 primary paradigms: \textit{reactive programming} and \textit{coroutines}, both
 of which have been used to achieve asynchronous I/O in the Java ecosystem. As
 an alternative, we investigate whether Java’s Virtual Threads can offer

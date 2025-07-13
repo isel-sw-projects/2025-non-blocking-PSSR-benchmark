@@ -26,7 +26,7 @@ facilitated the development of highly scalable, responsive, and resilient web
 applications capable of managing substantial data loads~\cite{Jin15}. The
 prominence of this concept increased with the advent of Node.js in 2009, and
 subsequently, various technologies adopted this approach in the Java ecosystem,
-including Netty, Akka HTTP, Vert.X, and Spring WebFlux.
+including Netty, Akka HTTP, Vert.x, and Spring WebFlux.
 % Among these, Spring WebFlux stands out as the most widely used web framework in
 % Java, according to surveys like JetBrains' State of Java report (2021) and
 % community metrics from platforms like Github and StackOverflow.
@@ -40,7 +40,7 @@ handlers' completion and HTML builders' execution may potentially lead to
 malformed HTML with an unexpected layout~\cite{wise2024pssr}.
 
 An alternative approach involves utilizing user-level threads, while
-maintaining a blocking I/O and a synchronous programming paradigm. However,
+maintaining a blocking I/O and a synchronous programming paradigm. On the other hand,
 this approach still requires a user-level I/O subsystem capable of mitigating
 system-level blocking, which is crucial for the performance of I/O-intensive
 applications. This technique offers a lightweight solution for efficiently
@@ -103,7 +103,7 @@ one pass, which is then sent to the client only after all necessary data has
 been gathered and rendered. By default, this architecture limits the ability to
 perform PSSR, as traditional rendering waits for all data before sending any
 output. This results in higher latency for clients and less responsive page
-loads, particularly for data-intensive views. However, Spring MVC provides a
+loads, particularly for data-intensive views. In any case, Spring MVC provides a
 mechanism for response streaming via the
 \texttt{StreamingResponseBody}\footnote{\url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}}
 interface, introduced in Spring 4.2. When a controller method returns a
@@ -140,7 +140,7 @@ useful for:
 In the example shown in \autoref{lst:streaming-response-body}, HTML content is
 written and flushed in discrete chunks, allowing the client to progressively
 render the response as it arrives, while the server continues processing
-additional data. However, this technique has two limitations. First, it does
+additional data. This technique has two limitations. First, it does
 not eliminate the blocking nature inherent in Spring MVC, as the handling
 thread remains active during the streaming process. Second, it is constrained
 by the servlet response buffer. By default, most servlet containers (e.g.,
@@ -218,7 +218,7 @@ performing blocking I/O or awaiting asynchronous operations imperatively.
 \subsubsection{Quarkus}
 
 Quarkus is a modern, cloud-native Java framework that supports both imperative
-and reactive programming models. It is built on top of Vert.X, which provides a
+and reactive programming models. It is built on top of Vert.x, which provides a
 non-blocking, event-driven runtime similar to Netty. Incoming HTTP requests are
 processed asynchronously on a small, fixed-size event loop thread pool,
 allowing the framework to handle many concurrent connections efficiently

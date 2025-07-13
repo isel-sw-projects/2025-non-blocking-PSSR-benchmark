@@ -383,12 +383,12 @@ Template engines with dedicated templating dialects typically rely on specific
 control flow constructs—such as a \texttt{foreach}-like statement—to iterate
 over elements in a data source. In the Java ecosystem, \texttt{Iterable} is the
 common supertype implemented by most data structures and serves as the standard
-API for iteration. However, other standard interfaces, such as
+API for iteration. Nevertheless, other standard interfaces, such as
 \texttt{java.util.Stream}, also represent sequences of elements but are not
 compatible with \texttt{Iterable}. This fragmentation becomes more evident when
 considering other JVM languages, such as Kotlin, which introduces additional
 abstractions like the \texttt{Sequence} interface—also incompatible with
-\texttt{Iterable}. As a result, template engines based on \textit{external}
+\texttt{Iterable}. In consequence, template engines based on \textit{external}
 DSLs must explicitly support each of these interfaces to accommodate the
 various iteration protocols across languages and libraries.
 
@@ -468,7 +468,7 @@ code.
 
 Thymeleaf was one of the first web template engines—and remains the only one
 among external DSLs for HTML—to support reactive streams based on the
-\texttt{Publisher} model. However, it is limited to using a single
+\texttt{Publisher} model. Yet, it is limited to using a single
 \texttt{Publisher} within a given template.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -480,7 +480,7 @@ among external DSLs for HTML—to support reactive streams based on the
 Another key characteristic of such DSLs is \textit{HTML safety}, which refers
 to whether they produce only valid HTML conforming to a well-formed document.
 To ensure HTML safety, a DSL API should only allow combining calls to builders
-that result in valid HTML. However, most HTML DSLs using the \textit{function
+that result in valid HTML. Nonetheless, most HTML DSLs using the \textit{function
   sequence} or \textit{nested function} approach cannot ensure HTML safety at
 compile time.
 
@@ -542,7 +542,7 @@ The notion of \textit{progressive rendering} has typically been aligned with
 \textit{client-side rendering} (CSR), where a single HTML page with static
 content is delivered upfront, while the dynamic content is fetched as the data
 becomes available to complete the web page.
-However, despite being overlooked, HTTP and browsers were designed from their
+Nevertheless, despite being overlooked, HTTP and browsers were designed from their
 inception to also support this feature in the context of SSR approaches,
 which offers the advantage of not being dependent on
 \textit{render-blocking resources}, such as the required JavaScript for CSR.
@@ -584,9 +584,9 @@ PSSR, and non-blocking template resolution. That solution builds upon HtmlFlow,
 a Java DSL for HTML, with an internal processing mechanism that streams HTML in
 chunks as data items become available from data sources, without requiring
 client-side JavaScript. Like Thymeleaf, their proposal avoids the use of
-client-side JavaScript; however, unlike Thymeleaf, it supports a wide range of
+client-side JavaScript; yet, unlike Thymeleaf, it supports a wide range of
 asynchronous APIs and multiple data sources, not limited to the
-\texttt{Publisher} API. However, the main counter-argument is the non-trivial
+\texttt{Publisher} API. Nonetheless, the main counter-argument is the non-trivial
 management of the \emph{resume} callback in
 continuations~\cite{von2003events,callbackhell}, which is used to linearize the
 execution flow between asynchronous calls.

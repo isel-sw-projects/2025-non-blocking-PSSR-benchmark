@@ -74,8 +74,8 @@ ANSWER:
 ---
 
 - Done: new section in results discussing memory and CPU utilization of
-- virtual threads vs suspendable coroutines.
-- "Assessing the Efficiency of Java Virtual Threads in Database-Driven Server Applications" just shows latency differences when using virtual threads vs
+virtual threads vs suspendable coroutines.
+"Assessing the Efficiency of Java Virtual Threads in Database-Driven Server Applications" just shows latency differences when using virtual threads vs
   os threads in the context of web applications with real databases, no throughput/
   memory or CPU utilization analysis.
 
@@ -99,8 +99,8 @@ ANSWER both article and paper.
 ---
 
 - Done: clarified that the drop is specific to JStachio and not a general
-- issue with virtual threads (gave HtmlFlow as an example of a virtual thread
-- approach that did not experience a drop).
+issue with virtual threads (gave HtmlFlow as an example of a virtual thread
+approach that did not experience a drop).
 
 ---
 
@@ -112,12 +112,12 @@ Is this a recommended best practice, or are there trade-offs?
 
 ---
 
-ANSWER: The same as reviewer 1 and include a percetage value of difference.
+ANSWER: The same as reviewer 1 and include a percentage value of difference.
 
 ---
 
 - Done: Same as review 1
--
+
 
 ---
 

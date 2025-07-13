@@ -59,9 +59,7 @@ ANSWER:
 
 ---
 
-ANSWER:
-
-- TODO: include.
+Done: Included in the Results section.
 
 1. How many independent test runs were conducted for each configuration?
 
@@ -93,7 +91,8 @@ ANSWER:
 
 ---
 
-- DONE: Added a results section for memory and cpu utilization, analysis.
+- DONE: Added a results section for memory and cpu utilization analysis with VisualVM 
+  profiler.
 - TO DO: Check if the contents seem relevant and if the analysis is correct.
 
 1. Discuss: do **virtual threads genuinely reduce memory overhead** for
@@ -102,6 +101,9 @@ ANSWER:
 ---
 
 ANSWER: ADD some reference e.g. "Comparison of Structured Concurrency Constructs in Java and Kotlin – Virtual Threads and Coroutines"
+
+Done: Did not add a reference, but added a section in the Results section
+with analysis of memory overhead.
 
 ---
 

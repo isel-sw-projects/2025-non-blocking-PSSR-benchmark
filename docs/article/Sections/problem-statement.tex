@@ -140,7 +140,7 @@ high concurrency, where blocking threads severely degrades throughput~\cite{wise
 Emerging features in the Java ecosystem, particularly \textit{virtual threads}
 introduced in Java 21 as part of Project Loom~\cite{Veen2024}, offer a promising solution to
 this challenge. Virtual threads drastically reduce the overhead of blocking
-operations by decoupling thread execution from OS-level threads. As a result,
+operations by decoupling thread execution from OS-level threads. For this reason,
 engines that rely on blocking interfaces—like those used in
 external DSLs—can potentially achieve scalability levels that approach those of
 non-blocking, asynchronous engines.
