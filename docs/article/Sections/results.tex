@@ -331,10 +331,9 @@ stored on the heap when suspended (e.g., during blocking I/O). In contrast,
 Kotlin coroutines compile into state machines that capture only the minimal
 execution state needed to resume computation. This typically allows coroutines
 to scale more efficiently in terms of memory usage, especially under high
-concurrency. These findings contrasts with prior research, such as Beronić et
-al.~\cite{9803765}, which reported lower heap usage for Kotlin coroutines
-(52--99~MB) compared to Java Virtual Threads (16--64~MB), albeit under
-different workloads.
+concurrency. These findings contrast with prior research, such as Beronić et
+al.~\cite{9803765}, which reported lower heap usage for Java Virtual Threads (16--64~MB)
+compared to Kotlin coroutines (52--99~MB), albeit under different workloads.
 
 These observations suggest that the choice between Virtual Threads and
 suspendable coroutines should be guided by both runtime behavior and
