@@ -169,9 +169,7 @@ Reactive Streams specification~\cite{ReactiveStreams}, enabling
 interoperability with other compliant reactive stream libraries. A
 \texttt{Mono} represents a single asynchronous value (or none)~\cite{promise},
 while a \texttt{Flux} represents a stream of zero or more
-values~\cite{rx-observable}. These abstractions allow the entire request
-lifecycle—from controller invocation to response rendering—to be orchestrated
-as a chain of non-blocking, asynchronous operations. I/O-bound tasks such as
+values~\cite{rx-observable}. I/O-bound tasks such as
 database queries or external API calls do not occupy threads during execution,
 enabling the framework to scale gracefully under high load and maintain
 responsiveness even in resource-constrained environments.

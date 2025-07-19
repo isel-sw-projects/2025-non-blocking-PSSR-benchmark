@@ -28,7 +28,7 @@ thereby reducing the load on the client. Consequently, the client does
 not need to execute JavaScript or make additional requests to retrieve page content.
 The streaming nature of PSSR allows users to see content progressively as it becomes
 available, rather than waiting for the complete page to be rendered server-side,
-thus providing a more responsive user experience with measurably lower TTFB values.
+thus providing a more responsive user experience with measurably lower TTFB values~\cite{wise2024pssr}.
 
 \textit{Low-thread} servers, also known as
 \textit{event-driven}~\cite{event-driven-servers}, have gained prominence in
@@ -40,8 +40,7 @@ database queries and API calls, servers can avoid blocking threads while
 waiting for data, thereby maximizing throughput and responsiveness. To support
 this non-blocking architecture, PSSR implementations require template engines
 that are compatible with asynchronous data models~\cite{carvalho2023async}.
-Some modern template
-engines, such as HtmlFlow~\cite{htmlflow} and Thymeleaf~\cite{thymeleaf}, have
+Some modern template engines, such as HtmlFlow~\cite{htmlflow} and Thymeleaf~\cite{thymeleaf}, have
 been designed with these capabilities in mind. However, many legacy
 template engines—particularly those using external domain-specific languages
 (DSLs)~\cite{Fowler03}—still depend on blocking interfaces like

@@ -1,15 +1,26 @@
 \section{Results}
 
-All the following benchmarks were conducted on a GitHub-hosted virtual machine
-under GitHub Actions, running Ubuntu 24.04.2 LTS (Noble Numbat) with an AMD
-EPYC 7763 64-Core Processor (x86\_64 architecture) operating at 3.24 GHz,
-configured with 2 CPU cores and 2 threads per core, and 7.8GB of available RAM.
-The system utilizes a 75GB SSD with ext4 filesystem, achieving 1.5 GB/s write
-throughput in basic I/O tests. Network connectivity is provided through a 1500
-MTU Ethernet interface. All tests were conducted on OpenJDK 21 (Correto build)
-with the G1 garbage collector enabled by default. The following . JVM arguments
-were used: \texttt{-Xms512m -Xmx16g}. Each test was executed 5 times per
-configuration to ensure the reliability of the results.
+This section presents the evaluation results organized into four main parts:
+Section~\ref{sec:environment} details the testing environment and hardware
+specifications; Section~\ref{sec:presentations-results} presents scalability
+results for the \texttt{Presentations} data model;
+Section~\ref{sec:stocks-results} analyzes performance with the more complex
+\texttt{Stocks} data model; and Section~\ref{sec:memory-analysis} provides
+detailed memory consumption and resource utilization analysis.
+
+\subsection{Environment Specifications}
+\label{sec:environment}
+
+All benchmarks were conducted on a GitHub-hosted virtual machine under GitHub
+Actions, running Ubuntu 24.04.2 LTS with an AMD EPYC 7763 64-Core Processor
+(x86\_64 architecture) operating at 3.24 GHz, configured with 2 CPU cores and 2
+threads per core, and 7.8 GB of available RAM. The system utilizes a 75 GB SSD
+with ext4 filesystem, achieving 1.5 GB/s write throughput in basic I/O tests.
+Network connectivity is provided through a 1500 MTU Ethernet interface. All
+tests were conducted on OpenJDK 21 (Corretto build) with the G1 garbage
+collector enabled by default. The JVM arguments used were: \texttt{-Xms512m
+     -Xmx16g}. Each test was executed 5 times per configuration to ensure result
+reliability.
 
 All template engines were configured to use UTF-8 encoding and disable
 automatic HTML escaping to ensure fair comparison and consistent output across
@@ -48,6 +59,7 @@ and the need for brevity, only JMeter results are presented, as they provide
 representative performance characteristics across all tested configurations.
 
 \subsection{Scalability results for the \texttt{Presentations} class}
+\label{sec:presentations-results}
 
 The results in Figure~\ref{fig:presentations-webflux-jmeter} depict the
 throughput (number of requests per second) for each template engine, with
@@ -151,6 +163,7 @@ although it does not achieve the same level of performance or scalability as
 the same approach in Spring WebFlux, stagnating after 32 concurrent users.
 
 \subsection{Scalability results for the \texttt{Stocks} class}
+\label{sec:stocks-results}
 
 \begin{figure}[h]
      \centering
@@ -247,6 +260,7 @@ understand performance boundaries and optimization strategies for complex PSSR
 implementations.
 
 \subsection{Memory Consumption and Resource Utilization Analysis}
+\label{sec:memory-analysis}
 
 This section evaluates the memory and CPU resource characteristics of three
 representative concurrency models: Virtual Threads, suspendable coroutines, and
@@ -254,64 +268,73 @@ reactive streams. While previous benchmarks demonstrated that Virtual Threads
 can offer comparable throughput to non-blocking paradigms, we now assess
 whether this simplicity in code comes with higher runtime resource costs.
 
-\textbf{Virtual Threads vs Suspendables}
+Resource utilization data was collected using VisualVM during 40-second
+benchmark runs, capturing detailed CPU and memory usage patterns under
+sustained load conditions. Each profiling session monitored system performance
+during the 1 to 128 concurrent user load test, providing comprehensive insights
+into runtime behavior.
 
-\begin{figure}[h]
-     \centering
-     \includegraphics[width=0.8\textwidth]{./Graphs/cpu-susp.png}
-     \caption{Benchmark CPU utilization profiling with HtmlFlow-Susp in Spring WebFlux}\label{fig:cpu-susp}
-\end{figure}
+\subsubsection{Virtual Threads vs Structured Concurrency}
 
 \begin{figure}[h]
      \centering
      \includegraphics[width=0.8\textwidth]{./Graphs/cpu-virt.png}
-     \caption{Benchmark CPU utilization profiling with HtmlFlow running on Virtual Threads in Spring WebFlux}\label{fig:cpu-virt}
+     \caption{CPU utilization profiling with HtmlFlow running on Virtual Threads in Spring WebFlux during 40-second load test}\label{fig:cpu-virt}
+\end{figure}
+
+\begin{figure}[h]
+     \centering
+     \includegraphics[width=0.8\textwidth]{./Graphs/cpu-susp.png}
+     \caption{CPU utilization profiling with HtmlFlow-Susp in Spring WebFlux during 40-second load test}\label{fig:cpu-susp}
 \end{figure}
 
 Figures~\ref{fig:cpu-virt} and~\ref{fig:cpu-susp} show CPU utilization profiles
 for the \texttt{HtmlFlow-Virtual} and \texttt{HtmlFlow-Susp} implementations,
-respectively. \texttt{HtmlFlow-Virtual} reaches peak CPU usage of around 90\%
-during load, with sharp transitions between idle and active phases. In
-contrast, \texttt{HtmlFlow-Susp} peaks at approximately 75\% and exhibits
-smoother transitions, suggesting more efficient CPU scheduling and lower
-contention.
-
-\begin{figure}[h]
-     \centering
-     \includegraphics[width=0.8\textwidth]{./Graphs/gc-susp.png}
-     \caption{Benchmark memory utilization profiling with HtmlFlow-Susp in Spring WebFlux}\label{fig:gc-susp}
-\end{figure}
+respectively. In both cases, the initial spike in CPU usage corresponds to the
+system's bootstrap and initial load phase. The subsequent gradual increase in
+CPU utilization reflects the ramp-up of concurrent users during the benchmark.
+\texttt{HtmlFlow-Virtual} exhibits a distinctive bell-shaped curve, rapidly
+climbing from near-zero to peak CPU usage of around 90\% during the initial
+load phase, maintaining high utilization during sustained load, and then
+dropping sharply back to baseline. The profile shows more aggressive CPU
+consumption with steep ramp-up and ramp-down phases. In contrast,
+\texttt{HtmlFlow-Susp} displays a more gradual and controlled resource
+utilization pattern, with a smoother ascent to a lower peak of approximately
+75\%, followed by a more gentle descent. This smoother profile suggests more
+efficient CPU scheduling and better resource management under load. The GC
+activity indicators in both profiles remain relatively low throughout the test
+duration, confirming that garbage collection overhead does not significantly
+impact CPU utilization in either approach.
 
 \begin{figure}[h]
      \centering
      \includegraphics[width=0.8\textwidth]{./Graphs/gc-virt.png}
-     \caption{Benchmark memory utilization profiling with HtmlFlow running on Virtual Threads in Spring WebFlux}\label{fig:gc-virt}
+     \caption{Memory utilization and garbage collection behavior with HtmlFlow running on Virtual Threads in Spring WebFlux during 40-second load test}\label{fig:gc-virt}
 \end{figure}
 
-The memory usage disparity is even more pronounced. As shown in
-Figure~\ref{fig:gc-virt}, the Virtual Threads implementation gradually climbs
-to a peak heap usage of 900MB, with large but infrequent garbage collection
-events. Figure~\ref{fig:gc-susp} shows the suspendable version peaks at only
-245MB, following a regular sawtooth pattern of small, frequent garbage
+\begin{figure}[h]
+     \centering
+     \includegraphics[width=0.8\textwidth]{./Graphs/gc-susp.png}
+     \caption{Memory utilization and garbage collection behavior with HtmlFlow-Susp in Spring WebFlux during 40-second load test}\label{fig:gc-susp}
+\end{figure}
+
+The memory usage disparity is more pronounced. Memory utilization data was
+collected using VisualVM profiling during the same 40-second benchmark runs. As
+shown in Figure~\ref{fig:gc-virt}, the Virtual Threads implementation gradually
+climbs to a peak heap usage of 900MB, with large but infrequent garbage
+collection events. Figure~\ref{fig:gc-susp} shows the suspendable version peaks
+at only 245MB, following a regular sawtooth pattern of small, frequent garbage
 collections. Overall, \texttt{HtmlFlow-Virtual} allocates a total of 939MB heap
 compared to just 348MB in \texttt{HtmlFlow-Susp}—a 2.7× difference.
 
-\textbf{RxJava Blocking vs Structured Concurrency}
-
-To further assess the efficiency of blocking versus structured concurrency, we
-compared the memory behavior of RxJava's \texttt{BlockingObservableIterable}
-with \texttt{PublisherAsFlow}. The blocking iterator internally relies on a
-lock-based condition variable and an unbounded queue
-(\texttt{SpscLinkedArrayQueue}), blocking the thread when no elements are
-available. Under high concurrency, this model tends to retain large numbers of
-elements in memory, especially when producers outpace consumers. This was
-reflected in our profiling, where heap usage for blocking consumption showed
-linear growth and irregular GC behavior.
-
-In contrast, \texttt{PublisherAsFlow} employs coroutine-based suspension with
-bounded \texttt{Channel} capacity and configurable \texttt{BufferOverflow}
-strategies. It requests upstream data based on demand, leveraging structured
-concurrency and cooperative cancellation.
+The higher observed heap usage with Virtual Threads stems from how they manage
+concurrency. Virtual Threads allocate a full stack per thread, and when they
+are suspended (e.g., during blocking I/O), their entire call stack is unmounted
+and copied to the heap, allowing the physical carrier thread to be reused.
+Kotlin coroutines, by contrast, also store their execution state on the heap
+when suspended — but the compiler transforms coroutine code into a state
+machine, so only the minimal necessary state is saved rather than a full stack.
+This results in significantly lower memory overhead per suspended task.
 
 It is important to note that our benchmark keeps data items in memory as static
 objects, which represents a best-case scenario for memory allocation patterns.
@@ -321,14 +344,9 @@ serialization for each request. This would result in significantly higher
 memory allocation rates and more frequent garbage collection cycles across all
 concurrency models, with the observed differences between Virtual Threads and
 suspendable coroutines likely becoming even more pronounced under such
-realistic I/O-intensive workloads. While our benchmark demonstrates that
-Virtual Threads can achieve comparable throughput to suspendable coroutines, or
-other non-blocking paradigms, future work should further explore the impact of
-dynamic data sources on memory allocation patterns and garbage collection
-behavior to better understand the trade-offs between these concurrency models
-in real-world scenarios.
+realistic I/O-intensive workloads.
 
-\textbf{Summary of Trade-offs}
+\subsubsection{Summary of Trade-offs}
 
 While the approaches can achieve similar throughput under load, they differ
 significantly in runtime efficiency. Virtual Threads, despite offering a
