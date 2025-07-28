@@ -331,11 +331,61 @@ stored on the heap when suspended (e.g., during blocking I/O). In contrast,
 Kotlin coroutines compile into state machines that capture only the minimal
 execution state needed to resume computation. This typically allows coroutines
 to scale more efficiently in terms of memory usage, especially under high
-concurrency. These findings contrast with prior research, such as Beronić et
-al.~\cite{9803765}, which reported lower heap usage for Java Virtual Threads (16--64~MB)
-compared to Kotlin coroutines (52--99~MB), albeit under different workloads.
+concurrency. 
 
-These observations suggest that the choice between Virtual Threads and
+\section{Discussion}
+
+Beronić et al.~\cite{9803765} compared different structured concurrency constructs 
+in Java and Kotlin in the context of a multithreaded HTTP server. 
+Their benchmark scenario differs from ours: their server awaited incoming requests 
+and, upon receiving one, executed a task involving object creation, writing the 
+object's information to a file, and returning the data as a response.
+Consistent with our findings, they concluded that both Kotlin's coroutines and 
+Java's virtual threads offer significant performance improvements over traditional 
+JVM-based threads in concurrent applications.
+
+However, our results diverge from theirs regarding memory usage. 
+They reported lower heap usage for Java virtual threads (16–64~MB) compared to 
+Kotlin coroutines (52–99~MB), which contrasts with our measurements. 
+This discrepancy may be attributed to the different workloads: while their 
+benchmark includes a single I/O read-write operation per request, our experiments 
+focus exclusively on read-only I/O tasks.
+
+The work of Navarro et al.~\cite{navarro2023considerations} focused on the
+performance of Quarkus, which relies on Eclipse Vert.x~\cite{vertx}, itself
+built on top of Netty~\cite{netty}. 
+This represents a similar environment to the one evaluated in our experiments
+with Quarkus. 
+Their study also emphasized template rendering, using a blocking HTML template
+engine (Qute). 
+The benchmark they employed is the Fortunes
+test\footnote{\url{https://www.techempower.com/benchmarks}}, which involves
+rendering a simple HTML table with only two data bindings per row.
+
+Their results show that Quarkus with Virtual Threads outperformed the
+traditional thread-per-request model under increased concurrency. Moreover,
+compared to the reactive model, virtual threads demonstrated competitive
+performance, particularly when executing blocking operations within template
+engines.
+In contrast, our experiments revealed that the reactive approach underperforms 
+relative to virtual threads, likely due to the significantly larger number of 
+data bindings in our use cases—namely, the \texttt{Presentation} and \texttt{Stock} 
+models.
+
+The work of Šimatović et al.\cite{vsimatovic2025evaluating} presents an
+evaluation of Java Virtual Threads under different garbage collectors. They
+explored three types of workloads, only one of which was based on a web
+application scenario. This scenario replicated large-scale web scraping by
+executing 1,000 parallel tasks, each consisting of an I/O-bound operation
+followed by CPU-bound string processing.
+
+In this workload, garbage collection activity remained low across all 
+collectors, indicating reduced memory pressure. These findings suggest 
+that Virtual Threads improve memory allocation efficiency and reduce the 
+frequency of garbage collection cycles—particularly when used with 
+concurrent garbage collectors.
+
+Our observations suggest that the choice between Virtual Threads and
 suspendable coroutines should be guided by both runtime behavior and
 development preferences. Virtual Threads offer the simplicity of synchronous
 programming with competitive performance in moderate-load scenarios. In
