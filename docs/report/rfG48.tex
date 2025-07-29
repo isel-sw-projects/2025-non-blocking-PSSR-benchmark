@@ -1,0 +1,161 @@
+% Classe do documento e parâmetros gerais.
+\documentclass[a4paper,openright,twoside,11pt]{report}
+
+% Packages utilizadas e respetivos parâmetros.
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\addto{\captionsenglish}{\renewcommand{\bibname}{References}}
+\addto{\captionsenglish}{\renewcommand{\contentsname}{Contents}}
+\usepackage{lipsum} % gerador de texto
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[Algoritmo]{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{listingstyles}
+\usepackage{amssymb}
+\usepackage{bookmark}
+
+\renewcommand{\algorithmicrequire}{\textbf{Dados: }}
+\renewcommand{\algorithmicensure}{\textbf{Resultado: }}
+
+% Definições das dimensões das páginas
+\setlength{\textheight}{24.00cm}
+\setlength{\textwidth}{15.50cm}
+\setlength{\topmargin}{0.35cm}
+\setlength{\headheight}{0cm}
+\setlength{\headsep}{0cm}
+\setlength{\oddsidemargin}{0.25cm}
+\setlength{\evensidemargin}{0.25cm}
+
+%\renewcommand{\baselinestretch}{1}
+
+% Página inicial (capa)
+\title{
+   \vspace{-50mm}
+   \begin{minipage}[l]{\textwidth}
+      \hspace{-20mm}\resizebox{75mm}{!}{\includegraphics{./figures/logoISELnew2.png}}\\
+   \end{minipage}\\[20mm]
+   {\fontsize{22pt}{26pt}\selectfont\textbf{Non-Blocking Progressive Server-Side Rendering Benchmark}}\\[10mm]
+   {\fontsize{14pt}{18pt}\selectfont\textbf{A Performance Comparison of Progressive SSR Techniques}}\\[5mm]
+}
+
+% Nome dos autores (um por linha)
+\author{
+\begin{tabular}{ll}
+             & Bernardo Pereira \\[50mm]
+\end{tabular}}
+
+\date{
+\begin{tabular}{ll}
+  {Supervisor:} & Miguel Carvalho, ISEL \\
+\end{tabular}\\[10mm]
+% Deixar o indicador respetivo em função da versão do relatório.
+Final Report written for Project and Seminar\\
+BSc in Computer Science and Engineering\\[20mm]
+June 2025}
+
+
+\begin{document}
+\pagenumbering{roman}
+\thispagestyle{empty}
+\maketitle
+
+\baselineskip 18pt % line spacing: 12pt for single, 18pt for 1 1/2, and 24pt for double spacing
+
+\newpage
+\thispagestyle{empty}
+% Fim da contracapa
+
+% Página com identificação completa (número e nome) e assinaturas do(s) estudante(s) e do(s) orientador(es)
+\cleardoublepage
+\setcounter{page}{1}
+\begin{center}
+  \textsc{\LARGE Instituto Superior de Engenharia de Lisboa}\\[30mm]
+
+  {\fontsize{22pt}{26pt}\selectfont\textbf{Non-Blocking Progressive Server-Side Rendering Benchmark}}\\[10mm]
+  {\fontsize{14pt}{18pt}\selectfont\textbf{A Performance Comparison of Progressive SSR Techniques}}\\[30mm]
+
+  \begin{tabular}{rl}
+    50493 & Bernardo André Batista Correia Murta Pereira \\[10mm]
+          & \rule{75mm}{0.5pt}                           \\[5mm]
+  \end{tabular}\\[10mm]
+
+  \begin{tabular}{rl}
+    Supervisor: & Miguel Carvalho, ISEL \\[10mm]
+                & \rule{75mm}{0.5pt}    \\[5mm]
+  \end{tabular}\\[10mm]
+
+  Final report written for Project and Seminar\\ BSc in Computer Science and Engineering\\[20mm]
+  June 2025\\
+\end{center}
+
+% Página de resumo em Português
+\cleardoublepage
+\chapter*{Abstract}
+
+Modern web applications increasingly demand rendering techniques that optimize performance, responsiveness, and scalability. Progressive Server-Side Rendering (PSSR) bridges the gap between Server-Side Rendering and Client-Side Rendering by progressively streaming HTML content, improving perceived load times.
+
+However, traditional HTML template engines often rely on blocking interfaces
+that hinder their use in asynchronous, non-blocking contexts required for PSSR.
+
+This work explores how Java Virtual Threads, introduced in Java 21, enable
+non-blocking execution of blocking I/O operations, allowing the reuse of
+traditional template engines for PSSR without complex asynchronous programming
+models. We benchmark multiple engines across Spring WebFlux, Spring MVC, and
+Quarkus using reactive, suspendable, and virtual-thread-based approaches.
+Results show that virtual threads allow blocking engines to scale comparably to
+those designed for non-blocking I/O, achieving high throughput and
+responsiveness under load. This demonstrates that Virtual Threads provide a
+compelling path to simplify the implementation of PSSR with familiar HTML
+templates, significantly lowering the barrier to entry while maintaining
+performance.
+
+\vspace{5mm}
+
+{\bf Keywords:} Web Templates; Server-Side Rendering; Non-Blocking; Java Virtual Threads; Asynchronous.
+
+%% Página de agradecimentos
+%\cleardoublepage
+%\chapter*{Agradecimentos}
+%Texto dos agradecimentos. É opcional.\\
+
+% Geração do índice de conteúdos
+\cleardoublepage
+\tableofcontents \cleardoublepage
+
+% Geração do índice de figuras e de tabelas
+%\listoffigures \cleardoublepage
+%\listoftables \cleardoublepage
+
+% Reiniciar a numeração de páginas
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+% Capitulo 1
+\include{Sections/introduction}
+
+% Capitulo 2
+\include{Sections/state-of-the-art}
+
+% Capitulo 3
+\include{Sections/problem-statement}
+
+% Capitulo 4
+\include{Sections/benchmark}
+
+% Capitulo 5
+\include{Sections/results}
+
+% Capitulo 6
+\include{Sections/conclusion}
+
+% Referências
+\bibliographystyle{unsrt}
+\bibliography{bibliography}
+\addcontentsline{toc}{chapter}{References}
+
+\end{document}

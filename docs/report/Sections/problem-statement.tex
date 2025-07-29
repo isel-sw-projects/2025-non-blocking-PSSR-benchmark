@@ -1,0 +1,170 @@
+\chapter{Problem Statement}
+
+In this section, we examine the challenges of implementing \textit{Progressive
+Server-Side Rendering} (PSSR) in modern web applications, with a focus on the
+limitations of current template engine designs. Our goal is to broaden the
+range of options available for PSSR, particularly within JVM-based frameworks.
+% Reactive streams~\cite{ReactiveStreams}, such as those based on
+% \texttt{Observable} (from RxJava)~\cite{rx-observable} and \texttt{Flow} (from
+% the Java 9+ standard library~\footnote{~\url{https://openjdk.org/jeps/266}}),
+% are abstractions that provide a non-blocking, asynchronous
+% way to handle data streams.
+% These abstractions support the incremental generation and transmission of HTML
+% content as data becomes available, enabling \textit{progressive server-side
+% rendering} (PSSR)~\cite{pssr2005}.
+
+
+\section{Reactive and Suspendable Templates}
+
+In PSSR, the server does not
+wait for the entire data model to be ready before beginning to render HTML.
+Instead, it processes and streams each piece of data to the client as soon as
+it arrives. Reactive types like \texttt{Observable<T>} of ReactiveX~\cite{rxjava} or Kotlin \texttt{Flow<T>}~\cite{kotlinlang}
+facilitate this by representing data as a sequence of asynchronous events.
+For example, a reactive stream might emit a sequence of \texttt{Presentation}
+objects, each representing a talk in a conference schedule.
+As each \texttt{Presentation} is emitted by the \texttt{Observable}
+or \texttt{Flow}, the internal DSL-based engine—such as HtmlFlow—can render the
+corresponding HTML fragment and immediately flush it to the client. This
+approach is demonstrated in Listing \ref{lst:presentation-observable}, where each
+presentation is rendered asynchronously as it is emitted by an
+\texttt{Observable}.
+Note that the \texttt{await} builder receives an additional parameter, the
+\texttt{onCompletion} callback, which is used to signal HtmlFlow that it can
+proceed to render the next HTML element in the web
+template~\cite{carvalho2023async}.
+HtmlFlow pauses the rendering process until \texttt{onCompletion} is called,
+similar to how the \emph{resume} function works in continuations and
+coroutines~\cite{coroutines_continuations}.
+In Listing \ref{lst:presentation-flow}, we show an
+equivalent suspend-based implementation using Kotlin's \texttt{Flow}~\cite{wise2024pssr}.
+Both examples highlight how internal DSLs can natively integrate with reactive types
+to enable non-blocking, progressive rendering on the server side.
+
+\begin{center}
+\begin{minipage}{0.51\textwidth}
+\begin{lstlisting}[
+    language=Kotlin,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none,
+    caption={\textit{HtmlFlow reactive} presentation template in Koltin with an \texttt{Observable} model},
+    label={lst:presentation-observable}
+]
+await { div, model, onCompletion ->
+  model
+    .doOnNext { presentation ->
+      presentationFragmentAsync
+        .renderAsync(presentation)
+        .thenApply { frag -> div.raw(frag) }
+      }
+    .doOnComplete { onCompletion.finish() }
+    .subscribe()
+}
+\end{lstlisting}
+\end{minipage}
+\hfill
+\begin{minipage}{0.47\textwidth}
+\begin{lstlisting}[
+    language=Kotlin,
+    basicstyle=\scriptsize\ttfamily,
+    numbers=none,
+    label={lst:presentation-flow},
+    caption={\textit{HtmlFlow suspend} presentation template in Kotlin with a \texttt{Flow} model},
+]
+suspending { model ->
+  model
+    .toFlowable()
+    .asFlow()
+    .collect { presentation ->
+      presentationFragmentAsync
+        .renderAsync(presentation)
+        .thenApply { frag -> raw(frag) }
+    }
+}
+\end{lstlisting}
+\end{minipage}
+\end{center}
+
+\section{External DSLs and Blocking Interfaces}
+
+By contrast, template engines that use \textit{external} DSLs—such as JStachio,
+Thymeleaf, or Handlebars—typically define templates within static HTML
+documents using custom markers, and rely on blocking interfaces like
+\texttt{java.util.Iterable} or \texttt{java.util.stream.Stream}.
+These interfaces require the entire data
+model to be materialized in memory before rendering can begin, which blocks server
+threads during template expansion and significantly limits scalability under
+high concurrency.
+Some reactive libraries, such as RxJava, provide bridging mechanisms like
+\texttt{Observable.blockingIterable()}, which allows asynchronous data sources
+to be exposed as \texttt{Iterable} by blocking the thread until all items are available.
+While useful for compatibility with traditional APIs, this approach
+reintroduces blocking behavior and undermines the benefits of non-blocking
+I/O—especially under high concurrency. Listing \ref{lst:presentation-jstachio}
+illustrates this model using a JStachio template, where the engine performs a
+blocking loop over \texttt{presentationItems}.
+
+\begin{center}
+\begin{minipage}{0.70\textwidth}
+\begin{lstlisting}[
+  language=Kotlin,
+  numbers=none,
+  basicstyle=\scriptsize\ttfamily,
+  caption={Presentation HTML template using \textit{JStachio}},
+  label={lst:presentation-jstachio}
+]
+{{#presentationItems}}
+<div class="card mb-3 shadow-sm rounded">
+    <div class="card-header">
+        <h5 class="card-title">
+            {{title}} - {{speakerName}}
+        </h5>
+    </div>
+    <div class="card-body">
+        {{summary}}
+    </div>
+</div>
+{{/presentationItems}}
+\end{lstlisting}
+\end{minipage}
+\end{center}
+
+Despite these performance limitations, external DSLs remain popular due to
+several advantages:
+
+\begin{enumerate}
+    \item \emph{Separation of Concerns}: HTML templates are decoupled from application logic, enabling front-end developers to contribute without modifying back-end code.
+    \item \emph{Cross-Language Compatibility}: External DSLs are portable across languages and frameworks, easing integration in multi-language environments.
+    \item \emph{Familiarity}: Many developers are comfortable with HTML syntax, lowering the barrier to entry and improving maintainability.
+\end{enumerate}
+
+These strengths make external DSLs appealing—even when they come at the cost of
+blocking, synchronous rendering. However, this tradeoff becomes critical under
+high concurrency, where blocking threads severely degrades throughput~\cite{wise2024pssr}.
+Emerging features in the Java ecosystem, particularly \textit{virtual threads}
+introduced in Java 21 as part of Project Loom~\cite{Veen2024}, offer a promising solution to
+this challenge. Virtual threads drastically reduce the overhead of blocking
+operations by decoupling thread execution from OS-level threads. As a result,
+engines that rely on blocking interfaces—like those used in
+external DSLs—can potentially achieve scalability levels that approach those of
+non-blocking, asynchronous engines, without requiring developers to adopt complex
+asynchronous programming paradigms.
+
+% Incluir este parágrafo?
+% In previous work \cite{PSSR-WISE2024}, Carvalho benchmarked the performance of
+% HtmlFlow (an internal DSL) using suspendable templates within a Spring WebFlux
+% application. HtmlFlow scaled efficiently to 128 concurrent users and delivered
+% up to 4,000 requests per second. In contrast, blocking engines such as JStachio
+% saturated at just 4 concurrent users, maxing out at around 400 requests per
+% second—highlighting the scalability limitations of blocking models.This work
+% builds upon those findings by evaluating whether virtual threads can close this
+% performance gap for blocking template engines. Specifically, we aim to
+% determine whether external DSLs—traditionally unsuitable for PSSR due to their
+% reliance on blocking APIs—can become viable for progressive rendering when
+% powered by virtual threads.
+
+% If successful, this approach would enable developers to reap the ergonomic
+% benefits of external DSLs while maintaining scalable performance, without
+% adopting complex asynchronous paradigms. It would also simplify the
+% implementation of PSSR across a broader range of frameworks and engines, making
+% the technique more accessible to mainstream web development.
