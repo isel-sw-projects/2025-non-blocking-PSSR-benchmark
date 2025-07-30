@@ -364,10 +364,11 @@ Their results show that Quarkus with Virtual Threads outperformed the
 traditional thread-per-request model under increased concurrency. Moreover,
 compared to the reactive model, virtual threads demonstrated competitive
 performance, particularly when executing blocking operations within template
-engines. In contrast, our experiments revealed that the reactive approach
-underperforms relative to virtual threads, likely due to the significantly
-larger number of data bindings in our use cases—namely, the
-\texttt{Presentation} and \texttt{Stock} models.
+engines.
+In contrast, our experiments revealed that the reactive approach in Spring
+WebFlux performs better than virtual threads in the same experiment conducted
+with Quarkus, suggesting that WebFlux provides a more efficient infrastructure
+for managing reactive processing flows.
 
 The work of Šimatović et al.\cite{vsimatovic2025evaluating} presents an
 evaluation of Java Virtual Threads under different garbage collectors. They
