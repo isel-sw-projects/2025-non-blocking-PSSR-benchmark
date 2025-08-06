@@ -144,10 +144,10 @@
 %\conference{} % An extended version of a conference paper
 
 % Abstract (Do not insert blank lines, i.e., \\) 
-\abstract{Modern web applications increasingly demand rendering techniques that optimize performance, responsiveness, and scalability. Progressive Server-Side Rendering (PSSR) bridges the gap between Server-Side Rendering and Client-Side Rendering by progressively streaming HTML content, improving perceived load times. Still, traditional HTML template engines often rely on blocking interfaces that hinder their use in asynchronous, non-blocking contexts required for PSSR. This paper analyzes how Java Virtual Threads, introduced in Java 21, enable non-blocking execution of blocking I/O operations, allowing the reuse of traditional template engines for PSSR without complex asynchronous programming models. We benchmark multiple engines across Spring WebFlux, Spring MVC, and Quarkus using reactive, suspendable, and virtual-thread-based approaches.~Results show that virtual threads allow blocking engines to scale comparably to those designed for non-blocking I/O, achieving high throughput and responsiveness under load. This demonstrates that Virtual Threads provide a compelling path to simplify the implementation of PSSR with familiar HTML templates, significantly lowering the barrier to entry while maintaining~performance.}
+\abstract{Modern web applications increasingly demand rendering techniques that optimize performance, responsiveness, and scalability. Progressive Server-Side Rendering (PSSR) bridges the gap between Server-Side Rendering and Client-Side Rendering by progressively streaming HTML content, improving perceived load times. Still, traditional HTML template engines often rely on blocking interfaces that hinder their use in asynchronous, non-blocking contexts required for PSSR. This paper analyzes how Java virtual threads, introduced in Java 21, enable non-blocking execution of blocking I/O operations, allowing the reuse of traditional template engines for PSSR without complex asynchronous programming models. We benchmark multiple engines across Spring WebFlux, Spring MVC, and Quarkus using reactive, suspendable, and virtual thread-based approaches.~Results show that virtual threads allow blocking engines to scale comparably to those designed for non-blocking I/O, achieving high throughput and responsiveness under load. This demonstrates that virtual threads provide a compelling path to simplify the implementation of PSSR with familiar HTML templates, significantly lowering the barrier to entry while maintaining~performance.}
 
 % Keywords
-\keyword{web templates; Server-Side Rendering; non-blocking; Java virtual threads; asynchronous} 
+\keyword{web templates; server-side rendering; non-blocking; Java virtual threads; asynchronous} 
 
 % The fields PACS, MSC, and JEL may be left empty or commented out if not applicable
 %\PACS{J0101}
@@ -219,7 +219,7 @@ JavaScript execution before meaningful content appears.
 \textit{\hl{Progressive Server-Side Rendering (PSSR)}} combines benefits from both SSR and CSR
 by streaming HTML content progressively. This technique enhances user-perceived performance by
 allowing progressive rendering as data becomes available, significantly reducing the
-\textit{\hl{Time to First Byte (TTFB)}} and improving perceived load times compared to traditional
+\textit{\hl{time-to-first-byte (TTFB)}} and improving perceived load times compared to traditional
 SSR approaches~\cite{wise2024pssr}. In this respect,
 PSSR is similar to CSR in that the server initially sends a minimal HTML
 document to the client and subsequently streams additional HTML fragments.
@@ -235,7 +235,7 @@ thus providing a more responsive user experience with measurably lower TTFB valu
 contemporary web applications due to their ability to efficiently manage a large
 number of concurrent I/O operations with minimal resources, thus promoting
 better scalability.
-By leveraging asynchronous I/O operations---such as
+By leveraging asynchronous I/O operations, such as
 database queries and API calls, servers can avoid blocking threads while
 waiting for data, thereby maximizing throughput and responsiveness. To support
 this non-blocking architecture, PSSR implementations require template engines
@@ -249,8 +249,8 @@ threads to remain idle until the entire HTML output is ready, undermining the
 performance benefits of non-blocking I/O and limiting scalability in
 high-concurrency environments.
 
-With the introduction of \textit{\hl{Virtual
-    Threads}}~({\url{https://openjdk.org/jeps/444}}, \hl{accessed on}%MDPI: footnote is not allowed in this journal, so we moved it to here, please confirm it, and please add the access date (format: Date Month Year), e.g., accessed on 1 January 2020.
+With the introduction of \textit{\hl{virtual
+    threads}}~({\url{https://openjdk.org/jeps/444}}, \hl{accessed on}%MDPI: footnote is not allowed in this journal, so we moved it to here, please confirm it, and please add the access date (format: Date Month Year), e.g., accessed on 1 January 2020.
 ) in Java 21, it is now
 possible to execute blocking I/O operations in a scalable, lightweight manner.
 This capability allows legacy template engines---often reliant on blocking
@@ -261,14 +261,14 @@ development and improving maintainability.
 We investigate the current landscape of non-blocking PSSR, focusing on two
 primary paradigms: \textit{\hl{reactive programming}} and \textit{\hl{coroutines}}, both
 of which have been used to achieve asynchronous I/O in the Java ecosystem. As
-an alternative, we investigate whether Java’s Virtual Threads can offer
+an alternative, we investigate whether Java’s virtual threads can offer
 comparable performance while preserving the simplicity of synchronous code.
 Section \ref{s2} reviews the state-of-the-art in PSSR and template engine design.
 Section \ref{s3} outlines the limitations of conventional engines in asynchronous
 settings and presents our proposed approach. Section \ref{sec:bench} details the benchmark
 methodology, followed by the results and analysis in Section \ref{s5}.
 Section~\ref{s6} compares our results with those from other studies.
-Conclusions are presented in Section \ref{s7}.
+The conclusions of this work are presented in Section \ref{s7}.
 
 % The introduction should briefly place the study in a broad context and
 % highlight why it is important. It should define the purpose of the work and its
@@ -324,8 +324,8 @@ Web templates can be distinguished by several properties, namely:
 
 Although some of the aforementioned characteristics apply to both
 \textit{\hl{server-side}} and \textit{\hl{client-side}} approaches, we focus solely on
-web template technologies for \textit{\hl{server-side rendering}}, as our work is
-centered on that approach. Before getting deep on each of the aforementioned
+web template technologies for \textit{\hl{Server-Side Rendering}}, as our work is
+centered on that approach. Before exploring each of the aforementioned
 characteristics, Table~\ref{table:cmplibs} presents a breakdown of mainstream
 template engines, classified according to the identified properties.
 
@@ -336,7 +336,7 @@ template engines, classified according to the identified properties.
  of web template technologies in the Java ecosystem.
 $^{(1)}$ Enforced via annotation processor that checks templates against typed interfaces at compile time.
 $^{(2)}$ Compile-time expression validation available via \texttt{@CheckedTemplate} and build-time metadata in Quarkus.
-$^{(3)}$ \texttt{Publisher} of Reactive Streams~\cite{ReactiveStreams}. Limited to a single model per web template.
+$^{(3)}$ \texttt{Publisher} of reactive streams~\cite{ReactiveStreams}. Limited to a single model per web template.
 $^{(4)}$ \texttt{kotlin.sequences.Sequence}
 $^{(5)}$ {Non-safety} for HTML attributes.}
 
@@ -584,7 +584,7 @@ Java library. One reason for verbosity in \textit{\hl{function sequence}} and
 \textit{\hl{method chaining}} approaches is the requirement of a dedicated HTML
 builder to emit the closing tag, exemplified by \texttt{end()} in \textbf{JATL}
 (Figure~\ref{fig:dsl-idioms}a) and \texttt{\_\_()} in \textbf{\hl{HtmlFlow}}
-(Figure~\ref{fig:dsl-idioms}c). But the \textit{\hl{nested function}} approach
+(Figure~\ref{fig:dsl-idioms}c). However, the \textit{\hl{nested function}} approach
 comes with a notable drawback: \textbf{\hl{it does not support PSSR}} because the
 sequence of nested functions is evaluated backward to the order in which they
 are written. In other words, arguments are evaluated before the functions are
@@ -697,7 +697,7 @@ API for iteration. Nevertheless, other standard interfaces, such as
 compatible with \texttt{Iterable}. This fragmentation becomes more evident when
 considering other JVM languages, such as Kotlin, which introduces additional
 abstractions like the \texttt{Sequence} interface---also incompatible with
-\texttt{Iterable}. In consequence, template engines based on \textit{\hl{external}}
+\texttt{Iterable}. Consequently, template engines based on \textit{\hl{external}}
 DSLs must explicitly support each of these interfaces to accommodate the
 various iteration protocols across languages and libraries.
 
@@ -767,12 +767,12 @@ Later, due to the proliferation of alternative implementations, the need arose t
 create a common interface to ensure interoperability between different reactive
 stream libraries. This led to the formation of a working group that included
 engineers from notable companies such as Lightbend, Pivotal, and Netflix.
-The group began defining the \textit{\hl{Reactive Streams}}
+The group began defining the \textit{\hl{reactive streams}}
 specification~\cite{ReactiveStreams}, which established a standard for
 asynchronous stream processing using non-blocking, backpressure-aware data
 pipelines.
 The more recent Mutiny~\cite{mutiny2021}, while conforming to the
-\textit{\hl{Reactive Streams}} standard, proposes a different approach that avoids
+\textit{\hl{reactive streams}} standard, proposes a different approach that avoids
 complex optimizations, resulting in more straightforward and easier-to-maintain
 code.
 
@@ -785,7 +785,7 @@ among external DSLs for HTML---to support reactive streams based on the
 %-------------------------------------------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{HTML safety}\label{s2.1.4}
+\subsubsection{HTML Safety}\label{s2.1.4}
 
 Another key characteristic of such DSLs is \textit{\hl{HTML safety}}, which refers
 to whether they produce only valid HTML conforming to a well-formed document.
@@ -849,7 +849,7 @@ On the other hand, the latter is associated with \textit{\hl{render-blocking
   resources}} such as scripts, stylesheets, and HTML imports, which may hinder the
 browser from rendering page content to the screen~\cite{progressive-2022}.
 The notion of \textit{\hl{progressive rendering}} has typically been aligned with
-\textit{\hl{client-side rendering}} (CSR), where a single HTML page with static
+\textit{\hl{Client-Side Rendering}} (CSR), where a single HTML page with static
 content is delivered upfront, while the dynamic content is fetched as the data
 becomes available to complete the web page.
 Nevertheless, despite being overlooked, HTTP and browsers were designed from their
@@ -1012,11 +1012,11 @@ interface, introduced in Spring 4.2. When a controller method returns a
 \texttt{StreamingResponseBody}, Spring writes directly to the
 \texttt{HttpServletResponse} output stream, allowing the server to send parts
 of the response incrementally as they become available. This is particularly
-useful for:
+useful for the following applications:
 \begin{itemize}
     \item Sending large responses without buffering the entire output in memory.
     \item Writing dynamic HTML in fragments as data is fetched or computed.
-    \item Reducing Time to First Byte (TTFB) and improving perceived performance.
+    \item Reducing time-to-first-byte (TTFB) and improving perceived performance.
 \end{itemize}
 
 
@@ -1028,7 +1028,7 @@ additional data. This technique has two limitations. First, it does
 not eliminate the blocking nature inherent in Spring MVC, as the handling
 thread remains active during the streaming process. Second, it is constrained
 by the servlet response buffer. By default, most servlet containers (e.g.,
-Tomcat) use a response buffer size of approximately 8KB. Data written to the
+Tomcat) use a response buffer size of approximately 8 KB. Data written to the
 response output stream is held in this buffer until it reaches capacity.
 Consequently, if the total size of the initial HTML content is less than the
 buffer threshold, the server will not transmit any data to the client until the
@@ -1073,7 +1073,7 @@ all I/O events. Incoming HTTP requests are routed to handler functions or
 annotated controllers, which return reactive types such as \texttt{Mono<T>} and
 \texttt{Flux<T>}---\texttt{Publisher} implementations provided by the Project
 Reactor library~\cite{projectreactor}. These implementations adhere to the
-Reactive Streams specification~\cite{ReactiveStreams}, enabling
+reactive streams specification~\cite{ReactiveStreams}, enabling
 interoperability with other compliant reactive stream libraries. A
 \texttt{Mono} represents a single asynchronous value (or none)~\cite{promise},
 while a \texttt{Flux} represents a stream of zero or more
@@ -1230,7 +1230,7 @@ Both examples highlight how internal DSLs can natively integrate with reactive t
 to enable non-blocking, progressive rendering on the server side.
 
 \begin{listing}[H]
-\caption{\textit{\hl{HtmlFlow reactive}} presentation template in Koltin with an \texttt{Observable} model.}
+\caption{\textit{\hl{HtmlFlow reactive}} presentation template in Kotlin with an \texttt{Observable} model.}
 \begin{lstlisting}[
     language=Kotlin,
     basicstyle=\scriptsize\ttfamily,
@@ -1325,7 +1325,7 @@ several~advantages:
 \end{enumerate}
 
 These strengths make external DSLs appealing---even when they come at the cost of
-blocking, synchronous rendering. However, this tradeoff becomes critical under
+blocking synchronous rendering. However, this trade-off becomes critical under
 high concurrency, where blocking threads severely degrades throughput~\cite{wise2024pssr}.
 Emerging features in the Java ecosystem, particularly \textit{\hl{virtual threads}}
 introduced in Java 21 as part of Project Loom~\cite{Veen2024}, offer a promising solution to
@@ -1429,8 +1429,8 @@ asynchronous rendering, while Thymeleaf enables it using the
 \texttt{ReactiveDataDriverContextVariable} in conjunction with a non-blocking
 Spring \texttt{ViewResolver}.
 
-The aforementioned blocking template engines are used in the context of Virtual
-Threads or alternative coroutine dispatchers, allowing the handler thread to be
+The aforementioned blocking template engines are used in the context of virtual
+threads or alternative coroutine dispatchers, allowing the handler thread to be
 released and reused for other requests.
 
 The Spring WebFlux core implementation uses Project Reactor to support a
@@ -1450,14 +1450,14 @@ PSSR\@:
             supports suspendable templates with the use of the \texttt{Flow} class from the
             Kotlin standard library.
       \item \textbf{\hl{Virtual}}: The template engine is used in a non-blocking
-            context, where the HTML content is rendered within the context of Virtual
-            Threads. This method is used for the template engines that do not traditionally
+            context, where the HTML content is rendered within the context of virtual
+            threads. This method is used for the template engines that do not traditionally
             support non-blocking I/O, be it either because they use external DSLs and in
             consequence only support the blocking \texttt{Iterable} interface, or
             because they do not support the asynchronous rendering of HTML~content.
       \item \textbf{\hl{Blocking}}: The template engine is used in a blocking
             context, where the HTML content is rendered using the blocking interface of the
-            \texttt{\hl{Observable}} class, within the context of a OS-thread.
+            \texttt{\hl{Observable}} class, within the context of an OS-thread.
 \end{itemize}
 % It also includes methods using Kotlin coroutines and other
 % asynchronous mechanisms supported by template engines, such as the
@@ -1476,9 +1476,9 @@ OutputStream without holding up the Servlet container thread.}}
 In Spring MVC, \texttt{StreamingResponseBody} enables asynchronous writing
 relative to the request-handling thread, but the underlying I/O remains
 blocking---specifically the writes to the \texttt{OutputStream}. When using
-Virtual Threads, the I/O operations are more efficient when compared to
+virtual threads, the I/O operations are more efficient when compared to
 platform threads, as they are executed in the context of a lightweight thread.
-Most of the computation is done in a separate thread from the one that receives
+Most of the computation is performed in a separate thread from the one that receives
 each request; we use a thread pool \texttt{TaskExecutor} to process requests,
 allowing the application to scale and handle multiple clients more efficiently
 as opposed to the default \texttt{TaskExecutor} implementation, which tries to
@@ -1504,7 +1504,7 @@ This implementation includes two main approaches to PSSR\@:
             where the HTML content is rendered using the blocking interface of the
             \texttt{Observable} class.
       \item \textbf{\hl{Virtual}}: The template engine is used in a non-blocking context,
-            where the HTML content is rendered within the context of Virtual Threads.
+            where the HTML content is rendered within the context of virtual threads.
 \end{itemize}
 
 The Quarkus implementation also uses handlers based on the blocking interface
@@ -1512,12 +1512,12 @@ of the \texttt{Observable} class. It implements the \texttt{StreamingOutput}
 interface from the JAX-RS specification to enable PSSR, allowing HTML content
 to be streamed to the client. While \texttt{StreamingOutput} also uses blocking
 I/O, it operates on Vert.x worker threads, which prevents blocking of the event
-loop. When Virtual Threads are used, the I/O operations are handled
+loop. When virtual threads are used, the I/O operations are handled
 efficiently, as they are executed in lightweight threads.
 
 The Quarkus implementation supports PSSR for these templates by configuring the
 response buffer size in the \textit{\hl{application.properties}} file. The default
-buffer size is 8KB, but we reduced it to 512 bytes, which allows the response
+buffer size is 8 KB, but we reduced it to 512 bytes, which allows the response
 to be sent to the client progressively as the HTML content is rendered.
 
 This implementation includes three main approaches to PSSR\@:
@@ -1526,7 +1526,7 @@ This implementation includes three main approaches to PSSR\@:
             where the HTML content is rendered using the blocking interface of the
             \texttt{Observable} class.
       \item \textbf{\hl{Virtual}}: The template engine is used in a non-blocking context,
-            where the HTML content is rendered within the context of Virtual Threads.
+            where the HTML content is rendered within the context of virtual threads.
       \item \textbf{\hl{Reactive}}: The template engine is used in a reactive context,
             where the HTML content is rendered using the reactive programming model.
             In this case, we use the HtmlFlow template engine, which
@@ -1551,25 +1551,25 @@ detailed memory consumption and resource utilization analysis.
 All benchmarks were conducted on a GitHub-hosted virtual machine under \hl{GitHub} %MDPI: Please state which version of the software was used.
 Actions, running \hl{Ubuntu 24.04.2 LTS with an AMD EPYC 7763 64-Core Processor
 (x86\_64 architecture)} %MDPI: Please state the name of the manufacturer, city, and country from where the equipment was sourced.
- operating at 3.24 GHz, configured with 2 CPU cores and 2
+ operating at 3.24 GHz, configured with two CPU cores and two
 threads per core, and 7.8 GB of available RAM. The system utilizes a 75 GB SSD
-with ext4 filesystem, achieving 1.5 GB/s write throughput in basic I/O tests.
+with ext4 file system, achieving 1.5 GB/s write throughput in basic I/O tests.
 Network connectivity is provided through a 1500 MTU Ethernet interface. All
 tests were conducted on \hl{OpenJDK 21} (Corretto build) with the G1 garbage
 collector enabled by default. The JVM arguments used were: \texttt{-Xms512m
-     -Xmx16g}. Each test was executed 5 times per configuration to ensure result
+     -Xmx16g}. Each test was executed five times per configuration to ensure result
 reliability.
 
 All template engines were configured to use UTF-8 encoding and disable
 automatic HTML escaping to ensure fair comparison and consistent output across
-all template engines. Caching behaviour was left as the default for each
+all template engines. Caching behavior was left as the default for each
 engine, allowing them to optimize template loading and rendering as per their
 design.~These configurations ensure that all engines operate under equivalent
 conditions, with template loading, encoding, and escaping behavior normalized
 across implementations.
 
-For both the Apache Bench and JMeter tests, we simulate a 1000-request warmup
-period for each route with a concurrent user load of 32 users. The warmup
+For both the Apache Bench and JMeter tests, we simulate a 1000-request warm up
+period for each route with a concurrent user load of 32 users. The warm up
 period is followed by the actual test period, during which we simulate 256
 requests per user, scaling in increments up to 128 concurrent users.
 
@@ -1578,10 +1578,10 @@ second) for each template engine, with the x-axis representing the number of
 concurrent users and the y-axis representing the throughput in requests per
 second.
 
-Both Quarkus and Spring MVC implementations were configured with an 8KB output
+Both Quarkus and Spring MVC implementations were configured with an 8 KB output
 buffer size to ensure consistency, despite Quarkus not enabling PSSR at this
 size and Spring MVC not supporting PSSR for the tested templates. Testing with
-a reduced 512B buffer size showed only a 0.046\% performance difference with
+a reduced 512 B buffer size showed only a 0.046\% performance difference with
 Rocker, indicating negligible impact. Both frameworks use unlimited platform
 thread pools, enabling on-demand thread creation up to system limits for
 maximum throughput and scalability observation under high concurrent load.
@@ -1603,14 +1603,14 @@ throughput (number of requests per second) for each template engine, with
 concurrent users ranging from 1 to 128, from left to right. The benchmarks
 include HtmlFlow using suspendable web templates (\textit{\hl{HtmlFlow-Susp}},
 equivalent to the approach shown in Listing~\ref{lst:presentation-flow}),
-Jstachio using Virtual Threads with the \texttt{Iterable} interface
-(\textit{\hl{Jstachio-Virtual}}), and Thymeleaf using the reactive View Resolver
+JStachio using virtual threads with the \texttt{Iterable} interface
+(\textit{\hl{JStachio-Virtual}}), and Thymeleaf using the reactive View Resolver
 driver (Thymeleaf-Rx). \textit{\hl{Blocking}} and \textit{\hl{Virtual}} represent the
-average throughput of the blocking approaches (i.e., KotlinX, Rocker, Jstachio,
+average throughput of the blocking approaches (i.e., KotlinX, Rocker, JStachio,
 Pebble, Freemarker, Trimou, HtmlFlow, and Thymeleaf) when run in the context of
-a separate coroutine dispatcher or Virtual Threads, respectively.}
+a separate coroutine dispatcher or virtual threads, respectively.}
 
-We show the \textit{\hl{HtmlFlow-Susp}}, \textit{\hl{Jstachio-Virtual}}, and
+We show the \textit{\hl{HtmlFlow-Susp}}, \textit{\hl{JStachio-Virtual}}, and
 \textit{Thymeleaf-Rx} engines separately to observe the performance of the
 non-blocking engines when using the Suspending, Virtual Thread, and Reactive
 approaches. The \textit{\hl{Blocking}} and \textit{\hl{Virtual}} are aggregated due to
@@ -1620,27 +1620,27 @@ the similar performance of different engines when using those approaches.
 \vspace{-6pt}
      \includegraphics[width=0.8\textwidth]{./Graphs/presentations-webflux-jmeter.png}
      \caption{\hl{Throughput} %MDPI: The numbers in the picture are incomplete, please modify
- (requests per second) scalability results for Spring Webflux with \texttt{Presentations} class.}\label{fig:presentations-webflux-jmeter}
+ (requests per second) scalability results for Spring WebFlux with \texttt{Presentations} class.}\label{fig:presentations-webflux-jmeter}
 \end{figure}
 
 The results in Figure~\ref{fig:presentations-webflux-jmeter} show that when
 using blocking template engines with a separate coroutine dispatcher, the
-engines are unable to scale effectively beyond 4 concurrent users. In contrast,
+engines are unable to scale effectively beyond four concurrent users. In contrast,
 \textit{\hl{HtmlFlow-Susp}} scales up to 128 concurrent users, achieving \hl{4487} %MDPI: Commas are only used for numbers with five or more digits. We have removed them in four-digit numbers. Please confirm.
 requests per second. When blocking approaches are executed in the context of
-Virtual Threads---thus enabling non-blocking I/O---the engines scale up to 64
-concurrent users, with Jstachio using Virtual Threads reaching \hl{3514} requests
+virtual threads---thus enabling non-blocking I/O---the engines scale up to 64
+concurrent users, with JStachio using virtual threads reaching \hl{3514} requests
 per second. The Thymeleaf implementation using the reactive View Resolver
 driver scales up to 32 concurrent users, achieving a lower maximum throughput
 of \hl{2559} requests per second.
 
 It is important to note that the differences in scalability and throughput
-between the \textit{\hl{HtmlFlow-Susp}}, \textit{\hl{Jstachio-Virtual}}, and
+between the \textit{\hl{HtmlFlow-Susp}}, \textit{\hl{JStachio-Virtual}}, and
 \textit{\hl{Thymeleaf-Rx}} approaches may be influenced by the specific template
 engines used, rather than the approach itself. When comparing the
 \textit{\hl{Reactive}}, \textit{\hl{Suspendable}}, and \textit{\hl{Virtual}} approaches
 specifically with HtmlFlow, we found that all three achieve similar
-performance: HtmlFlow using a blocking approach with Virtual Threads reaches
+performance: HtmlFlow using a blocking approach with virtual threads reaches
 4691 requests per second, while HtmlFlow using a reactive approach achieves
 4792~requests per second.
 
@@ -1657,12 +1657,12 @@ performance: HtmlFlow using a blocking approach with Virtual Threads reaches
 The results for the Spring MVC implementation, shown in
 Figure~\ref{fig:presentations-springmvc-jmeter}, compare two synchronous
 approaches: \textit{Blocking}, which uses platform threads with
-\texttt{StreamingResponseBody}, and \textit{\hl{Virtual}}, which uses Virtual
-Threads. Since Spring MVC follows a thread-per-request architecture, the
+\texttt{StreamingResponseBody}, and \textit{\hl{Virtual}}, which uses virtual
+threads. Since Spring MVC follows a thread-per-request architecture, the
 asynchronous approaches---\textbf{\hl{Reactive}} and \textbf{\hl{Suspendable}}---described in
 Section~\ref{sec:bench} are not applicable. Both the \textit{\hl{Blocking}} and
 \textit{\hl{Virtual}} strategies scale effectively up to 32 concurrent users, with
-the Virtual Threads approach achieving a slightly higher maximum throughput of
+the virtual threads approach achieving a slightly higher maximum throughput of
 2797 requests per second, compared to 2498 requests per second for the
 blocking approach. These results indicate that while Spring MVC can handle a
 moderate level of concurrency, it does not reach the scalability of the
@@ -1683,9 +1683,9 @@ The results for the Quarkus implementation, shown in
 Figure~\ref{fig:presentations-quarkus-jmeter}, indicate that Quarkus handles
 synchronous approaches more efficiently than Spring WebFlux. The blocking
 engines scale up to 64 concurrent users, achieving up to 3744 requests per
-second. When using Virtual Threads, the throughput increases even further,
+second. When using virtual threads, the throughput increases even further,
 reaching 4856 requests per second, allowing scalability up to 128 users. This
-demonstrates that Quarkus's implementation of Virtual Threads is effective for
+demonstrates that Quarkus's implementation of virtual threads is effective for
 enabling PSSR\@, and comparable to the \textit{\hl{Suspendable}} and
 \textit{\hl{Reactive}} approaches used in Spring WebFlux in terms of scalability and
 throughput.
@@ -1715,10 +1715,10 @@ engines and approaches as the previous benchmark, but with a more complex data
 model: the Stock class, which includes 20~instances and approximately two times
 as many data bindings. With this data model, the scalability of the engines
 remains largely unchanged; however, throughput is reduced across all engines.
-Compared to the Presentation benchmark, Jstachio using virtual threads
+Compared to the Presentation benchmark, JStachio using virtual threads
 experienced a more pronounced decrease in performance relative to the
-\textit{\hl{Reactive}} and \textit{\hl{Suspending}} approaches, with Jstachio using
-Virtual Threads now achieving 1509 requests per second, compared to 1750
+\textit{\hl{Reactive}} and \textit{\hl{Suspending}} approaches, with JStachio using
+virtual threads now achieving 1509 requests per second, compared to 1750
 requests per second achieved by the Thymeleaf implementation using the reactive
 View Resolver driver.
 
@@ -1726,7 +1726,7 @@ View Resolver driver.
 \vspace{-6pt}
      \includegraphics[width=0.8\textwidth]{./Graphs/stocks-webflux-jmeter.png}
      \caption{\hl{Throughput} %MDPI: The numbers in the picture are incomplete, please modify
- (requests per second) scalability results for Spring Webflux with \texttt{Stocks} class.}\label{fig:stocks-webflux-jmeter}
+ (requests per second) scalability results for Spring WebFlux with \texttt{Stocks} class.}\label{fig:stocks-webflux-jmeter}
 \end{figure}
 
 It is again important to note that the differences in scalability and
@@ -1735,11 +1735,11 @@ throughput between the \textit{\hl{HtmlFlow-Susp}}, \textit{J\hl{stachio-Virtual
 engines used, rather than the approach itself. When comparing the
 \textit{\hl{Reactive}}, \textit{\hl{Suspendable}}, and \textit{Virtual} approaches
 specifically with HtmlFlow, we found that all three achieve similar
-performance: HtmlFlow using a blocking approach with Virtual Threads reaches
+performance: HtmlFlow using a blocking approach with virtual threads reaches
 3090 requests per second, while HtmlFlow using a reactive approach achieves
 3026 requests per second. This indicates that the more pronounced decrease in
-performance for Jstachio using Virtual Threads is likely due to the specific
-implementation of the template engine, rather than the use of Virtual Threads
+performance for JStachio using virtual threads is likely due to the specific
+implementation of the template engine, rather than the use of virtual threads
 itself.
 
 The overall throughput reduction across all engines is expected, as the Stock
@@ -1751,8 +1751,8 @@ adding overhead related to the data binding process of each template engine.
 The results shown in Figure~\ref{fig:stocks-springmvc-jmeter} indicate that the
 Spring MVC implementation using the blocking approach with
 \texttt{StreamingResponseBody} achieves a throughput of up to 1,916 requests
-per second, with no significant improvement observed when using Virtual
-Threads. Both approaches scale effectively up to 64 concurrent users. Although
+per second, with no significant improvement observed when using virtual
+threads. Both approaches scale effectively up to 64 concurrent users. Although
 these approaches achieve higher throughput in Spring MVC than in Spring
 WebFlux, their overall performance remains lower than that of the reactive and
 suspendable approaches.
@@ -1761,7 +1761,7 @@ The results depicted in Figure~\ref{fig:stocks-quarkus-jmeter} show that the
 Quarkus synchronous approaches scale effectively up to 128 concurrent users,
 achieving performance comparable to the Spring WebFlux implementation. The
 blocking approach reaches a throughput of 3019 requests per second, while the
-Virtual Threads approach achieves a throughput of 3357 requests per second. In
+virtual threads approach achieves a throughput of 3357 requests per second. In
 addition to the synchronous engines, the \textit{\hl{HtmlFlow-Rx}} approach also
 achieves a throughput of 1760 requests per second, indicating that this
 approach achieves lower performance in Quarkus than in Spring WebFlux, where it
@@ -1784,15 +1784,15 @@ reached 3026 requests per second, as previously mentioned.
 
 
 The results of the benchmarks show that non-blocking engines---whether using
-reactive programming, Kotlin coroutines, or Java Virtual Threads---are able to
+reactive programming, Kotlin coroutines, or Java virtual threads---are able to
 scale effectively, supporting between 32 and 128 concurrent users depending on
-the approach and framework. Out of all the tested frameworks, Spring Webflux
+the approach and framework. Out of all the tested frameworks, Spring WebFlux
 showed itself the most effective at enabling PSSR, mostly due to its native
-support for publish-subscribe interfaces, allowing for content to be streamed
+support for publish--subscribe interfaces, allowing for content to be streamed
 as data becomes available, instead of when the response buffer is flushed.
 Quarkus also enabled PSSR effectively, but it required additional configuration
 of the \texttt{OutputBuffer} size to achieve the same results as Spring
-Webflux. The Spring MVC implementation, on the other hand, did not enable PSSR
+WebFlux. The Spring MVC implementation, on the other hand, did not enable PSSR
 for the tested templates.
 
 However, it is important to acknowledge the limitations of our chosen data
@@ -1815,11 +1815,10 @@ implementations.
 \label{sec:memory-analysis}
 
 \textls[-15]{This section evaluates the memory and CPU resource usage characteristics of
-structured concurrency approaches, specifically comparing Virtual Threads and
+structured concurrency approaches, specifically comparing virtual threads and
 suspendable~coroutines.}
 
-Resource utilization data was collected using VisualVM during 30-s
-benchmark runs, capturing detailed CPU and memory usage patterns under
+Resource utilization data was collected using VisualVM during 30 s benchmark runs, capturing detailed CPU and memory usage patterns under
 sustained load conditions. Each profiling session monitored system performance
 during the 1 to 128 concurrent user load test, providing comprehensive insights
 into runtime behavior.
@@ -1848,10 +1847,10 @@ utilization in either approach.
 Figures~\ref{fig:gc-susp} and~\ref{fig:gc-virt} show similar memory usage for
 both approaches, with peaks around 300~MB during load. The initial spike to
 450~MB in both graphs corresponds to the applications' bootstrapping phase.
-Overall, these results indicate that under the tested conditions, Virtual
-Threads and suspendable coroutines exhibit comparable memory~consumption.
+Overall, these results indicate that under the tested conditions, virtual
+threads and suspendable coroutines exhibit comparable memory~consumption.
 
-Virtual Threads allocate a full call stack per thread, which is unmounted and
+Virtual threads allocate a full call stack per thread, which is unmounted and
 stored on the heap when suspended (e.g., during blocking I/O). In contrast,
 Kotlin coroutines compile into state machines that capture only the minimal
 execution state needed to resume computation. This typically allows coroutines
@@ -1861,36 +1860,36 @@ concurrency.
 \begin{figure}[H]
 \vspace{-3pt}
      \includegraphics[width=0.48\textwidth]{./Graphs/cpu-susp.png}
-     \caption{CPU utilization profiling with HtmlFlow-Susp in Spring WebFlux during 30-s load~test.}     \label{fig:cpu-susp}
+     \caption{CPU utilization profiling with HtmlFlow-Susp in Spring WebFlux during 30 s load~test.}     \label{fig:cpu-susp}
 \end{figure}
 
 
 \begin{figure}[H]
 
      \includegraphics[width=0.48\textwidth]{./Graphs/cpu-virt.png}
-     \caption{CPU utilization profiling with HtmlFlow-Virtual in Spring WebFlux during 30-s load~test.}   \label{fig:cpu-virt}
+     \caption{CPU utilization profiling with HtmlFlow-Virtual in Spring WebFlux during 30 s load~test.}   \label{fig:cpu-virt}
 \end{figure}
      
 
 \begin{figure}[H]
 \vspace{-6pt}
     \includegraphics[width=0.48\textwidth]{./Graphs/mem-susp.png}
-     \caption{Memory utilization and garbage collection behavior with HtmlFlow-Susp in Spring WebFlux during 30-s load test.}             \label{fig:gc-susp}
+     \caption{Memory utilization and garbage collection behavior with HtmlFlow-Susp in Spring WebFlux during 30 s load test.}             \label{fig:gc-susp}
 \end{figure}
      
      \begin{figure}[H]
 \vspace{-6pt}
    \includegraphics[width=0.48\textwidth]{./Graphs/mem-virt.png}
-     \caption{Memory utilization and garbage collection behavior with HtmlFlow-Virtual in Spring WebFlux during 30-s load test.} \label{fig:gc-virt}
+     \caption{Memory utilization and garbage collection behavior with HtmlFlow-Virtual in Spring WebFlux during 30 s load test.} \label{fig:gc-virt}
 \end{figure}
 
 
 
-\section{\highlighting{Discussion} %MDPI: To AE: This section seems to be added compared to the PDF file from susy, please check if it is correct.
+\section{{Discussion} 
 }\label{s6}
 
 Beronić et al.~\cite{9803765} compared different structured concurrency
-constructs in Java and Kotlin in the context of a multithreaded HTTP server.
+constructs in Java and Kotlin in the context of a multi-threaded HTTP server.
 Their benchmark scenario differs from ours: their server awaited incoming
 requests and, upon receiving one, executed a task involving object creation,
 writing the object's information to a file, and returning the data as a
@@ -1902,7 +1901,7 @@ Our results diverge from theirs regarding memory usage. They reported lower
 heap usage for Java virtual threads (16–64~MB) compared to Kotlin coroutines
 (52–99~MB), which contrasts with our measurements. This discrepancy may be
 attributed to the different workloads: while their benchmark includes a single
-I/O read-write operation per request, our experiments focus exclusively on
+I/O read--write operation per request, our experiments focus exclusively on
 read-only I/O tasks.
 
 The work of Navarro et al.~\cite{navarro2023considerations} focused on the
@@ -1914,7 +1913,7 @@ they employed is the Fortunes
 test ({\url{https://www.techempower.com/benchmarks}}, \hl{accessed on}), which involves
 rendering a simple HTML table with only two data bindings per row.
 
-Their results show that Quarkus with Virtual Threads outperformed the
+Their results show that Quarkus with virtual threads outperformed the
 traditional thread-per-request model under increased concurrency. Moreover,
 compared to the reactive model, virtual threads demonstrated competitive
 performance, particularly when executing blocking operations within template
@@ -1925,7 +1924,7 @@ with Quarkus, suggesting that WebFlux provides a more efficient infrastructure
 for managing reactive processing flows.
 
 The work of Šimatović et al.~\cite{vsimatovic2025evaluating} presents an
-evaluation of Java Virtual Threads under different garbage collectors. They
+evaluation of Java virtual threads under different garbage collectors. They
 explored three types of workloads, only one of which was based on a web
 application scenario. This scenario replicated large-scale web scraping by
 executing 1000 parallel tasks, each consisting of an I/O-bound operation
@@ -1933,13 +1932,13 @@ followed by CPU-bound string processing.
 
 In this workload, garbage collection activity remained low across all
 collectors, indicating reduced memory pressure. These findings suggest that
-Virtual Threads improve memory allocation efficiency and reduce the frequency
+virtual threads improve memory allocation efficiency and reduce the frequency
 of garbage collection cycles---particularly when used with concurrent garbage
 collectors.
 
-Our observations suggest that the choice between Virtual Threads and
+Our observations suggest that the choice between virtual threads and
 suspendable coroutines should be guided by both runtime behavior and
-development constraints. Virtual Threads offer the compelling advantage of
+development constraints. Virtual threads offer the compelling advantage of
 preserving synchronous programming semantics while achieving competitive
 performance across moderate to high-load scenarios---a significant benefit for
 teams migrating existing codebases or working with legacy template engines.
@@ -1973,7 +1972,7 @@ Recent proposals~\cite{carvalho2023async,wise2024pssr} have applied contemporary
 asynchronous idioms to SSR web templates, demonstrating how they can overcome
 the scalability bottlenecks present in traditional web template engines.
 
-As an alternative, Java Virtual Threads can be applied to any blocking I/O call,
+As an alternative, Java virtual threads can be applied to any blocking I/O call,
 leveraging the Java runtime to transparently intercept and convert it into non-blocking I/O,
 without requiring any changes to the calling code or exposing its internal complexities.
 In this work, we explored how this technique can be applied to traditional
