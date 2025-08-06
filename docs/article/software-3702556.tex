@@ -93,14 +93,14 @@
 \newcommand{\orcidauthorB}{0000-0002-4281-3195} % Add \orcidB{} behind the author's name
 
 % Authors, for the paper (add full first names)
-\Author{\hl{Bernardo Pereira} %MDPI: 1. Please carefully check the accuracy of names and affiliations. 
- \orcidA{} and \hl{Fernando Miguel Carvalho} %MDPI: The names highlighted are different from the ones submitted online at susy.mdpi.com. Please confirm which are correct. 
+\Author{Bernardo Pereira
+ \orcidA{} and Fernando Miguel Carvalho
  *\orcidB{}}
 
 %\longauthorlist{yes}
 
 % MDPI internal command: Authors, for metadata in PDF
-\AuthorNames{Bernardo Pereira, Miguel Carvalho}
+\AuthorNames{Bernardo Pereira, Fernando Miguel Carvalho}
 
 % MDPI internal command: Authors, for citation in the left column, only choose below one of them according to the journal style
 % If this is a Chicago style journal 
@@ -119,15 +119,14 @@
          \isChicagoStyle{%
          \AuthorCitation{Lastname, Firstname, Firstname Lastname, and Firstname Lastname.}
          }{
-         \AuthorCitation{\hl{Pereira}%MDPI: Please carefully check the accuracy of names
-, B.; Carvalho, F.M.}
+         \AuthorCitation{Pereira, B.; Carvalho, F.M.}
          }
  }
 
 % Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
-\address[1]{Polytechnical Institute of Lisbon, \hl{ISEL}%MDPI: Please add full name if possible
-, \hl{Lisbon}%MDPI: please add post code
-, Portugal; \hl{a50493@alunos.isel.pt} %MDPI: We added these email addresses here according to those submitted online at susy.mdpi.com. Please confirm.
+\address[1]{Polytechnical Institute of Lisbon, ISEL
+, Lisbon 1959-007
+, Portugal; a50493@alunos.isel.pt
 }
 
 
@@ -204,22 +203,20 @@
 % Falta adicionar referências
 
 Modern web applications rely on different rendering strategies to optimize
-performance, user experience, and \textit{\hl{scalability}%MDPI: Please confirm if the italics are necessary; if not, please remove them. The following highlights are the same.
-}. The two most dominant
-approaches are \textit{\hl{Server-Side Rendering (SSR)}} and \textit{\hl{Client-Side Rendering (CSR)}}. SSR generates HTML content on the server before sending it to the client, resulting in a faster \textit{\hl{First Contentful Paint (FCP)}}~\cite{Edgar2024-FCP} and better Search Engine Optimization (SEO). Nevertheless, SSR
-can increase server load and reduce \textit{\hl{throughput}} ({\hl{The} %MDPI: footnote is not allowed in this journal, so we moved it to here, please confirm it
- number of
-    requests the server can handle per second (RPS)}) since each request requires
+performance, user experience, and scalability. The two most dominant
+approaches are \textit{Server-Side Rendering (SSR)} and \textit{Client-Side Rendering (CSR)}. SSR generates HTML content on the server before sending it to the client, resulting in a faster \textit{First Contentful Paint (FCP)}~\cite{Edgar2024-FCP} and better Search Engine Optimization (SEO). Nevertheless, SSR
+can increase server load and reduce \textit{throughput}
+(the number of requests the server can handle per second (RPS)) since each request requires
 additional processing before responding. In contrast, CSR shifts the rendering
 workload to the browser---the server initially sends a minimal HTML document with
 JavaScript, which dynamically loads the page content. While CSR reduces the
-server’s burden, it can lead to a slower \textit{\hl{FCP}}, as users must wait for
+server’s burden, it can lead to a slower FCP, as users must wait for
 JavaScript execution before meaningful content appears.
 
-\textit{\hl{Progressive Server-Side Rendering (PSSR)}} combines benefits from both SSR and CSR
+\textit{Progressive Server-Side Rendering (PSSR)} combines benefits from both SSR and CSR
 by streaming HTML content progressively. This technique enhances user-perceived performance by
 allowing progressive rendering as data becomes available, significantly reducing the
-\textit{\hl{time-to-first-byte (TTFB)}} and improving perceived load times compared to traditional
+\textit{time-to-first-byte (TTFB)} and improving perceived load times compared to traditional
 SSR approaches~\cite{wise2024pssr}. In this respect,
 PSSR is similar to CSR in that the server initially sends a minimal HTML
 document to the client and subsequently streams additional HTML fragments.
@@ -230,8 +227,8 @@ The streaming nature of PSSR allows users to see content progressively as it bec
 available, rather than waiting for the complete page to be rendered server-side,
 thus providing a more responsive user experience with measurably lower TTFB values~\cite{wise2024pssr}.
 
-\textit{\hl{Low-thread}} servers, also known as
-\textit{\hl{event-driven}}~\cite{event-driven-servers}, have gained prominence in
+\textit{Low-thread} servers, also known as
+\textit{event-driven}~\cite{event-driven-servers}, have gained prominence in
 contemporary web applications due to their ability to efficiently manage a large
 number of concurrent I/O operations with minimal resources, thus promoting
 better scalability.
@@ -249,9 +246,8 @@ threads to remain idle until the entire HTML output is ready, undermining the
 performance benefits of non-blocking I/O and limiting scalability in
 high-concurrency environments.
 
-With the introduction of \textit{\hl{virtual
-    threads}}~({\url{https://openjdk.org/jeps/444}}, \hl{accessed on}%MDPI: footnote is not allowed in this journal, so we moved it to here, please confirm it, and please add the access date (format: Date Month Year), e.g., accessed on 1 January 2020.
-) in Java 21, it is now
+With the introduction of \textit{virtual
+    threads}~({\url{https://openjdk.org/jeps/444}}, accessed on 6 August 2025) in Java 21, it is now
 possible to execute blocking I/O operations in a scalable, lightweight manner.
 This capability allows legacy template engines---often reliant on blocking
 interfaces---to operate efficiently in high-concurrency, non-blocking
@@ -259,7 +255,7 @@ environments without requiring complex asynchronous programming models. Due to t
 development and improving maintainability.
 
 We investigate the current landscape of non-blocking PSSR, focusing on two
-primary paradigms: \textit{\hl{reactive programming}} and \textit{\hl{coroutines}}, both
+primary paradigms: \textit{reactive programming} and \textit{coroutines}, both
 of which have been used to achieve asynchronous I/O in the Java ecosystem. As
 an alternative, we investigate whether Java’s virtual threads can offer
 comparable performance while preserving the simplicity of synchronous code.
@@ -299,23 +295,23 @@ these choices impact the behavior of the web template engines.
 
 \subsection{Web Templates}\label{s2.1}
 
-\textit{\hl{Web templates}} have been the most widely adopted approach for
+\textit{Web templates} have been the most widely adopted approach for
 constructing dynamic HTML pages.
-Web templates or \textit{\hl{web views}}~\cite{Fowler02,Alur01} (e.g., JSP, Handlebars,
+Web templates or \textit{web views}~\cite{Fowler02,Alur01} (e.g., JSP, Handlebars,
 or Thymeleaf), are based on HTML documents augmented with template-specific
 markers (e.g., \texttt{<\%>}, \texttt{\{\{\}\}}, or \texttt{\$\{\}}), which
-represent \textit{\hl{dynamic}} information to be replaced at runtime with the
+represent \textit{dynamic} information to be replaced at runtime with the
 results of corresponding computations, producing the final HTML page.
 The process of parsing and replacing these markers---i.e.,
-\textit{\hl{resolution}}---is the primary responsibility of the \textit{\hl{template
-  engine}}~\cite{Parr04}.
-One key characteristic of \textit{\hl{web templates}} is their ability to receive a
+\textit{resolution}---is the primary responsibility of the \textit{template
+  engine}~\cite{Parr04}.
+One key characteristic of \textit{web templates} is their ability to receive a
 \textit{context object}---equivalent to the \textit{model} in the model-view
 design pattern~\cite{mvc88,Parr04}---which provides the data used to fill
 template placeholders at runtime.
 Web templates can be distinguished by several properties, namely:
 \begin{enumerate}
-  \item \textit{\hl{Domain-specific language}} idiom
+  \item \textit{Domain-specific language} idiom
   \item Supported data model APIs
   \item Asynchronous support
   \item Type safety and HTML safety
@@ -323,8 +319,8 @@ Web templates can be distinguished by several properties, namely:
 \end{enumerate}
 
 Although some of the aforementioned characteristics apply to both
-\textit{\hl{server-side}} and \textit{\hl{client-side}} approaches, we focus solely on
-web template technologies for \textit{\hl{Server-Side Rendering}}, as our work is
+\textit{server-side} and \textit{client-side} approaches, we focus solely on
+web template technologies for \textit{Server-Side Rendering}, as our work is
 centered on that approach. Before exploring each of the aforementioned
 characteristics, Table~\ref{table:cmplibs} presents a breakdown of mainstream
 template engines, classified according to the identified properties.
@@ -353,7 +349,7 @@ $^{(5)}$ {Non-safety} for HTML attributes.}
      & \shortstack{\textbf{Progressive}  \\\textbf{Rendering}}
     \\
     \midrule
-    \textbf{\hl{Freemarker}}
+    \textbf{Freemarker}
      & External DSL
      & \texttt{Iterable}
      & \large{$\textcolor{red}{\times}$}
@@ -496,13 +492,13 @@ $^{(5)}$ {Non-safety} for HTML attributes.}
 \end{table}
 
 The first half of Table~\ref{table:cmplibs} lists template engines that use
-their own templating dialects, referred to as \textit{\hl{external DSLs}}. The
-second half lists Java libraries that provide an \textit{\hl{internal DSL}},
-typically using a \textit{\hl{nested}} or \textit{\hl{chaining}} style to build HTML.
+their own templating dialects, referred to as \textit{external DSLs}. The
+second half lists Java libraries that provide an \textit{internal DSL},
+typically using a \textit{nested} or \textit{chaining} style to build HTML.
 Note that, by leveraging the host language (e.g., Clojure, Groovy, Java,
 Kotlin, or Scala) as the templating idiom, the latter impose no restrictions on
 the data model and fully support all styles of data access APIs. They also
-benefit from static type checking, which helps ensure \textit{\hl{type safety}}.
+benefit from static type checking, which helps ensure \textit{type safety}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------------------------------------------------
@@ -510,17 +506,17 @@ benefit from static type checking, which helps ensure \textit{\hl{type safety}}.
 
 \subsubsection{Domain-Specific Language Idiom}\label{s2.1.1}
 
-Web templates are based on a \textit{\hl{domain-specific language}}
+Web templates are based on a \textit{domain-specific language}
 (DSL)~\cite{landin1966next}, which defines a language tailored to a specific
-\textit{\hl{domain}}~\cite{evans2004domain}---in this case, HTML for expressing web
+\textit{domain}~\cite{evans2004domain}---in this case, HTML for expressing web
 documents. The DSL constrains the template's syntax and semantics to match the
 structure and purpose of HTML.
-DSLs can be divided in two types: \textit{\hl{external}} or
-\textit{\hl{internal}}~\cite{dslbook}. \textit{\hl{External}} DSLs are languages created
+DSLs can be divided in two types: \textit{external} or
+\textit{internal}~\cite{Fowler03}. \textit{External} DSLs are languages created
 without any affiliation to a concrete programming language. An example of an
-\textit{\hl{external}} DSL is the regular expressions search
+\textit{external} DSL is the regular expressions search
 pattern~\cite{thompson1968}, since it defines its own syntax without any
-dependency of programming languages. On the other hand, an \textit{\hl{internal}} DSL
+dependency of programming languages. On the other hand, an \textit{internal} DSL
 is defined within a host programming language as a library and tends to be
 limited to the syntax of the host language, such as Java.
 JQuery~\cite{resig2007pro} is one of the most well-known examples of an internal
@@ -539,8 +535,8 @@ be expressed in each technology using its own DSL:
   \item \texttt{<?php foreach (\$items as \$item):?>} in PHP
 \end{itemize}
 
-On the other hand, \textit{\hl{internal}} DSLs for HTML allow templates to be
-defined directly within the \emph{\hl{host}} language (such as Java, Kotlin, Groovy,
+On the other hand, \textit{internal} DSLs for HTML allow templates to be
+defined directly within the \emph{host} language (such as Java, Kotlin, Groovy,
 Scala, or other general-purpose programming languages), rather than using
 text-based template files~\cite{carvalho2020}. In this case, a web template
 is not limited to templating constructs but may instead leverage any available
@@ -548,19 +544,19 @@ primitive of the host language or any external API.
 
 Using an internal DSL can have several benefits over using textual templates:
 \begin{enumerate}
-  \item \emph{\hl{Type safety}}: Because the templates are defined with the host
+  \item \emph{Type safety}: Because the templates are defined with the host
         programming language, the compiler can check the syntax and types of the
         templates at compile time, which can help catch errors earlier in the
         development process.
 
-  \item \emph{\hl{IDE support}}: Many modern IDEs provide code completion, syntax
+  \item \emph{IDE support}: Many modern IDEs provide code completion, syntax
         highlighting, and other features, which can make it easier to write and
         maintain templates.
 
-  \item \emph{\hl{Flexibility}}: Use all the features of the host programming language
+  \item \emph{Flexibility}: Use all the features of the host programming language
         to generate HTML, can make it easier to write complex templates and reuse code.
 
-  \item \emph{\hl{Integration}}: Because the templates are defined in Java code, for
+  \item \emph{Integration}: Because the templates are defined in Java code, for
         example, you can easily integrate them with other Java code in your
         application, such as controllers, services, repositories and models.
 
@@ -569,23 +565,22 @@ Using an internal DSL can have several benefits over using textual templates:
 DSLs for HTML provide an API where methods or functions correspond to the names
 of available HTML elements. These methods, also known as \textit{builders}, can
 be combined in a chain of calls to mimic the construction of an HTML document
-in a fluent manner. Martin Fowler~\cite{dslbook} identifies three different
-patterns for combining functions to create a DSL: (1) \textit{\hl{function
-  sequence}}; (2) \textit{\hl{nested function}}, and (3) \textit{\hl{method chaining}}, which
+in a fluent manner. Martin Fowler~\cite{Fowler03} identifies three different
+patterns for combining functions to create a DSL: (1) \textit{function
+  sequence}; (2) \textit{nested function}, and (3) \textit{method chaining}, which
 are illustrated in the snippets of Figure~\ref{fig:dsl-idioms}.
 
 From the three examples depicted in Figure~\ref{fig:dsl-idioms}, the
-\textit{\hl{nested function}} idiom used by \textbf{\hl{ScalaTags}%MDPI: Please confirm if the bold formatting is necessary; if not, please remove it. The following highlights are the same.
-}, as shown in the
+\textit{nested function} idiom used by \textbf{ScalaTags}, as shown in the
 snippet of Figure~\ref{fig:dsl-idioms}b, is the least verbose, requiring
 fewer statements than the other two cases. This approach of combining function
-calls is also utilized by \textbf{\hl{Hiccup}} Clojure Library and \textbf{\hl{j2html}}
-Java library. One reason for verbosity in \textit{\hl{function sequence}} and
-\textit{\hl{method chaining}} approaches is the requirement of a dedicated HTML
+calls is also utilized by \textbf{Hiccup} Clojure Library and \textbf{j2html}
+Java library. One reason for verbosity in \textit{function sequence} and
+\textit{method chaining} approaches is the requirement of a dedicated HTML
 builder to emit the closing tag, exemplified by \texttt{end()} in \textbf{JATL}
-(Figure~\ref{fig:dsl-idioms}a) and \texttt{\_\_()} in \textbf{\hl{HtmlFlow}}
-(Figure~\ref{fig:dsl-idioms}c). However, the \textit{\hl{nested function}} approach
-comes with a notable drawback: \textbf{\hl{it does not support PSSR}} because the
+(Figure~\ref{fig:dsl-idioms}a) and \texttt{\_\_()} in \textbf{HtmlFlow}
+(Figure~\ref{fig:dsl-idioms}c). However, the \textit{nested function} approach
+comes with a notable drawback: \textbf{it does not support PSSR} because the
 sequence of nested functions is evaluated backward to the order in which they
 are written. In other words, arguments are evaluated before the functions are
 invoked. Taking the example in Figure~\ref{fig:dsl-idioms}b, the
@@ -671,15 +666,15 @@ html()
 
 
 
-Two other JVM libraries, \textbf{\hl{Groovy MarkupBuilder}} and
-\textbf{\hl{KotlinX.html}}, also adopt a \textit{\hl{nested function}} approach, but they
-address the backward evaluation issue by implementing \textit{\hl{lazy evaluation}}
+Two other JVM libraries, \textbf{Groovy MarkupBuilder} and
+\textbf{KotlinX.html}, also adopt a \textit{nested function} approach, but they
+address the backward evaluation issue by implementing \textit{lazy evaluation}
 of arguments~\cite{Landin65}, expressed in lambda expressions (also known as
 function literals). Due to the concise form of expressing lambdas with brackets
 (i.e., \texttt{\{\}}) in both Groovy and Kotlin, translating the template shown
 in Figure~\ref{fig:dsl-idioms}b to use Groovy MarkupBuilder or KotlinX.html
 only requires replacing parentheses with brackets for parent elements.
-\textbf{\hl{HtmlFlow}} also adopts this approach and provides a Kotlin-idiomatic API
+\textbf{HtmlFlow} also adopts this approach and provides a Kotlin-idiomatic API
 as an alternative to its original Java API.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -697,7 +692,7 @@ API for iteration. Nevertheless, other standard interfaces, such as
 compatible with \texttt{Iterable}. This fragmentation becomes more evident when
 considering other JVM languages, such as Kotlin, which introduces additional
 abstractions like the \texttt{Sequence} interface---also incompatible with
-\texttt{Iterable}. Consequently, template engines based on \textit{\hl{external}}
+\texttt{Iterable}. Consequently, template engines based on \textit{external}
 DSLs must explicitly support each of these interfaces to accommodate the
 various iteration protocols across languages and libraries.
 
@@ -713,7 +708,7 @@ returning an \texttt{Iterator}. This enables support for both Java
 The remaining analyzed template engines that use external DSLs support only Java
 \texttt{Iterable} as their sole iteration protocol.
 
-On the other hand, template engines that employ an \textit{\hl{internal}} DSL do not
+On the other hand, template engines that employ an \textit{internal} DSL do not
 face such limitations, as they can leverage any available API within the host
 programming language. This flexibility extends beyond the standard library to
 include third-party APIs as well. For example, in Java, developers can iterate
@@ -735,26 +730,25 @@ direct style, where the result of a method call corresponds to its returned
 value, there is no equivalent standard in the asynchronous approach. Instead,
 we may encounter various asynchronous conventions depending on the programming
 language and runtime environment. Some of these approaches include
-\emph{\hl{continuation-passing style}} (CPS)~\cite{scheme},
-\textit{\hl{promises}}~\cite{promise}, async/await idiom~\cite{async_await},
-or \textit{\hl{suspend functions}}~\cite{elizarov2021coroutines}.
+\emph{continuation-passing style} (CPS)~\cite{scheme},
+\textit{promises}~\cite{promise}, async/await idiom~\cite{async_await},
+or \textit{suspend functions}~\cite{elizarov2021coroutines}.
 
-Many \textit{\hl{general-purpose languages}} (GPLs) have embraced the
+Many \textit{general-purpose languages} (GPLs) have embraced the
 \texttt{async}/\texttt{await} feature~\cite{async_await} enabling non-blocking
 routines to mimic the structure of synchronous ones, allowing developers to
 reason about instruction flow sequentially. The simplicity and broad adoption
 of this programming model have led to its incorporation into mainstream
-languages like \hl{C\#, JavaScript, Python, Perl, Swift, Kotlin} %MDPI: Please confirm whether this is the software used in this article. If so, please provide the version number.
-, and others,
+languages like C\#, JavaScript, Python, Perl, Swift, Kotlin, and others,
 excluding Java. However, implementing \texttt{async}/\texttt{a}wait requires
-compiler support to translate \textit{\hl{suspension points}} (i.e., \texttt{await}
+compiler support to translate \textit{suspension points} (i.e., \texttt{await}
 statements) into state machines. Most template engines operate using an
 external DSL with their own templating dialect (e.g., Thymeleaf, JSP, Jade,
 Handlebars, and others), which do not inherently leverage asynchronous
 capabilities from their host programming languages.
 
 An alternative approach to asynchronous programming involves handling data as
-a sequence of asynchronous events, commonly known as a \textit{\hl{reactive stream}}.
+a sequence of asynchronous events, commonly known as a \textit{reactive stream}.
 Instead of materializing all items in memory, reactive streams emit values over
 time, allowing clients to subscribe and consume data incrementally as it becomes
 available.
@@ -767,12 +761,12 @@ Later, due to the proliferation of alternative implementations, the need arose t
 create a common interface to ensure interoperability between different reactive
 stream libraries. This led to the formation of a working group that included
 engineers from notable companies such as Lightbend, Pivotal, and Netflix.
-The group began defining the \textit{\hl{reactive streams}}
+The group began defining the \textit{reactive streams}
 specification~\cite{ReactiveStreams}, which established a standard for
 asynchronous stream processing using non-blocking, backpressure-aware data
 pipelines.
 The more recent Mutiny~\cite{mutiny2021}, while conforming to the
-\textit{\hl{reactive streams}} standard, proposes a different approach that avoids
+\textit{reactive streams} standard, proposes a different approach that avoids
 complex optimizations, resulting in more straightforward and easier-to-maintain
 code.
 
@@ -787,31 +781,31 @@ among external DSLs for HTML---to support reactive streams based on the
 
 \subsubsection{HTML Safety}\label{s2.1.4}
 
-Another key characteristic of such DSLs is \textit{\hl{HTML safety}}, which refers
+Another key characteristic of such DSLs is \textit{HTML safety}, which refers
 to whether they produce only valid HTML conforming to a well-formed document.
 To ensure HTML safety, a DSL API should only allow combining calls to builders
-that result in valid HTML. Nonetheless, most HTML DSLs using the \textit{\hl{function
-  sequence}} or \textit{\hl{nested function}} approach cannot ensure HTML safety at
+that result in valid HTML. Nonetheless, most HTML DSLs using the \textit{function
+  sequence} or \textit{nested function} approach cannot ensure HTML safety at
 compile time.
 
-The \textit{\hl{function sequence}} approach, as illustrated in the snippet of
+The \textit{function sequence} approach, as illustrated in the snippet of
 Figure~\ref{fig:dsl-idioms}a, involves combining function calls as a sequence
 of statements, making it challenging to restrict the order of statements. In
-the \textit{\hl{nested function}} approach shown in Figure~\ref{fig:dsl-idioms}b,
+the \textit{nested function} approach shown in Figure~\ref{fig:dsl-idioms}b,
 variable-length arguments are often used to allow an undefined number of child
 elements, which cannot be strongly typed in every programming language.
 
-KotlinX.html, which utilizes the \textit{\hl{nested function}} idiom with lazy
+KotlinX.html, which utilizes the \textit{nested function} idiom with lazy
 evaluation, mitigates this issue through function types with a receiver. In
 this approach, the receiver (i.e., \texttt{this} within the lambda) is strongly
 typed and provides a set of methods corresponding to legal child elements. This
 enables KotlinX.html to enforce HTML safety by restricting the available
 methods during compile time.
 
-To achieve this, KotlinX.html provides HTML builders using \textit{\hl{function
-  literals with receiver}}~\cite{kotlinlang}. In Kotlin, a block of code enclosed
-in curly braces \texttt{\{...\}} is known as a \emph{\hl{lambda}}, and can be used
-as an argument to a function that expects a \emph{\hl{function literal}}. When we
+To achieve this, KotlinX.html provides HTML builders using \textit{function
+  literals with receiver}~\cite{kotlinlang}. In Kotlin, a block of code enclosed
+in curly braces \texttt{\{...\}} is known as a \emph{lambda}, and can be used
+as an argument to a function that expects a \emph{function literal}. When we
 write, for example, \texttt{body \{ div \{ hr() \} \}}, we are invoking the
 \texttt{body} function with a lambda as its argument. This lambda, in turn,
 calls the \texttt{div} function with another lambda as an argument that creates
@@ -820,8 +814,8 @@ a horizontal row (i.e., \texttt{hr}). Each call to an HTML builder (e.g.,
 element generated by the outer function call.
 
 HtmlFlow provides two APIs: one in idiomatic Kotlin, similar to the
-\texttt{KotlinX.html} API, and another that employs the \textit{\hl{method
-  chaining}} idiom, as illustrated in the snippet of
+\texttt{KotlinX.html} API, and another that employs the \textit{method
+  chaining} idiom, as illustrated in the snippet of
 Figure~\ref{fig:dsl-idioms}c. In this approach, the receiver object is
 implicitly passed as an argument to each method call, enabling subsequent
 methods to be invoked on the result of the preceding one. This facilitates the
@@ -838,24 +832,24 @@ builders and attributes after the dot (\texttt{.}) operator.
 Pursuing the optimal user experience for web users has been a consistent goal
 since the inception of the World Wide Web. Consequently, various approaches
 have been explored to deliver the initial meaningful content to the end-user as
-promptly as possible, while the remaining content \textit{\hl{progressively}} (or
+promptly as possible, while the remaining content \textit{progressively} (or
 incrementally) loads as the server streams the HTML~content.
 
-\textit{\textbf{\hl{Progressive rendering}}} and \textit{\textbf{\hl{progressive loading}}}
-encompass different concepts. The former pertains to the \textit{\hl{dynamic}} content of a
-\textit{\hl{dynamic web page}}, encompassing elements with logic and placeholders
-that are fulfilled by data from an object \textit{\hl{model}} constructed at runtime.
-On the other hand, the latter is associated with \textit{\hl{render-blocking
-  resources}} such as scripts, stylesheets, and HTML imports, which may hinder the
+\textit{\textbf{Progressive rendering}} and \textit{\textbf{progressive loading}}
+encompass different concepts. The former pertains to the \textit{dynamic} content of a
+\textit{dynamic web page}, encompassing elements with logic and placeholders
+that are fulfilled by data from an object \textit{model} constructed at runtime.
+On the other hand, the latter is associated with \textit{render-blocking
+  resources} such as scripts, stylesheets, and HTML imports, which may hinder the
 browser from rendering page content to the screen~\cite{progressive-2022}.
-The notion of \textit{\hl{progressive rendering}} has typically been aligned with
-\textit{\hl{Client-Side Rendering}} (CSR), where a single HTML page with static
+The notion of \textit{progressive rendering} has typically been aligned with
+\textit{Client-Side Rendering} (CSR), where a single HTML page with static
 content is delivered upfront, while the dynamic content is fetched as the data
 becomes available to complete the web page.
 Nevertheless, despite being overlooked, HTTP and browsers were designed from their
 inception to also support this feature in the context of SSR approaches,
 which offers the advantage of not being dependent on
-\textit{\hl{render-blocking resources}}, such as the required JavaScript for CSR.
+\textit{render-blocking resources}, such as the required JavaScript for CSR.
 % \textit{Progressive server-side rendering} (PSSR) is the
 % ability of streaming HTML content to the client in chunks or data frames, as it
 % gets resolved on the server at runtime.
@@ -897,7 +891,7 @@ client-side JavaScript. Like Thymeleaf, their proposal avoids the use of
 client-side JavaScript; yet, unlike Thymeleaf, it supports a wide range of
 asynchronous APIs and multiple data sources, not limited to the
 \texttt{Publisher} API. Nonetheless, the main counter-argument is the non-trivial
-management of the \emph{\hl{resume}} callback in
+management of the \emph{resume} callback in
 continuations~\cite{von2003events,callbackhell}, which is used to linearize the
 execution flow between asynchronous~calls.
 
@@ -912,16 +906,16 @@ bogged down by context switching and thread management
 overhead~\cite{kant2000scalable}. In the Java ecosystem, Spring MVC is one of
 the most widely used frameworks that follow this model, according to several
 reports such as the Stack Overflow 2024 Developer
-Survey~({\url{https://survey.stackoverflow.co/2024/technology\#1-web-frameworks-and-technologies}}, \hl{accessed on}).
+Survey~({\url{https://survey.stackoverflow.co/2024/technology\#1-web-frameworks-and-technologies}}, accessed on 6 August 2025).
 
-On the other hand, in modern \textit{\hl{low-thread}} architectures, the server uses
+On the other hand, in modern \textit{low-thread} architectures, the server uses
 a small number of threads to handle a large number of requests.
-\textit{\hl{Low-thread}} servers, also known as
-\textit{\hl{event-driven}}~\cite{event-driven-servers}, offer a significant
+\textit{Low-thread} servers, also known as
+\textit{event-driven}~\cite{event-driven-servers}, offer a significant
 advantage in efficiently managing a high number of concurrent I/O operations
 with minimal resource usage.
 
-The \textit{\hl{non-blocking}} I/O model employed in low-thread servers is
+The \textit{non-blocking} I/O model employed in low-thread servers is
 well-suited for handling large volumes of data asynchronously~\cite{Meijer12}.
 This combination of low-thread servers and asynchronous data models has
 facilitated the development of highly scalable, responsive, and resilient web
@@ -932,7 +926,7 @@ including Netty, Akka HTTP, Vert.x, and Spring WebFlux.
 % Among these, Spring WebFlux stands out as the most widely used web framework in
 % Java, according to surveys like JetBrains' State of Java report (2021) and
 % community metrics from platforms like Github and StackOverflow.
-The \textit{\hl{non-blocking}} I/O model in low-thread servers functions optimally
+The \textit{non-blocking} I/O model in low-thread servers functions optimally
 only when HTTP handlers avoid blocking. Therefore, HTML templates need to be
 proficient in dealing with the asynchronous APIs provided by data models. While
 most legacy web templates struggle with asynchronous models, DSLs for HTML face
@@ -954,8 +948,8 @@ programming.
 
 Among mainstream technologies, the Kotlin programming language introduces a new
 abstraction for managing coroutines and provides structured concurrency, which
-ensures that coroutines are \textit{\hl{scoped}}, \textit{\hl{cancellable}}, and
-\textit{\hl{coordinated}} within a well-defined
+ensures that coroutines are \textit{scoped}, \textit{cancellable}, and
+\textit{coordinated} within a well-defined
 lifecycle~\cite{elizarov2021coroutines}. Although this model embraces the
 \texttt{async}/\texttt{await} feature~\cite{async_await}, enabling non-blocking
 routines to mimic the structure of synchronous ones, it still lacks a
@@ -967,7 +961,7 @@ they typically support only a limited subset of the host library's API---most
 commonly just the \texttt{Iterable} interface.
 
 Only Java virtual threads, introduced in
-JEP~444 ({\url{https://openjdk.org/jeps/444}}, \hl{accessed on}), adopt a similar approach
+JEP~444 ({\url{https://openjdk.org/jeps/444}}, accessed on 6 August 2025), adopt a similar approach
 to Karsten's proposal, using user-mode threads to preserve a synchronous
 programming model while still allowing blocking I/O operations without tying up
 platform threads. When a virtual thread performs a blocking I/O operation, the
@@ -1007,7 +1001,7 @@ perform PSSR, as traditional rendering waits for all data before sending any
 output. This results in higher latency for clients and less responsive page
 loads, particularly for data-intensive views. In any case, Spring MVC provides a
 mechanism for response streaming via the
-\texttt{StreamingResponseBody} ({\url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}}, \hl{accessed on})
+\texttt{StreamingResponseBody} ({\url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}}, accessed on 6 August 2025)
 interface, introduced in Spring 4.2. When a controller method returns a
 \texttt{StreamingResponseBody}, Spring writes directly to the
 \texttt{HttpServletResponse} output stream, allowing the server to send parts
@@ -1190,8 +1184,8 @@ public StreamingOutput streamHtml() {
 
 \section{Problem Statement}\label{s3}
 
-In this section, we examine the challenges of implementing \textit{\hl{Progressive
-Server-Side Rendering}} (PSSR) in modern web applications, with a focus on the
+In this section, we examine the challenges of implementing \textit{Progressive
+Server-Side Rendering} (PSSR) in modern web applications, with a focus on the
 limitations of current template engine designs. Our goal is to broaden the
 range of options available for PSSR, particularly within JVM-based frameworks.
 % Reactive streams~\cite{ReactiveStreams}, such as those based on
@@ -1222,7 +1216,7 @@ Note that the \texttt{await} builder receives an additional parameter, the
 proceed to render the next HTML element in the web
 template~\cite{carvalho2023async}.
 HtmlFlow pauses the rendering process until \texttt{onCompletion} is called,
-similar to how the \emph{\hl{resume}} function works in continuations and
+similar to how the \emph{resume} function works in continuations and
 coroutines~\cite{coroutines_continuations}.
 In Listing~\ref{lst:presentation-flow}, we show an
 equivalent suspend-based implementation using Kotlin's \texttt{Flow}~\cite{wise2024pssr}.
@@ -1230,7 +1224,7 @@ Both examples highlight how internal DSLs can natively integrate with reactive t
 to enable non-blocking, progressive rendering on the server side.
 
 \begin{listing}[H]
-\caption{\textit{\hl{HtmlFlow reactive}} presentation template in Kotlin with an \texttt{Observable} model.}
+\caption{\textit{HtmlFlow reactive} presentation template in Kotlin with an \texttt{Observable} model.}
 \begin{lstlisting}[
     language=Kotlin,
     basicstyle=\scriptsize\ttfamily,
@@ -1253,7 +1247,7 @@ await { div, model, onCompletion ->
 
 \vspace{-12pt}
 \begin{listing}[H]
-\caption{\textit{\hl{HtmlFlow suspend}} presentation template in Kotlin with a \texttt{Flow} model.}
+\caption{\textit{HtmlFlow suspend} presentation template in Kotlin with a \texttt{Flow} model.}
 \begin{lstlisting}[
     language=Kotlin,
     basicstyle=\scriptsize\ttfamily,
@@ -1274,7 +1268,7 @@ suspending { model ->
 \end{lstlisting}
 \end{listing}
 
-By contrast, template engines that use \textit{\hl{external}} DSLs---such as JStachio,
+By contrast, template engines that use \textit{external} DSLs---such as JStachio,
 Thymeleaf, or Handlebars---typically define templates within static HTML
 documents using custom markers, and rely on blocking interfaces like
 \texttt{java.util.Iterable} or \texttt{java.util.stream.Stream}.
@@ -1292,7 +1286,7 @@ illustrates this model using a JStachio template, where the engine performs a
 blocking loop over \texttt{presentationItems}.
 
 \begin{listing}[H]
-\caption{Presentation HTML template using \textit{\hl{JStachio}}.}
+\caption{Presentation HTML template using \textit{JStachio}.}
 \begin{lstlisting}[
   language=Kotlin,
   numbers=none,
@@ -1319,15 +1313,15 @@ Despite these performance limitations, external DSLs remain popular due to
 several~advantages:
 
 \begin{enumerate}
-    \item \emph{\hl{Separation of Concerns}}: HTML templates are decoupled from application logic, enabling front-end developers to contribute without modifying back-end code.
-    \item \emph{\hl{Cross-Language Compatibility}}: External DSLs are portable across languages and frameworks, easing integration in multi-language environments.
-    \item \emph{\hl{Familiarity}}: Many developers are comfortable with HTML syntax, lowering the barrier to entry and improving maintainability.
+    \item \emph{Separation of Concerns}: HTML templates are decoupled from application logic, enabling front-end developers to contribute without modifying back-end code.
+    \item \emph{Cross-Language Compatibility}: External DSLs are portable across languages and frameworks, easing integration in multi-language environments.
+    \item \emph{Familiarity}: Many developers are comfortable with HTML syntax, lowering the barrier to entry and improving maintainability.
 \end{enumerate}
 
 These strengths make external DSLs appealing---even when they come at the cost of
 blocking synchronous rendering. However, this trade-off becomes critical under
 high concurrency, where blocking threads severely degrades throughput~\cite{wise2024pssr}.
-Emerging features in the Java ecosystem, particularly \textit{\hl{virtual threads}}
+Emerging features in the Java ecosystem, particularly \textit{virtual threads}
 introduced in Java 21 as part of Project Loom~\cite{Veen2024}, offer a promising solution to
 this challenge. Virtual threads drastically reduce the overhead of blocking
 operations by decoupling thread execution from OS-level threads. For this reason,
@@ -1358,12 +1352,12 @@ non-blocking, asynchronous~engines.
 \section{Benchmark Implementation}
 \label{sec:bench}
 
-This benchmark ({\url{https://github.com/xmlet/comparing-non-blocking-progressive-ssr}}, \hl{accessed on})
-is designed with a modular architecture, separating the \textit{\hl{view}} and
-\textit{\hl{model}} layers from the \textit{\hl{controller}} layer ~\cite{Bucanek2009},
+This benchmark ({\url{https://github.com/xmlet/comparing-non-blocking-progressive-ssr}}, accessed on 6 August 2025)
+is designed with a modular architecture, separating the \textit{view} and
+\textit{model} layers from the \textit{controller} layer ~\cite{Bucanek2009},
 which allows for easy extension and integration of new template engines and
 frameworks. It also includes a set of tests to ensure the correctness of
-implementations and to validate the \textit{\hl{HTML}} output. It includes two
+implementations and to validate the HTML output. It includes two
 different data models, defined as \texttt{Presentation} and \texttt{Stock}, as
 shown in Listing \ref{lst:stock-class} and Listing \ref{lst:presentation-class},
 following the proposal of the
@@ -1373,7 +1367,7 @@ the \texttt{Stock} class represents a stock with a name, URL, symbol, price,
 change, and ratio.
 
 \begin{listing}[H]
-\caption{\texttt{\hl{Stock}} class.}
+\caption{\texttt{Stock} class.}
             \begin{lstlisting}[
   language=kotlin,
   numbers=none,
@@ -1394,7 +1388,7 @@ data class Stock(
 \end{listing}
 
 \begin{listing}[H]
-\caption{\texttt{\hl{Presentation}} class.}
+\caption{\texttt{Presentation} class.}
             \begin{lstlisting}[
     language=kotlin,
     basicstyle=\scriptsize\ttfamily,
@@ -1439,25 +1433,25 @@ response body, which acts as a publisher that progressively streams the HTML
 content to the client. The implementation includes four main approaches to
 PSSR\@:
 \begin{itemize}
-      \item \textbf{\hl{Reactive}}: The template engine is used in a reactive context,
+      \item \textbf{Reactive}: The template engine is used in a reactive context,
             where the HTML content rendered using the reactive programming model.
             An example of this approach is the Thymeleaf template engine
             when using the \texttt{ReactiveDataDriverContextVariable} in conjunction with a
             non-blocking Spring \texttt{ViewResolver}.
-      \item \textbf{\hl{Suspendable}}: The template engine is used in a suspendable
+      \item \textbf{Suspendable}: The template engine is used in a suspendable
             context, where the HTML content is rendered within the context of a suspending function.
             An example of this approach is the HtmlFlow template engine, which
             supports suspendable templates with the use of the \texttt{Flow} class from the
             Kotlin standard library.
-      \item \textbf{\hl{Virtual}}: The template engine is used in a non-blocking
+      \item \textbf{Virtual}: The template engine is used in a non-blocking
             context, where the HTML content is rendered within the context of virtual
             threads. This method is used for the template engines that do not traditionally
             support non-blocking I/O, be it either because they use external DSLs and in
             consequence only support the blocking \texttt{Iterable} interface, or
             because they do not support the asynchronous rendering of HTML~content.
-      \item \textbf{\hl{Blocking}}: The template engine is used in a blocking
+      \item \textbf{Blocking}: The template engine is used in a blocking
             context, where the HTML content is rendered using the blocking interface of the
-            \texttt{\hl{Observable}} class, within the context of an OS-thread.
+            \texttt{Observable} class, within the context of an OS-thread.
 \end{itemize}
 % It also includes methods using Kotlin coroutines and other
 % asynchronous mechanisms supported by template engines, such as the
@@ -1468,10 +1462,10 @@ The Spring MVC implementation uses handlers based solely on the blocking
 interface of the \texttt{Observable} class. To enable PSSR in this context, we
 utilize the \texttt{StreamingResponseBody} interface, which allows the
 application to write directly to the response \texttt{OutputStream} without
-blocking the servlet container thread. According to the Spring documentation ({\url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}}, \hl{accessed on}),
-this class is \textit{\hl{a controller method return value type for asynchronous
+blocking the servlet container thread. According to the Spring documentation ({\url{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/StreamingResponseBody.html}}, accessed on 6 August 2025),
+this class is \textit{a controller method return value type for asynchronous
 request processing where the application can write directly to the response
-OutputStream without holding up the Servlet container thread.}}
+OutputStream without holding up the Servlet container thread.}
 
 In Spring MVC, \texttt{StreamingResponseBody} enables asynchronous writing
 relative to the request-handling thread, but the underlying I/O remains
@@ -1500,10 +1494,10 @@ implementing effective PSSR compared to reactive frameworks like Spring~WebFlux.
 
 This implementation includes two main approaches to PSSR\@:
 \begin{itemize}
-      \item \textbf{\hl{Blocking}}: The template engine is used in a blocking context,
+      \item \textbf{Blocking}: The template engine is used in a blocking context,
             where the HTML content is rendered using the blocking interface of the
             \texttt{Observable} class.
-      \item \textbf{\hl{Virtual}}: The template engine is used in a non-blocking context,
+      \item \textbf{Virtual}: The template engine is used in a non-blocking context,
             where the HTML content is rendered within the context of virtual threads.
 \end{itemize}
 
@@ -1516,18 +1510,18 @@ loop. When virtual threads are used, the I/O operations are handled
 efficiently, as they are executed in lightweight threads.
 
 The Quarkus implementation supports PSSR for these templates by configuring the
-response buffer size in the \textit{\hl{application.properties}} file. The default
+response buffer size in the \textit{application.properties} file. The default
 buffer size is 8 KB, but we reduced it to 512 bytes, which allows the response
 to be sent to the client progressively as the HTML content is rendered.
 
 This implementation includes three main approaches to PSSR\@:
 \begin{itemize}
-      \item \textbf{\hl{Blocking}}: The template engine is used in a blocking context,
+      \item \textbf{Blocking}: The template engine is used in a blocking context,
             where the HTML content is rendered using the blocking interface of the
             \texttt{Observable} class.
-      \item \textbf{\hl{Virtual}}: The template engine is used in a non-blocking context,
+      \item \textbf{Virtual}: The template engine is used in a non-blocking context,
             where the HTML content is rendered within the context of virtual threads.
-      \item \textbf{\hl{Reactive}}: The template engine is used in a reactive context,
+      \item \textbf{Reactive}: The template engine is used in a reactive context,
             where the HTML content is rendered using the reactive programming model.
             In this case, we use the HtmlFlow template engine, which
             supports asynchronous rendering through the \texttt{writeAsync}~method.
@@ -1555,7 +1549,7 @@ Actions, running \hl{Ubuntu 24.04.2 LTS with an AMD EPYC 7763 64-Core Processor
 threads per core, and 7.8 GB of available RAM. The system utilizes a 75 GB SSD
 with ext4 file system, achieving 1.5 GB/s write throughput in basic I/O tests.
 Network connectivity is provided through a 1500 MTU Ethernet interface. All
-tests were conducted on \hl{OpenJDK 21} (Corretto build) with the G1 garbage
+tests were conducted on OpenJDK 21 (Corretto build) with the G1 garbage
 collector enabled by default. The JVM arguments used were: \texttt{-Xms512m
      -Xmx16g}. Each test was executed five times per configuration to ensure result
 reliability.
@@ -1601,19 +1595,19 @@ representative performance characteristics across all tested configurations.
 \textls[-10]{The results in Figure~\ref{fig:presentations-webflux-jmeter} depict the
 throughput (number of requests per second) for each template engine, with
 concurrent users ranging from 1 to 128, from left to right. The benchmarks
-include HtmlFlow using suspendable web templates (\textit{\hl{HtmlFlow-Susp}},
+include HtmlFlow using suspendable web templates (\textit{HtmlFlow-Susp},
 equivalent to the approach shown in Listing~\ref{lst:presentation-flow}),
 JStachio using virtual threads with the \texttt{Iterable} interface
-(\textit{\hl{JStachio-Virtual}}), and Thymeleaf using the reactive View Resolver
-driver (Thymeleaf-Rx). \textit{\hl{Blocking}} and \textit{\hl{Virtual}} represent the
+(\textit{JStachio-Virtual}), and Thymeleaf using the reactive View Resolver
+driver (Thymeleaf-Rx). \textit{Blocking} and \textit{Virtual} represent the
 average throughput of the blocking approaches (i.e., KotlinX, Rocker, JStachio,
 Pebble, Freemarker, Trimou, HtmlFlow, and Thymeleaf) when run in the context of
 a separate coroutine dispatcher or virtual threads, respectively.}
 
-We show the \textit{\hl{HtmlFlow-Susp}}, \textit{\hl{JStachio-Virtual}}, and
+We show the \textit{HtmlFlow-Susp}, \textit{JStachio-Virtual}, and
 \textit{Thymeleaf-Rx} engines separately to observe the performance of the
 non-blocking engines when using the Suspending, Virtual Thread, and Reactive
-approaches. The \textit{\hl{Blocking}} and \textit{\hl{Virtual}} are aggregated due to
+approaches. The \textit{Blocking} and \textit{Virtual} are aggregated due to
 the similar performance of different engines when using those approaches.
 
 \begin{figure}[H]
@@ -1626,19 +1620,19 @@ the similar performance of different engines when using those approaches.
 The results in Figure~\ref{fig:presentations-webflux-jmeter} show that when
 using blocking template engines with a separate coroutine dispatcher, the
 engines are unable to scale effectively beyond four concurrent users. In contrast,
-\textit{\hl{HtmlFlow-Susp}} scales up to 128 concurrent users, achieving \hl{4487} %MDPI: Commas are only used for numbers with five or more digits. We have removed them in four-digit numbers. Please confirm.
+\textit{HtmlFlow-Susp} scales up to 128 concurrent users, achieving 4487 %MDPI: Commas are only used for numbers with five or more digits. We have removed them in four-digit numbers. Please confirm.
 requests per second. When blocking approaches are executed in the context of
 virtual threads---thus enabling non-blocking I/O---the engines scale up to 64
-concurrent users, with JStachio using virtual threads reaching \hl{3514} requests
+concurrent users, with JStachio using virtual threads reaching 3514 requests
 per second. The Thymeleaf implementation using the reactive View Resolver
 driver scales up to 32 concurrent users, achieving a lower maximum throughput
-of \hl{2559} requests per second.
+of 2559 requests per second.
 
 It is important to note that the differences in scalability and throughput
-between the \textit{\hl{HtmlFlow-Susp}}, \textit{\hl{JStachio-Virtual}}, and
-\textit{\hl{Thymeleaf-Rx}} approaches may be influenced by the specific template
+between the \textit{HtmlFlow-Susp}, \textit{JStachio-Virtual}, and
+\textit{Thymeleaf-Rx} approaches may be influenced by the specific template
 engines used, rather than the approach itself. When comparing the
-\textit{\hl{Reactive}}, \textit{\hl{Suspendable}}, and \textit{\hl{Virtual}} approaches
+\textit{Reactive}, \textit{Suspendable}, and \textit{Virtual} approaches
 specifically with HtmlFlow, we found that all three achieve similar
 performance: HtmlFlow using a blocking approach with virtual threads reaches
 4691 requests per second, while HtmlFlow using a reactive approach achieves
@@ -1657,11 +1651,11 @@ performance: HtmlFlow using a blocking approach with virtual threads reaches
 The results for the Spring MVC implementation, shown in
 Figure~\ref{fig:presentations-springmvc-jmeter}, compare two synchronous
 approaches: \textit{Blocking}, which uses platform threads with
-\texttt{StreamingResponseBody}, and \textit{\hl{Virtual}}, which uses virtual
+\texttt{StreamingResponseBody}, and \textit{Virtual}, which uses virtual
 threads. Since Spring MVC follows a thread-per-request architecture, the
-asynchronous approaches---\textbf{\hl{Reactive}} and \textbf{\hl{Suspendable}}---described in
-Section~\ref{sec:bench} are not applicable. Both the \textit{\hl{Blocking}} and
-\textit{\hl{Virtual}} strategies scale effectively up to 32 concurrent users, with
+asynchronous approaches---\textbf{Reactive} and \textbf{Suspendable}---described in
+Section~\ref{sec:bench} are not applicable. Both the \textit{Blocking} and
+\textit{Virtual} strategies scale effectively up to 32 concurrent users, with
 the virtual threads approach achieving a slightly higher maximum throughput of
 2797 requests per second, compared to 2498 requests per second for the
 blocking approach. These results indicate that while Spring MVC can handle a
@@ -1686,22 +1680,22 @@ engines scale up to 64 concurrent users, achieving up to 3744 requests per
 second. When using virtual threads, the throughput increases even further,
 reaching 4856 requests per second, allowing scalability up to 128 users. This
 demonstrates that Quarkus's implementation of virtual threads is effective for
-enabling PSSR\@, and comparable to the \textit{\hl{Suspendable}} and
-\textit{\hl{Reactive}} approaches used in Spring WebFlux in terms of scalability and
+enabling PSSR\@, and comparable to the \textit{Suspendable} and
+\textit{Reactive} approaches used in Spring WebFlux in terms of scalability and
 throughput.
 
 \vspace{-3pt}
 \begin{figure}[H]
      \includegraphics[width=0.8\textwidth]{./Graphs/presentations-quarkus-jmeter.png}
-     \caption{\hl{Throughput} %MDPI: The numbers in the picture are incomplete, please modify
+     \caption{Throughput %MDPI: The numbers in the picture are incomplete, please modify
  (requests per second) scalability results for Quarkus with \texttt{Presentations} class.}\label{fig:presentations-quarkus-jmeter}
 \end{figure}
 
-Additionally, \textit{\hl{HtmlFlow-Rx}}, a reactive implementation of the HtmlFlow
+Additionally, \textit{HtmlFlow-Rx}, a reactive implementation of the HtmlFlow
 template engine (equivalent to the approach shown in
 Listing~\ref{lst:presentation-observable}) that utilizes Quarkus's reactive
-programming model, achieved a lower throughput than the the \textit{\hl{Blocking}}
-and \textit{\hl{Virtual}} approaches---3088 requests per second. This demonstrates
+programming model, achieved a lower throughput than the the \textit{Blocking}
+and \textit{Virtual} approaches---3088 requests per second. This demonstrates
 that Quarkus's reactive programming model is effective for enabling PSSR\@,
 although it does not achieve the same level of performance or scalability as
 the same approach in Spring WebFlux, stagnating after 32~concurrent users.
@@ -1717,7 +1711,7 @@ as many data bindings. With this data model, the scalability of the engines
 remains largely unchanged; however, throughput is reduced across all engines.
 Compared to the Presentation benchmark, JStachio using virtual threads
 experienced a more pronounced decrease in performance relative to the
-\textit{\hl{Reactive}} and \textit{\hl{Suspending}} approaches, with JStachio using
+\textit{Reactive} and \textit{Suspending} approaches, with JStachio using
 virtual threads now achieving 1509 requests per second, compared to 1750
 requests per second achieved by the Thymeleaf implementation using the reactive
 View Resolver driver.
@@ -1730,10 +1724,10 @@ View Resolver driver.
 \end{figure}
 
 It is again important to note that the differences in scalability and
-throughput between the \textit{\hl{HtmlFlow-Susp}}, \textit{J\hl{stachio-Virtual}}, and
-\textit{\hl{Thymeleaf-Rx}} approaches may be influenced by the specific template
+throughput between the \textit{HtmlFlow-Susp}, \textit{Jstachio-Virtual}, and
+\textit{Thymeleaf-Rx} approaches may be influenced by the specific template
 engines used, rather than the approach itself. When comparing the
-\textit{\hl{Reactive}}, \textit{\hl{Suspendable}}, and \textit{Virtual} approaches
+\textit{Reactive}, \textit{Suspendable}, and \textit{Virtual} approaches
 specifically with HtmlFlow, we found that all three achieve similar
 performance: HtmlFlow using a blocking approach with virtual threads reaches
 3090 requests per second, while HtmlFlow using a reactive approach achieves
@@ -1762,7 +1756,7 @@ Quarkus synchronous approaches scale effectively up to 128 concurrent users,
 achieving performance comparable to the Spring WebFlux implementation. The
 blocking approach reaches a throughput of 3019 requests per second, while the
 virtual threads approach achieves a throughput of 3357 requests per second. In
-addition to the synchronous engines, the \textit{\hl{HtmlFlow-Rx}} approach also
+addition to the synchronous engines, the \textit{HtmlFlow-Rx} approach also
 achieves a throughput of 1760 requests per second, indicating that this
 approach achieves lower performance in Quarkus than in Spring WebFlux, where it
 reached 3026 requests per second, as previously mentioned.
@@ -1910,7 +1904,7 @@ built on top of Netty~\cite{netty}. This represents a similar environment to
 the one evaluated in our experiments with Quarkus.~Their study also emphasized
 template rendering, using a blocking HTML template engine (Qute). The benchmark
 they employed is the Fortunes
-test ({\url{https://www.techempower.com/benchmarks}}, \hl{accessed on}), which involves
+test ({\url{https://www.techempower.com/benchmarks}}, accessed on 6 August 2025), which involves
 rendering a simple HTML table with only two data bindings per row.
 
 Their results show that Quarkus with virtual threads outperformed the
@@ -1960,12 +1954,12 @@ In recent decades, non-blocking I/O has become the standard approach for buildin
 highly responsive and scalable web servers. However, traditional synchronous
 programming models are not compatible with non-blocking APIs, which typically
 rely on callback-based conventions such as
-\textit{\hl{continuation-passing style}} (CPS)~\cite{scheme} or
-\textit{\hl{promises}}~\cite{promise}. These approaches not only hinder
+\textit{continuation-passing style} (CPS)~\cite{scheme} or
+\textit{promises}~\cite{promise}. These approaches not only hinder
 sequential readability but also increase code verbosity, making them more
 error-prone.
 Alternatives like the \texttt{async}/\texttt{await} idiom~\cite{async_await}
-or \textit{\hl{suspend functions}}~\cite{elizarov2021coroutines} simplify
+or \textit{suspend functions}~\cite{elizarov2021coroutines} simplify
 asynchronous programming by mimicking a sequential style without blocking
 threads.
 Recent proposals~\cite{carvalho2023async,wise2024pssr} have applied contemporary
@@ -2090,7 +2084,7 @@ without compromising scalability or responsiveness.
 
 \institutionalreview{This study did not involve human subjects or personal data; therefore, Institutional Review Board approval was not required.}
 
-\dataavailability{The data presented in this study are available in Github at \url{https://github.com/xmlet/comparing-non-blocking-progressive-ssr}, \hl{accessed on}.}
+\dataavailability{The data presented in this study are available in Github at \url{https://github.com/xmlet/comparing-non-blocking-progressive-ssr}, accessed on 6 August 2025.}
 
 % Only for journal Drones
 %\durcstatement{Current research is limited to the [please insert a specific academic field, e.g., XXX], which is beneficial [share benefits and/or primary use] and does not pose a threat to public health or national security. Authors acknowledge the dual-use potential of the research involving xxx and confirm that all necessary precautions have been taken to prevent potential misuse. As an ethical responsibility, authors strictly adhere to relevant national and international laws about DURC. Authors advocate for responsible deployment, ethical considerations, regulatory compliance, and transparent reporting to mitigate misuse risks and foster beneficial outcomes.}
@@ -2132,7 +2126,7 @@ Edgar, M. First Contentful Paint.
 Carvalho, F.M.
 \newblock Progressive Server-Side Rendering with Suspendable Web Templates.
 \newblock In \emph{Web Information Systems Engineering---WISE
-  2024}; Barhamgi, M., Wang, H., Wang, X., Eds.; \hl{Springer}%MDPI: newly added, please confirm it
+  2024}; Barhamgi, M., Wang, H., Wang, X., Eds.; Springer%MDPI: newly added, please confirm it
 : Singapore,  2025; pp. 458--473.
 
 \bibitem[Elmeleegy et~al.(2004)Elmeleegy, Chanda, Cox, and
@@ -2140,7 +2134,7 @@ Carvalho, F.M.
 Elmeleegy, K.; Chanda, A.; Cox, A.L.; Zwaenepoel, W.
 \newblock Lazy Asynchronous I/O for Event-Driven Servers.
 \newblock In Proceedings of the Annual Conference on USENIX
-  Annual Technical Conference, ATEC '04, \hl{Boston, MA, USA, 27 June 27--2 July 2004;} p.~21.
+  Annual Technical Conference, ATEC '04, Boston, MA, USA, 27 June 27--2 July 2004; p.~21.
 
 \bibitem[Carvalho and Fialho(2023)]{carvalho2023async}
 Carvalho, F.M.; Fialho, P.
@@ -2148,23 +2142,23 @@ Carvalho, F.M.; Fialho, P.
   Progressive Server-Side Rendering with Any Asynchronous API and Multiple Data
   Models.
 \newblock In Proceedings of the 19th International
-  Conference on Web Information Systems and Technologies, WEBIST '23, \hl{Rome, Italy, 15--17 November  2023.}
+  Conference on Web Information Systems and Technologies, WEBIST '23, Rome, Italy, 15--17 November  2023.
 
 
 \bibitem[Carvalho(2017)]{htmlflow}
 Carvalho, F.M.
 \newblock HtmlFlow Java DSL to Write Typesafe HTML.
-\newblock Technical Report, 2017. Available online: \url{https://htmlflow.org/} \hl{(accessed on).} %MDPI: Please add the access date (format: Date Month Year), e.g., accessed on 1 January 2020.
+\newblock Technical Report, 2017. Available online: \url{https://htmlflow.org/} accessed on 6 August 2025. %MDPI: Please add the access date (format: Date Month Year), e.g., accessed on 1 January 2020.
 
 
 \bibitem[Fernández(2011)]{thymeleaf}
 Fernández, D.
 \newblock Thymeleaf.
-\newblock Technical Report, 2011. Available online: \url{https://www.thymeleaf.org/} \hl{(accessed on).}
+\newblock Technical Report, 2011. Available online: \url{https://www.thymeleaf.org/} accessed on 6 August 2025.
 
 \bibitem[Fowler(2010)]{Fowler03}
-\hl{Fowler, M.} %MDPI: Refs.7 and 15 are duplicated. Please remove duplicated references and rearrange all the references so that they appear in numerical order. Please ensure that there are no duplicated references.
-\newblock {\em Domain Specific Languages}; Addison-Wesley Professional: \hl{Boston, MA, USA,} 2010.
+Fowler, M.
+\newblock {\em Domain Specific Languages}; Addison-Wesley Professional: Boston, MA, USA, 2010.
 
 \bibitem[Fowler(2002)]{Fowler02}
 Fowler, M.
@@ -2180,7 +2174,7 @@ Alur, D.; Malks, D.; Crupi, J.
 Parr, T.J.
 \newblock Enforcing Strict Model-view Separation in Template Engines.
 \newblock In Proceedings of the 13th International
-  Conference on World Wide Web, WWW '04, New York, NY, USA, \hl{17--20 May} 2004; pp.
+  Conference on World Wide Web, WWW '04, New York, NY, USA, 17--20 May 2004; pp.
   224--233.
 \newblock {\url{https://doi.org/10.1145/988672.988703}}.
 
@@ -2195,7 +2189,7 @@ Krasner, G.E.; Pope, S.
   {Twitter}, and {Lightbend}]{ReactiveStreams}
 {Netflix}; {Pivotal}; {Red Hat}; {Oracle}; {Twitter}; {Lightbend}.
 \newblock Reactive Streams Specification.
-\newblock Technical Report, 2015. Available online: \url{https://www.reactive-streams.org/} \hl{(accessed on).}
+\newblock Technical Report, 2015. Available online: \url{https://www.reactive-streams.org/} accessed on 6 August 2025.
 
 \bibitem[Landin(1966)]{landin1966next}
 Landin, P.J.
@@ -2205,12 +2199,7 @@ Landin, P.J.
 \bibitem[Evans and Fowler(2004)]{evans2004domain}
 Evans, E.; Fowler, M.
 \newblock {\em Domain-Driven Design: Tackling Complexity in the Heart of
-  Software}; Addison-Wesley: \hl{Boston, MA, USA,} 2004.
-
-\bibitem[Fowler(2010)]{dslbook}
-\hl{Fowler, M.}
-\newblock {\em Domain Specific Languages}, 1st ed.; Addison-Wesley
-  Professional: \hl{Boston, MA, USA,} 2010.
+  Software}; Addison-Wesley: Boston, MA, USA, 2004.
 
 \bibitem[Thompson(1968)]{thompson1968}
 Thompson, K.
@@ -2220,14 +2209,14 @@ Thompson, K.
 
 \bibitem[Resig(2007)]{resig2007pro}
 Resig, J.
-\newblock {\em Pro JavaScript Techniques}; Apress: \hl{New York, NY, USA,} 2007.
+\newblock {\em Pro JavaScript Techniques}; Apress: New York, NY, USA, 2007.
 
 \bibitem[Hors et~al.(2004)Hors, Hégaret, Wood, Nicol, Robie, Champion,
   Arbortext, and Byrne]{dom}
 Hors, A.L.; Hégaret, P.L.; Wood, L.; Nicol, G.; Robie, J.; Champion, M.;
   Arbortext; Byrne, S.
 \newblock Document Object Model (DOM) Level 3 Core Specification.
-\newblock Technical Report, 2004. Available online: \url{https://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/} \hl{(accessed on).}
+\newblock Technical Report, 2004. Available online: \url{https://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/} accessed on 6 August 2025.
 
 \bibitem[Carvalho et~al.(2020)Carvalho, Duarte, and Gouesse]{carvalho2020}
 Carvalho, F.M.; Duarte, L.; Gouesse, J.
@@ -2258,7 +2247,7 @@ Friedman; Wise.
 Syme, D.; Petricek, T.; Lomov, D.
 \newblock The F{\#} Asynchronous Programming Model.
 \newblock In \emph{Practical Aspects of Declarative Languages};
-  Rocha, R., Launchbury, J., Eds.; \hl{Springer}: Berlin/Heidelberg, Germany, 2011; pp. 175--189.
+  Rocha, R., Launchbury, J., Eds.; Springer: Berlin/Heidelberg, Germany, 2011; pp. 175--189.
 
 \bibitem[Elizarov et~al.(2021)Elizarov, Belyaev, Akhin, and
   Usmanov]{elizarov2021coroutines}
@@ -2266,24 +2255,24 @@ Elizarov, R.; Belyaev, M.; Akhin, M.; Usmanov, I.
 \newblock Kotlin coroutines: Design and implementation.
 \newblock In Proceedings of the 2021 ACM SIGPLAN
   International Symposium on New Ideas, New Paradigms, and Reflections on
-  Programming and Software, \hl{Chicago, IL, USA, 20--22 October 2021}; pp. 68--84.
+  Programming and Software, Chicago, IL, USA, 20--22 October 2021; pp. 68--84.
 
 \bibitem[Meijer(2009)]{rx-observable}
 Meijer, E.
 \newblock Democratizing The Cloud With The .NET Reactive Framework Rx.
-\newblock In Proceedings of the Internaional Softare Development Conference, \hl{Vancouver, BC, Canada, 16--24 May 2009} %MDPI: 
-;  Available online: \url{https://qconsf.com/sf2009/sf2009/speaker/Erik+Meijer.html} \hl{(accessed on).} %MDPI: 
+\newblock In Proceedings of the Internaional Softare Development Conference, Vancouver, BC, Canada, 16--24 May 2009 %MDPI: 
+;  Available online: \url{https://qconsf.com/sf2009/sf2009/speaker/Erik+Meijer.html} accessed on 6 August 2025. %MDPI: 
 
 
 \bibitem[contributors(2025)]{rxjava}
 RxJava Contributors.
 \newblock RX Java.
-\newblock Technical Report, 2025. Available online: \url{https://github.com/ReactiveX/RxJava} \hl{(accessed on).}
+\newblock Technical Report, 2025. Available online: \url{https://github.com/ReactiveX/RxJava} accessed on 6 August 2025.
 
 \bibitem[VMWare and contributors(2025)]{projectreactor}
 VMWare; Contributors.
 \newblock Project Reactor.
-\newblock Technical Report, 2025. Available online: \url{https://projectreactor.io/} \hl{(accessed on).}
+\newblock Technical Report, 2025. Available online: \url{https://projectreactor.io/} accessed on 6 August 2025.
 
 \bibitem[Davis(2019)]{akka}
 Davis, A.L. Akka HTTP and Streams.
@@ -2297,27 +2286,27 @@ Ponge, J.; Navarro, A.; Escoffier, C.; Le~Mou\"{e}l, F.
   in Java.
 \newblock In Proceedings of the 8th ACM SIGPLAN
   International Workshop on Reactive and Event-Based Languages and Systems, REBLS 2021, New
-  York, NY, USA, \hl{18 October} 2021; pp. 51–60.
+  York, NY, USA, 18 October 2021; pp. 51–60.
 \newblock {\url{https://doi.org/10.1145/3486605.3486788}}.
 
 \bibitem[Breslav(2016)]{kotlinlang}
 Breslav, A.
 \newblock Kotlin Language Documentation.
-\newblock Technical Report, 2016. Available online: \url{https://kotlinlang.org/docs/kotlin-docs.pdf} \hl{(accessed on).}
+\newblock Technical Report, 2016. Available online: \url{https://kotlinlang.org/docs/kotlin-docs.pdf} accessed on 6 August 2025.
 
 \bibitem[Vogel and Springer(2022)]{progressive-2022}
 Vogel, L.; Springer, T.
 \newblock User Acceptance of Modified Web Page Loading Based on Progressive
   Streaming.
-\newblock In Proceedings of the International Conference on Web \hl{Engineering, 2022;} %MDPI: please add location and date for conference
-  Springer:  \hl{Berlin/Heidelberg, Germany,} %We added the location of publisher. Please confirm
+\newblock In Proceedings of the International Conference on Web Engineering, 2022; %MDPI: please add location and date for conference
+  Springer:  Berlin/Heidelberg, Germany, %We added the location of publisher. Please confirm
  2022; pp. 391--405.
 
 \bibitem[Atwood(2005)]{pssr2005}
 Atwood, J.
 \newblock The Lost Art of Progressive HTML Rendering.
 \newblock Technical Report, 2005.
-  Available online: \url{https://blog.codinghorror.com/the-lost-art-of-progressive-html-rendering/} \hl{(accessed on).}
+  Available online: \url{https://blog.codinghorror.com/the-lost-art-of-progressive-html-rendering/} accessed on 6 August 2025.
 
 \bibitem[Farago et~al.(2007)Farago, Williams, Walsh, Whyte, Goel, and
   Fung]{scroll2007}
@@ -2336,14 +2325,14 @@ Schiller, S.
 Von~Behren, R.; Condit, J.; Brewer, E.
 \newblock Why Events Are a Bad Idea (for $\{$High-Concurrency$\}$ Servers).
 \newblock In Proceedings of the 9th Workshop on Hot Topics in Operating Systems
-  (HotOS IX), \hl{Lihue, HI, USA, 18–21 May 2003.}
+  (HotOS IX), Lihue, HI, USA, 18–21 May 2003.
 
 \bibitem[Kambona et~al.(2013)Kambona, Boix, and De~Meuter]{callbackhell}
 Kambona, K.; Boix, E.G.; De~Meuter, W.
 \newblock An Evaluation of Reactive Programming and Promises for Structuring
   Collaborative Web Applications.
 \newblock In Proceedings of the 7th Workshop on Dynamic
-  Languages and Applications, DYLA '13, New York, NY, USA, \hl{1–5 July} 2013.
+  Languages and Applications, DYLA '13, New York, NY, USA, 1–5 July 2013.
 \newblock {\url{https://doi.org/10.1145/2489798.2489802}}.
 
 \bibitem[Kant and Mohapatra(2000)]{kant2000scalable}
@@ -2381,7 +2370,7 @@ Burke, B.
 Haynes, C.T.; Friedman, D.P.; Wand, M.
 \newblock Continuations and Coroutines.
 \newblock In Proceedings of the 1984 ACM Symposium on LISP
-  and Functional Programming, LFP '84, \hl{Austin, TX, USA, 5--8 August 1984}; pp. 293–298.
+  and Functional Programming, LFP '84, Austin, TX, USA, 5--8 August 1984; pp. 293–298.
 \newblock {\url{https://doi.org/10.1145/800055.802046}}.
 
 \bibitem[Veen and Vlijmincx(2024)]{Veen2024}
@@ -2400,14 +2389,14 @@ Model-View-Controller Pattern.
 Bösecke, M.
 \newblock JMH Benchmark of the Most Popular Java Template Engines.
 \newblock Technical Report, 2015.
-  Available online: \url{https://github.com/mbosecke/template-benchmark} \hl{(accessed on).}
+  Available online: \url{https://github.com/mbosecke/template-benchmark} accessed on 6 August 2025.
 
 
 \bibitem[Reijn(2015)]{springbenchmark}
 Reijn, J.
 \newblock Comparing Template Engines for Spring MVC.
 \newblock Technical Report, 2015.
- Available online: \url{https://github.com/jreijn/spring-comparing-template-engines} \hl{(accessed on).}
+ Available online: \url{https://github.com/jreijn/spring-comparing-template-engines} accessed on 6 August 2025.
 
 \bibitem[Beronić et~al.(2022)Beronić, Modrić, Mihaljević, and
   Radovan]{9803765}
@@ -2424,12 +2413,12 @@ Navarro, A.; Ponge, J.; Le~Mou{\"e}l, F.; Escoffier, C.
 \newblock Considerations for integrating virtual threads in a Java framework: A
   Quarkus example in a resource-constrained environment.
 \newblock In Proceedings of the 17th ACM International
-  Conference on Distributed and Event-based Systems, \hl{Neuchatel, Switzerland, 27--30 June 2023}; pp. 103--114.
+  Conference on Distributed and Event-based Systems, Neuchatel, Switzerland, 27--30 June 2023; pp. 103--114.
 
 \bibitem[Fox(2014)]{vertx}
 Fox, T.
 \newblock Eclipse Vert.x$^{\text{TM}}$ Reactive Applications on the JVM.
-\newblock Technical Report, 2014. Available online: \url{https://vertx.io/} \hl{(accessed~on).}
+\newblock Technical Report, 2014. Available online: \url{https://vertx.io/} accessed on 6 August 2025.
 
 \bibitem[Maurer and Wolfthal(2015)]{netty}
 Maurer, N.; Wolfthal, M.
@@ -2441,7 +2430,7 @@ Maurer, N.; Wolfthal, M.
 {\v{S}}imatovi{\'c}, M.; Markulin, H.; Beroni{\'c}, D.; Mihaljevi{\'c}, B.
 \newblock Evaluating Memory Management and Garbage Collection Algorithms with
   Virtual Threads in High-Concurrency Java Applications.
-\newblock In Proceedings of the 48th ICT and Electronics Convention MIPRO 2025. Rijeka: Croatian Society for Information, Communication and Electronic Technology–MIPRO, \hl{Opatija, Croatia, 2--6 June 2025.} %MDPI: Please confirm added conference date and location.
+\newblock In Proceedings of the 48th ICT and Electronics Convention MIPRO 2025. Rijeka: Croatian Society for Information, Communication and Electronic Technology–MIPRO, Opatija, Croatia, 2--6 June 2025. %MDPI: Please confirm added conference date and location.
 
 
 \bibitem[Deinum and Cosmina(2021)]{webflux}
