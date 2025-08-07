@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%	MDPI class for LaTeX files	 24 March 2025
+%%%%	MDPI class for LaTeX files	 18 June 2025
 %% %%	For any information please send an e-mail to:
 %% %%		latex@mdpi.com
 %% %%
@@ -23,7 +23,7 @@
 
 %% IDENTIFICATION
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{Definitions/mdpi}[3/24/2025 MDPI paper class]
+\ProvidesClass{Definitions/mdpi}[18/06/2025 MDPI paper class]
 
  %% PRELIMINARY DECLARATIONS
 \LoadClass[10pt,a4paper]{article}
@@ -170,6 +170,7 @@
 \newcommand{\isPreprints}{
         \ifthenelse{\equal{\@journal}{preprints} %
                 \OR \equal{\@journal}{preprintschicago}
+                \OR \equal{\@journal}{preprintsapa}
 	}
 }
 
@@ -284,6 +285,7 @@
 %%%% APA style journals
 \newcommand{\isAPAStyle}{
 	\ifthenelse{\equal{\@journal}{admsci}       % Transfer to APA type
+		\OR \equal{\@journal}{aieduc}       
 		\OR \equal{\@journal}{behavsci}       % Transfer to APA type
 		\OR \equal{\@journal}{businesses}    % Transfer to APA type
 		\OR \equal{\@journal}{econometrics}% Transfer to APA type
@@ -320,6 +322,7 @@
 		\OR \equal{\@journal}{socsci}
              \OR \equal{\@journal}{preprintschicago} 
 	      \OR \equal{\@journal}{admsci}       
+		\OR \equal{\@journal}{aieduc}      
 		\OR \equal{\@journal}{behavsci}       
 		\OR \equal{\@journal}{businesses}   
 		\OR \equal{\@journal}{econometrics}
@@ -404,6 +407,7 @@
 	\crefname{scheme}{Scheme}{Schemes}
 	\crefname{chart}{Chart}{Charts}
 	\crefname{paragraph}{Section}{Sections}
+	\crefname{graph}{Graph}{Graphs}
 }
 
 % After TeXLive 2021, \AddToHook{begindocument} is needed to make sure that hyperref is loaded last. \ifdef{\AddToHook{begindocument}}{ is needed for backwards-compatibility because \AddToHook{begindocument} did not yet exist in 2020.
@@ -469,6 +473,7 @@
 	\crefrangelabelformat{appendix}{##3##1##4--##5##2##6}
 	\crefrangelabelformat{scheme}{##3##1##4--##5##2##6}
 	\crefrangelabelformat{chart}{##3##1##4--##5##2##6}
+	\crefrangelabelformat{graph}{##3##1##4--##5##2##6}
 }
 
 \newcommand{\crefrangeconjunction}{--}
@@ -479,7 +484,8 @@
 \newcommand{\sche}[1]{Scheme~\ref{#1}}
 \newcommand{\cchart}[1]{Chart~\ref{#1}}
 \newcommand{\equ}[1]{\ref{#1}}
-\newcommand{\boxref}[1]{Box~\ref{#1}}%
+\newcommand{\boxref}[1]{Box~\ref{#1}}
+\newcommand{\cgraph}[1]{Graph~\ref{#1}}
 
 %%%% Metadata
 \newcommand{\org@maketitle}{}% LATEX-Check
@@ -760,6 +766,7 @@
 %% The plain page style needs to be redefined because with \maketitle in the article class, LaTeX applies the the plain page style automatically to the first page.
 \ifthenelse{\equal{\@journal}{preprints} %
 		\OR \equal{\@journal}{preprintschicago}
+		\OR \equal{\@journal}{preprintsapa}
 		\OR \equal{\@arttype}{Book}
 		\OR \equal{\@arttype}{Monograph}}{%
 	\fancypagestyle{plain}{%
@@ -853,6 +860,7 @@
 		{%0
 		\ifthenelse{\equal{\@journal}{preprints}
 		\OR \equal{\@journal}{preprintschicago}
+		\OR \equal{\@journal}{preprintsapa}
 			\OR \equal{\@arttype}{Book}
 			\OR \equal{\@arttype}{Monograph}}{}{
 				\vspace{-2 pt}%
@@ -1205,29 +1213,29 @@
 % For journal Applied Sciences:
 \ifthenelse{\equal{\@featuredapplication}{\@empty}}{
 	}{%
-	\noindent\textbf{Featured Application:\space\@featuredapplication}
+	\noindent\textbf{Featured Application\vspace{6pt}\\}\@featuredapplication
 	\vspace{12pt}
 	\par
 }	
 %
 %10
 \ifthenelse{\equal{\@simplesumm}{\@empty}}{}{
-	\noindent\textbf{Simple Summary:\space}\@simplesumm
+	\noindent\textbf{Simple Summary\vspace{6pt}\\}\@simplesumm
 	\vspace{12pt}
 	\par
 }
 \ifthenelse{\equal{\@addhighlights}{\@empty}}{}{
-	\noindent\textbf{Highlights\\\vspace{-12pt}}\addhighlights % redefined in .tex to use itemize
+	\noindent\textbf{Highlights\vspace{-6pt}\\}\addhighlights % redefined in .tex to use itemize
 	\vspace{12pt}
 	\par
 }
 \ifthenelse{\equal{\@abstract}{\@empty}}{}{
-	\noindent\textbf{Abstract:\space}\@abstract
+	\noindent\textbf{Abstract\vspace{6pt}\\}\@abstract
 	\vspace{12pt}
 	\par
 }
 \ifthenelse{\equal{\@encyclopediadef}{\@empty}}{}{
-	\noindent\textbf{Definition:\space}\@encyclopediadef
+	\noindent\textbf{Definition\vspace{6pt}\\}\@encyclopediadef
 	\vspace{12pt}
 	\par
 }
@@ -1445,6 +1453,7 @@
 \setcounter{hypothesis}{0}
 \setcounter{notation}{0}
 \setcounter{algorithm}{0}
+\setcounter{graph}{0}
 }
 
 \renewcommand{\appendix}{%
@@ -1502,6 +1511,7 @@
 \renewcommand{\thehypothesis}{A\arabic{hypothesis}}
 \renewcommand{\thenotation}{A\arabic{notation}}
 \renewcommand{\thealgorithm}{A\arabic{algorithm}}
+\renewcommand{\thegraph}{A\arabic{graph}}
 }
 
 %%%% Dimensions
@@ -1599,6 +1609,7 @@
 \DeclareFloatingEnvironment[]{chart}
 \DeclareFloatingEnvironment[]{scheme}
 \DeclareFloatingEnvironment[]{figurewide}
+\DeclareFloatingEnvironment[]{graph}
 
 \RequirePackage{caption}
 \isPreprints{%
@@ -1613,6 +1624,8 @@
 \captionsetup[table]{position=top, 		labelfont={bf, small, stretch=1.17}, labelsep=period, textfont={small, stretch=1.17}, aboveskip=6pt, singlelinecheck=on, justification=justified}
 
 \captionsetup[boxenv]{position=top, 		labelfont={bf, small, stretch=1.17}, labelsep=period, textfont={small, stretch=1.17}, aboveskip=6pt, singlelinecheck=on, justification=justified}
+
+\captionsetup[graph]{position=bottom, 	labelfont={bf, small, stretch=1.17}, labelsep=period, textfont={small, stretch=1.17}, aboveskip=6pt, belowskip=-6pt, singlelinecheck=on, justification=justified}
 }{
 \captionsetup[figure]{position=bottom, 	labelfont={bf, small, stretch=1.17}, labelsep=period, textfont={small, stretch=1.17}, aboveskip=6pt, belowskip=-6pt, singlelinecheck=off, justification=justified}
 
@@ -1625,6 +1638,8 @@
 \captionsetup[table]{position=top, 		labelfont={bf, small, stretch=1.17}, labelsep=period, textfont={small, stretch=1.17}, aboveskip=6pt, singlelinecheck=off, justification=justified}
 
 \captionsetup[boxenv]{position=top, 		labelfont={bf, small, stretch=1.17}, labelsep=period, textfont={small, stretch=1.17}, aboveskip=6pt, singlelinecheck=off, justification=justified}
+
+\captionsetup[graph]{position=bottom, 	labelfont={bf, small, stretch=1.17}, labelsep=period, textfont={small, stretch=1.17}, aboveskip=6pt, belowskip=-6pt, singlelinecheck=off, justification=justified}
 }
 
 %% For table footnotes
@@ -1675,6 +1690,7 @@
 \lhead{
 	\ifthenelse{\equal{\@journal}{preprints}%
 	\OR \equal{\@journal}{preprintschicago}
+	\OR \equal{\@journal}{preprintsapa}
 	\OR \equal{\@arttype}{Book}
 	\OR \equal{\@arttype}{Monograph}}{%
 		}{%
@@ -1812,7 +1828,7 @@
 			\raggedright\textbf{Copyright: }\copyright{} {\@ \the\year} by the \@authornum. %
 			Submitted to {\em\journalname} for %
 			possible open access publication %
-			under the terms and conditions of the Creative Commons Attribution %
+			under the terms and conditions of the Creative Commons Attri- bution %
 			\ifthenelse{\equal{\@journal}{ijtpp}}{(CC BY-NC-ND)}{(CC BY)} %
 			license %
 			\ifthenelse{\equal{\@journal}{ijtpp}}{%
