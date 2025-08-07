@@ -328,8 +328,7 @@ template engines, classified according to the identified properties.
 \begin{table}[H]
   \small
     \caption{
-    \hl{Comparison} %MDPI: 1. Please confirm whether the different font colors are retained. If so, please confirm whether additional explanation is needed. 2. Please confirm whether √ and × require additional explanation. 3. Please confirm whether the bold text in the table can be deleted
- of web template technologies in the Java ecosystem.
+    Comparison of web template technologies in the Java ecosystem.
 $^{(1)}$ Enforced via annotation processor that checks templates against typed interfaces at compile time.
 $^{(2)}$ Compile-time expression validation available via \texttt{@CheckedTemplate} and build-time metadata in Quarkus.
 $^{(3)}$ \texttt{Publisher} of reactive streams~\cite{ReactiveStreams}. Limited to a single model per web template.
@@ -659,8 +658,7 @@ html()
     \caption*{\centering(\textbf{c}) Method chaining}
   \end{minipage}
 \vspace*{6pt}
-  \caption{\hl{Utilizing} %MDPI: Please note that changes to the position/size of figures or tables may occur during the production stage.
- DSL for HTML libraries with JATL, ScalaTags, and HtmlFlow.}
+  \caption{Utilizing DSL for HTML libraries with JATL, ScalaTags, and HtmlFlow.}
   \label{fig:dsl-idioms}
 \end{figure}
 
@@ -1542,10 +1540,10 @@ detailed memory consumption and resource utilization analysis.
 \subsection{Environment Specifications}
 \label{sec:environment}
 
-All benchmarks were conducted on a GitHub-hosted virtual machine under \hl{GitHub} %MDPI: Please state which version of the software was used.
-Actions, running \hl{Ubuntu 24.04.2 LTS with an AMD EPYC 7763 64-Core Processor
-(x86\_64 architecture)} %MDPI: Please state the name of the manufacturer, city, and country from where the equipment was sourced.
- operating at 3.24 GHz, configured with two CPU cores and two
+All benchmarks were conducted on a GitHub-hosted virtual machine under GitHub
+Actions (GitHub, Inc., San Francisco, CA, USA), running Ubuntu 24.04.2 LTS with an AMD EPYC 7763 64-Core Processor
+(Advanced Micro Devices, Inc., Santa Clara, CA, USA)
+operating at 3.24 GHz, configured with two CPU cores and two
 threads per core, and 7.8 GB of available RAM. The system utilizes a 75 GB SSD
 with ext4 file system, achieving 1.5 GB/s write throughput in basic I/O tests.
 Network connectivity is provided through a 1500 MTU Ethernet interface. All
@@ -1613,14 +1611,17 @@ the similar performance of different engines when using those approaches.
 \begin{figure}[H]
 \vspace{-6pt}
      \includegraphics[width=0.8\textwidth]{./Graphs/presentations-webflux-jmeter.png}
-     \caption{\hl{Throughput} %MDPI: The numbers in the picture are incomplete, please modify
- (requests per second) scalability results for Spring WebFlux with \texttt{Presentations} class.}\label{fig:presentations-webflux-jmeter}
+     \caption{Throughput in requests per second (\texttt{req/sec}) for Spring
+WebFlux using the \texttt{Presentation} class, showing scalability results as
+the number of concurrent users increases (1, 2, 4, 8, 16, 32, 64, and 128)
+across different rendering approaches.}
+    \label{fig:presentations-webflux-jmeter}
 \end{figure}
 
 The results in Figure~\ref{fig:presentations-webflux-jmeter} show that when
 using blocking template engines with a separate coroutine dispatcher, the
 engines are unable to scale effectively beyond four concurrent users. In contrast,
-\textit{HtmlFlow-Susp} scales up to 128 concurrent users, achieving 4487 %MDPI: Commas are only used for numbers with five or more digits. We have removed them in four-digit numbers. Please confirm.
+\textit{HtmlFlow-Susp} scales up to 128 concurrent users, achieving 4487
 requests per second. When blocking approaches are executed in the context of
 virtual threads---thus enabling non-blocking I/O---the engines scale up to 64
 concurrent users, with JStachio using virtual threads reaching 3514 requests
@@ -1667,8 +1668,11 @@ tested templates, as previously discussed in Section~\ref{sec:bench}.
 \begin{figure}[H]
 \vspace{-6pt}
      \includegraphics[width=0.8\textwidth]{./Graphs/presentations-springmvc-jmeter.png}
-     \caption{\hl{Throughput} %MDPI: The numbers in the picture are incomplete, please modify
- (requests per second) scalability results for Spring MVC with \texttt{Presentations} class.}\label{fig:presentations-springmvc-jmeter}
+     \caption{Throughput in requests per second (\texttt{req/sec}) for Spring
+MVC using the \texttt{Presentation} class, showing scalability results as
+the number of concurrent users increases (1, 2, 4, 8, 16, 32, 64, and 128)
+across different rendering approaches.}
+\label{fig:presentations-springmvc-jmeter}
 \end{figure}
 
 
@@ -1687,8 +1691,11 @@ throughput.
 \vspace{-3pt}
 \begin{figure}[H]
      \includegraphics[width=0.8\textwidth]{./Graphs/presentations-quarkus-jmeter.png}
-     \caption{Throughput %MDPI: The numbers in the picture are incomplete, please modify
- (requests per second) scalability results for Quarkus with \texttt{Presentations} class.}\label{fig:presentations-quarkus-jmeter}
+     \caption{Throughput in requests per second (\texttt{req/sec}) for Quarkus
+      using the \texttt{Presentation} class, showing scalability results as the
+      number of concurrent users increases (1, 2, 4, 8, 16, 32, 64, and 128)
+      across different rendering approaches.}
+\label{fig:presentations-quarkus-jmeter}
 \end{figure}
 
 Additionally, \textit{HtmlFlow-Rx}, a reactive implementation of the HtmlFlow
@@ -1719,8 +1726,11 @@ View Resolver driver.
 \begin{figure}[H]
 \vspace{-6pt}
      \includegraphics[width=0.8\textwidth]{./Graphs/stocks-webflux-jmeter.png}
-     \caption{\hl{Throughput} %MDPI: The numbers in the picture are incomplete, please modify
- (requests per second) scalability results for Spring WebFlux with \texttt{Stocks} class.}\label{fig:stocks-webflux-jmeter}
+     \caption{Throughput in requests per second (\texttt{req/sec}) for Spring
+WebFlux using the \texttt{Stock} class, showing scalability results as
+the number of concurrent users increases (1, 2, 4, 8, 16, 32, 64, and 128)
+across different rendering approaches.}
+\label{fig:stocks-webflux-jmeter}
 \end{figure}
 
 It is again important to note that the differences in scalability and
@@ -1764,15 +1774,20 @@ reached 3026 requests per second, as previously mentioned.
 \begin{figure}[H]
 \vspace{-3pt}
      \includegraphics[width=0.8\textwidth]{./Graphs/stocks-springmvc-jmeter.png}
-     \caption{\hl{Throughput} %MDPI: The numbers in the picture are incomplete, please modify
- (requests per second) scalability results for Spring MVC with \texttt{Stocks} class.}\label{fig:stocks-springmvc-jmeter}
+     \caption{Throughput in requests per second (\texttt{req/sec}) for Spring
+MVC using the \texttt{Stock} class, showing scalability results as
+the number of concurrent users increases (1, 2, 4, 8, 16, 32, 64, and 128)
+across different rendering approaches.}\label{fig:stocks-springmvc-jmeter}
 \end{figure}
 \vspace{-6pt}
 \begin{figure}[H]
 
      \includegraphics[width=0.8\textwidth]{./Graphs/stocks-quarkus-jmeter.png}
-     \caption{\hl{Throughput} %MDPI: The numbers in the picture are incomplete, please modify
- (requests per second) scalability results for Quarkus with \texttt{Stocks}.}\label{fig:stocks-quarkus-jmeter}
+     \caption{Throughput in requests per second (\texttt{req/sec}) for Quarkus
+      using the \texttt{Stock} class, showing scalability results as the
+      number of concurrent users increases (1, 2, 4, 8, 16, 32, 64, and 128)
+      across different rendering approaches.}
+\label{fig:stocks-quarkus-jmeter}
 \end{figure}
 
 
@@ -2126,7 +2141,7 @@ Edgar, M. First Contentful Paint.
 Carvalho, F.M.
 \newblock Progressive Server-Side Rendering with Suspendable Web Templates.
 \newblock In \emph{Web Information Systems Engineering---WISE
-  2024}; Barhamgi, M., Wang, H., Wang, X., Eds.; Springer%MDPI: newly added, please confirm it
+  2024}; Barhamgi, M., Wang, H., Wang, X., Eds.; Springer
 : Singapore,  2025; pp. 458--473.
 
 \bibitem[Elmeleegy et~al.(2004)Elmeleegy, Chanda, Cox, and
@@ -2148,7 +2163,7 @@ Carvalho, F.M.; Fialho, P.
 \bibitem[Carvalho(2017)]{htmlflow}
 Carvalho, F.M.
 \newblock HtmlFlow Java DSL to Write Typesafe HTML.
-\newblock Technical Report, 2017. Available online: \url{https://htmlflow.org/} accessed on 6 August 2025. %MDPI: Please add the access date (format: Date Month Year), e.g., accessed on 1 January 2020.
+\newblock Technical Report, 2017. Available online: \url{https://htmlflow.org/} accessed on 6 August 2025.
 
 
 \bibitem[Fernández(2011)]{thymeleaf}
@@ -2219,10 +2234,9 @@ Hors, A.L.; Hégaret, P.L.; Wood, L.; Nicol, G.; Robie, J.; Champion, M.;
 \newblock Technical Report, 2004. Available online: \url{https://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/} accessed on 6 August 2025.
 
 \bibitem[Carvalho et~al.(2020)Carvalho, Duarte, and Gouesse]{carvalho2020}
-Carvalho, F.M.; Duarte, L.; Gouesse, J.
-\newblock Text Web Templates Considered Harmful.
-\newblock In {\em Lecture Notes in Business Information Processing}; \hl{{2020};} %MDPI: We are sorry but we could not find the required information about this entry. Please add the name of the publisher and their location.
- pp. 69--95.
+Carvalho, F.M.; Duarte, L.; Gouesse, J.  
+\newblock Text Web Templates Considered Harmful.  
+\newblock In {\em Lecture Notes in Business Information Processing}; Springer: Cham, Switzerland, 2020; pp. 69--95.
 
 \bibitem[Landin(1965)]{Landin65}
 Landin, P.J.
@@ -2231,10 +2245,9 @@ Landin, P.J.
 \newblock {\url{https://doi.org/10.1145/363744.363749}}.
 
 \bibitem[Sussman and Steele(1975)]{scheme}
-Sussman, G.; Steele, G.
-\newblock {\em Scheme: An Interpreter for Extended Lambda Calculus}; \hl{AI Memo
-  No, MIT, Artificial Intelligence Laboratory:  1975.} %MDPI: We are sorry but we could not find the required information about this entry. Please add the location of the publisher (city and country).
-
+Sussman, G.; Steele, G.  
+\newblock {\em Scheme: An Interpreter for Extended Lambda Calculus};  
+AI Memo No. 349, MIT Artificial Intelligence Laboratory: Cambridge, MA, USA, 1975.
 
 \bibitem[Friedman and Wise(1978)]{promise}
 Friedman; Wise.
@@ -2260,8 +2273,8 @@ Elizarov, R.; Belyaev, M.; Akhin, M.; Usmanov, I.
 \bibitem[Meijer(2009)]{rx-observable}
 Meijer, E.
 \newblock Democratizing The Cloud With The .NET Reactive Framework Rx.
-\newblock In Proceedings of the Internaional Softare Development Conference, Vancouver, BC, Canada, 16--24 May 2009 %MDPI: 
-;  Available online: \url{https://qconsf.com/sf2009/sf2009/speaker/Erik+Meijer.html} accessed on 6 August 2025. %MDPI: 
+\newblock In Proceedings of the Internaional Softare Development Conference, Vancouver, BC, Canada, 16--24 May 2009 
+;  Available online: \url{https://qconsf.com/sf2009/sf2009/speaker/Erik+Meijer.html} accessed on 6 August 2025.
 
 
 \bibitem[contributors(2025)]{rxjava}
@@ -2298,8 +2311,8 @@ Breslav, A.
 Vogel, L.; Springer, T.
 \newblock User Acceptance of Modified Web Page Loading Based on Progressive
   Streaming.
-\newblock In Proceedings of the International Conference on Web Engineering, 2022; %MDPI: please add location and date for conference
-  Springer:  Berlin/Heidelberg, Germany, %We added the location of publisher. Please confirm
+\newblock In Proceedings of the International Conference on Web Engineering, 2022;
+  Springer:  Berlin/Heidelberg, Germany, 
  2022; pp. 391--405.
 
 \bibitem[Atwood(2005)]{pssr2005}
@@ -2311,15 +2324,13 @@ Atwood, J.
 \bibitem[Farago et~al.(2007)Farago, Williams, Walsh, Whyte, Goel, and
   Fung]{scroll2007}
 Farago, J.; Williams, H.; Walsh, J.; Whyte, N.; Goel, K.; Fung, P.
-\newblock Object Search UI and Dragging Object Results\hl{,  ~23 2007.} %MDPI: please confirm whether can be deleted
-\newblock US Patent Applications 11/353,787, \hl{2007}%MDPI: please add day and month
-.
+\newblock Object Search UI and Dragging Object Results, February 14, 2007. 
+\newblock US Patent Applications 11/353,787, 2007.
 
 \bibitem[Schiller(2007)]{schiller2007progressive}
 Schiller, S.
 \newblock Progressive Loading.
-\newblock US Patent Applications 11/364,992, \hl{2007.} %MDPI: please add day and month
-
+\newblock US Patent Applications 11/364,992, February 26, 2007.
 
 \bibitem[Von~Behren et~al.(2003)Von~Behren, Condit, and Brewer]{von2003events}
 Von~Behren, R.; Condit, J.; Brewer, E.
@@ -2362,8 +2373,7 @@ Karsten, M.; Barghi, S.
 \bibitem[Burke(2013)]{burke2013restful}
 Burke, B.
 \newblock {\em RESTful Java with JAX-RS 2.0: Designing and Developing
-  Distributed Web Services}; \hl{O'Reilly Media, Inc.: 2013.} %MDPI: We are sorry but we could not find the required information about this entry. Please add the location of the publisher (city and country).
-
+  Distributed Web Services}; O'Reilly Media, Inc.: Sebastopol, CA, USA, 2013.
 
 \bibitem[Haynes et~al.(1984)Haynes, Friedman, and
   Wand]{coroutines_continuations}
@@ -2403,7 +2413,7 @@ Reijn, J.
 Beronić, D.; Modrić, L.; Mihaljević, B.; Radovan, A.
 \newblock Comparison of Structured Concurrency Constructs in Java and Kotlin---Virtual Threads and Coroutines.
 \newblock In Proceedings of the 2022 45th Jubilee International Convention on
-  Information, Communication and Electronic Technology (MIPRO), \hl{Opatija, Croatia, 23--27 May 2022}%MDPI: Please confirm added date and location for conference
+  Information, Communication and Electronic Technology (MIPRO), Opatija, Croatia, 23--27 May 2022
 ; pp. 1466--1471.
 \newblock {\url{https://doi.org/10.23919/MIPRO55190.2022.9803765}}.
 
@@ -2422,7 +2432,7 @@ Fox, T.
 
 \bibitem[Maurer and Wolfthal(2015)]{netty}
 Maurer, N.; Wolfthal, M.
-\newblock {\em Netty in Action}; \hl{Manning: 2015.} %MDPI: We are sorry but we could not find the required information about this entry. Please add the location of the publisher (city and country).
+\newblock {\em Netty in Action}; Manning Publications: Shelter Island, NY, USA, 2015.
 
 
 \bibitem[{\v{S}}imatovi{\'c} et~al.(2025){\v{S}}imatovi{\'c}, Markulin,
@@ -2430,7 +2440,7 @@ Maurer, N.; Wolfthal, M.
 {\v{S}}imatovi{\'c}, M.; Markulin, H.; Beroni{\'c}, D.; Mihaljevi{\'c}, B.
 \newblock Evaluating Memory Management and Garbage Collection Algorithms with
   Virtual Threads in High-Concurrency Java Applications.
-\newblock In Proceedings of the 48th ICT and Electronics Convention MIPRO 2025. Rijeka: Croatian Society for Information, Communication and Electronic Technology–MIPRO, Opatija, Croatia, 2--6 June 2025. %MDPI: Please confirm added conference date and location.
+\newblock In Proceedings of the 48th ICT and Electronics Convention MIPRO 2025. Rijeka: Croatian Society for Information, Communication and Electronic Technology–MIPRO, Opatija, Croatia, 2--6 June 2025. 
 
 
 \bibitem[Deinum and Cosmina(2021)]{webflux}
